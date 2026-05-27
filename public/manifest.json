@@ -1,0 +1,24 @@
+{
+  "name": "HOVET - Hospital Veterinário Universitário",
+  "short_name": "HOVET",
+  "description": "Sistema de Gestão de Filas do Hospital Veterinário Universitário",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

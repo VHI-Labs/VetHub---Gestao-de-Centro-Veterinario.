@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE - VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+out/
+
+# IDE - Sublime Text
+*.sublime-workspace
+
+# IDE - Vim/Neovim
+*.swp
+*.swo
+*~
+
+# IDE - Emacs
+*~
+\#*\#
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# TypeScript
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+
+# Supabase migrations
+supabase-*.sql
+
+# Docs
+docs/
+
+# Misc
+.cache/
+.tmp/
+*.local
