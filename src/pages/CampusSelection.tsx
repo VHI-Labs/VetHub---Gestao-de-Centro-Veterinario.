@@ -121,8 +121,18 @@ export default function CampusSelection() {
               rel="noopener noreferrer"
               className="font-semibold hover:underline"
             >
-              capybara holding
-            </a>
+              Vitor Santos
+            </a>{" "}
+            (NSI — Piracicaba) &{" "}
+            <a
+              href="https://ingridbrito.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold hover:underline"
+            >
+              Ingrid Brito
+            </a>{" "}
+            (NSI — Mooca)
           </p>
         </footer>
       </div>
