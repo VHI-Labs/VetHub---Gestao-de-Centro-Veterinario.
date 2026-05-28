@@ -7,7 +7,7 @@ const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São Jos�
 
 export default function CampusSelection() {
   const navigate = useNavigate()
-  const { user, unidade, funcoes, signOut, refreshProfile } = useAuth()
+  const { user, unidade, funcoes, role, signOut, refreshProfile } = useAuth()
   const [selected, setSelected] = useState("")
   const [saving, setSaving] = useState(false)
 
@@ -16,7 +16,7 @@ export default function CampusSelection() {
       navigate("/selecionar-tv", { replace: true })
       return
     }
-    if (unidade && unidade !== "Todos") {
+    if (unidade && unidade !== "Todos" && role !== "admin" && role !== "coordinator") {
       navigate("/recepcao", { replace: true })
     }
   }, [unidade, funcoes, navigate])
@@ -26,7 +26,6 @@ export default function CampusSelection() {
     setSaving(true)
     await supabase.from("user_profiles").update({
       unidade: selected,
-      funcoes: ["Recepcao", "Fila", "Videos", "Relatorios"],
       atualizado_em: new Date().toISOString()
     }).eq("id", user.id)
     await refreshProfile()

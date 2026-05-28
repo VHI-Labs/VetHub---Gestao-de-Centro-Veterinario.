@@ -40,7 +40,7 @@ export const useQueueStore = create<QueueState>((set, get) => ({
   },
   refresh: async () => {
     const { unidade, isAdmin } = get()
-    const u = (isAdmin || unidade === "Todos") ? '' : unidade
+    const u = unidade === "Todos" ? '' : unidade
     const [dogs, cats, wild, history, activeCallDog, activeCallCat, activeCallWild, callHistoryDog, callHistoryCat, callHistoryWild] = await Promise.all([
       getQueue('Cão', u),
       getQueue('Gato', u),
