@@ -12,6 +12,7 @@ interface ChangeCampusModalProps {
 function campusImgUrl(campus: string): string | null {
   switch (campus) {
     case "Mooca": return "/mooca.svg"
+    case "Vila Olímpia": return "/VO.svg"
     case "Paulista": return "/paulista.png"
     case "Piracicaba": return "/piracicaba.svg"
     case "São José dos Campos": return "/sjc.svg"
@@ -20,7 +21,7 @@ function campusImgUrl(campus: string): string | null {
 }
 
 function campusSvg(campus: string): boolean {
-  return campus === "Mooca" || campus === "Paulista" || campus === "Piracicaba" || campus === "São José dos Campos"
+  return campus === "Mooca" || campus === "Vila Olímpia" || campus === "Paulista" || campus === "Piracicaba" || campus === "São José dos Campos"
 }
 
 export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {

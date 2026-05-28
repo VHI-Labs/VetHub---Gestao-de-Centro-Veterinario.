@@ -36,6 +36,11 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
     loadVideos()
   }, [])
 
+  useEffect(() => {
+    const id = setInterval(loadVideos, 30000)
+    return () => clearInterval(id)
+  }, [])
+
   const loadVideos = async () => {
     const list = await getTvVideos()
     setVideos(list)

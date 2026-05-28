@@ -60,8 +60,8 @@ export default function CampusSelection() {
                   key={campus}
                   onClick={() => setSelected(campus)}
                   style={{
-                    padding: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? "0 16px 20px" : "20px 16px",
-                    paddingTop: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? 0 : 20,
+                    padding: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" || campus === "Vila Olímpia" ? "0 16px 20px" : "20px 16px",
+                    paddingTop: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" || campus === "Vila Olímpia" ? 0 : 20,
                     borderRadius: 14,
                     border: selected === campus ? "2px solid #6b8e6b" : "2px solid #e5e7eb",
                     background: selected === campus ? "rgba(107,142,107,0.08)" : "#fff",
@@ -74,14 +74,14 @@ export default function CampusSelection() {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    gap: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? 0 : 8,
+                    gap: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" || campus === "Vila Olímpia" ? 0 : 8,
                     overflow: "visible",
                     position: "relative"
                   }}
                 >
-                  {campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? (
+                  {campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" || campus === "Vila Olímpia" ? (
                     <img
-                      src={campus === "Piracicaba" ? "/piracicaba.svg" : campus === "São José dos Campos" ? "/sjc.svg" : campus === "Mooca" ? "/mooca.svg" : "/paulista.png"}
+                      src={campus === "Piracicaba" ? "/piracicaba.svg" : campus === "São José dos Campos" ? "/sjc.svg" : campus === "Mooca" ? "/mooca.svg" : campus === "Vila Olímpia" ? "/VO.svg" : "/paulista.png"}
                       alt={campus}
                       style={{
                         width: campus === "Paulista" ? 100 : 140,
@@ -97,7 +97,7 @@ export default function CampusSelection() {
                       {campus === "Vila Olímpia" ? <TreeDeciduous size={32} /> : <Sun size={32} />}
                     </span>
                   )}
-                  <span style={{ marginTop: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? 4 : 0 }}>{campus}</span>
+                  <span style={{ marginTop: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" || campus === "Vila Olímpia" ? 4 : 0 }}>{campus}</span>
                 </button>
               ))}
             </div>
