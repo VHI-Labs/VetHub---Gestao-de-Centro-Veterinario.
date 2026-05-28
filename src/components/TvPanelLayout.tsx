@@ -57,9 +57,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   }, [handleStorage])
 
   const call = activeCall
-  const callStartedAt = call?.calledAt ? new Date(call.calledAt).getTime() : Date.now()
-  const callElapsed = call ? Date.now() - callStartedAt : 0
-  const shouldShowCall = call && callElapsed < CALL_DISPLAY_MS
+  const shouldShowCall = call && (call.calledAt ? Date.now() - new Date(call.calledAt).getTime() < CALL_DISPLAY_MS : true)
   const callToken = call ? `${call.id}-${call.calledAt || ""}` : ""
 
   useEffect(() => {
@@ -93,16 +91,18 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   useEffect(() => {
     if (shouldShowCall && callToken !== activeCallTokenRef.current) {
       activeCallTokenRef.current = callToken
+      const startedAt = call?.calledAt ? new Date(call.calledAt).getTime() : Date.now()
+      const remaining = Math.max(0, CALL_DISPLAY_MS - (Date.now() - startedAt))
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
         activeCallTokenRef.current = ""
         useQueueStore.getState().refresh()
-      }, Math.max(0, CALL_DISPLAY_MS - callElapsed))
+      }, remaining)
     }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [shouldShowCall, callToken, callElapsed])
+  }, [shouldShowCall, callToken])
 
   const recentCalls = history.slice(0, 6)
 
