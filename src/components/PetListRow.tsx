@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase"
 import { updatePetStatus } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
 import { useQueueStore } from "../store/queueStore"
+import { PawPrint, Bird, Megaphone, MapPin } from "lucide-react"
 
 interface PetListRowProps {
   pet: Pet
@@ -28,10 +29,10 @@ export default function PetListRow({
   const refresh = useQueueStore(s => s.refresh)
 
   const especieBadge = pet.especie === "Cão"
-    ? { bg: "rgba(59,130,246,0.1)", color: "#2563eb", label: "🐶 Cão" }
+    ? { bg: "rgba(59,130,246,0.1)", color: "#2563eb", icon: <PawPrint size={14} />, label: "Cão" }
     : pet.especie === "Gato"
-      ? { bg: "rgba(236,72,153,0.1)", color: "#db2777", label: "🐱 Gato" }
-      : { bg: "rgba(16,185,129,0.1)", color: "#059669", label: "🦜 Silvestres" }
+      ? { bg: "rgba(236,72,153,0.1)", color: "#db2777", icon: <PawPrint size={14} />, label: "Gato" }
+      : { bg: "rgba(16,185,129,0.1)", color: "#059669", icon: <Bird size={14} />, label: "Silvestres" }
 
   const handleCall = () => {
     setTimeout(async () => {
@@ -60,7 +61,7 @@ export default function PetListRow({
           padding: "4px 12px", borderRadius: 100, fontSize: "0.8rem",
           fontWeight: 700, whiteSpace: "nowrap"
         }}>
-          {especieBadge.label}
+          {especieBadge.icon} {especieBadge.label}
         </span>
       </div>
 
@@ -79,7 +80,7 @@ export default function PetListRow({
       <div className="pet-list-actions">
         {showCall && (
           <button className="action-btn-block btn-call" onClick={handleCall}>
-            <span className="btn-icon">📣</span>
+            <span className="btn-icon"><Megaphone size={16} /></span>
             <span>{callLabel}</span>
           </button>
         )}
@@ -90,7 +91,7 @@ export default function PetListRow({
               className="action-btn-block btn-direct"
               onClick={(e) => { e.stopPropagation(); setShowDirPopover(!showDirPopover) }}
             >
-              <span className="btn-icon">📍</span>
+              <span className="btn-icon"><MapPin size={16} /></span>
               <span>{pet.localDirecionado || directionLabel}</span>
             </button>
             <div className={`direction-popover ${showDirPopover ? "show" : ""}`}

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { useClock } from "../hooks/useClock"
 import { useAuth } from "../context/AuthContext"
-import { MapPin } from "lucide-react"
+import { MapPin, Hospital } from "lucide-react"
 import ChangeCampusModal from "./ChangeCampusModal"
 
 interface TopbarProps {
@@ -25,7 +25,7 @@ export default function Topbar({ title, tabs }: TopbarProps) {
         borderBottom: "var(--glass-border)", boxShadow: "0 4px 30px rgba(15,118,110,0.03)", zIndex: 10
       }}>
         <div className="topbar-brand" style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <span style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)" }}>🏥 HOVET</span>
+          <span style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 10 }}><Hospital size={28} /> HOVET</span>
           <div style={{ display: "flex", gap: 8, fontSize: "0.9rem" }}>
             <Link to="/recepcao" className="tab-btn" style={{
               textDecoration: "none", padding: "6px 14px", borderRadius: 100, display: "inline-block",

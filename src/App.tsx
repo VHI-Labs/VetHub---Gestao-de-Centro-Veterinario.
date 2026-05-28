@@ -15,17 +15,12 @@ import { useQueueStore } from './store/queueStore'
 import { useEffect } from 'react'
 import { useStorageSync } from './hooks/useStorageSync'
 import { useAuth } from './context/AuthContext'
-import twemoji from 'twemoji'
 
 export default function App() {
   useStorageSync()
   const { unidade, role } = useAuth()
   const location = useLocation()
   const hideFooter = ["/", "/login", "/triagem", "/painel-caes", "/painel-gatos"].includes(location.pathname)
-
-  useEffect(() => {
-    twemoji.parse(document.body)
-  })
 
   useEffect(() => {
     useQueueStore.getState().setCampus(unidade, role === 'admin' || role === 'coordinator')

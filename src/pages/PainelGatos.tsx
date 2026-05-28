@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import TvPanelLayout from "../components/TvPanelLayout"
+import { PawPrint } from "lucide-react"
 
 export default function PainelGatos() {
   useStorageSync()
@@ -19,7 +20,7 @@ export default function PainelGatos() {
       activeCall={activeCall}
       history={mergedHistory}
       title="Gatos e Silvestres"
-      icon="🐱"
+      icon={<PawPrint size={28} />}
     />
   )
 }

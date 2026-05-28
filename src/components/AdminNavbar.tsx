@@ -1,14 +1,15 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import { Hospital, Ambulance, ClipboardList, PawPrint, Tv, Settings } from "lucide-react"
 
 const LINKS = [
-  { path: "/recepcao", label: "Recepção", icon: "🏥" },
-  { path: "/pronto-atendimento", label: "Pronto Atendimento", icon: "🚑" },
-  { path: "/triagem", label: "Triagem", icon: "📋" },
-  { path: "/painel-caes", label: "Cães", icon: "🐶" },
-  { path: "/painel-gatos", label: "Gatos", icon: "🐱" },
-  { path: "/selecionar-tv", label: "TV", icon: "📺" },
-  { path: "/admin", label: "Admin", icon: "⚙️" },
+  { path: "/recepcao", label: "Recepção", icon: Hospital },
+  { path: "/pronto-atendimento", label: "Pronto Atendimento", icon: Ambulance },
+  { path: "/triagem", label: "Triagem", icon: ClipboardList },
+  { path: "/painel-caes", label: "Cães", icon: PawPrint },
+  { path: "/painel-gatos", label: "Gatos", icon: PawPrint },
+  { path: "/selecionar-tv", label: "TV", icon: Tv },
+  { path: "/admin", label: "Admin", icon: Settings },
 ]
 
 export default function AdminNavbar() {
@@ -47,7 +48,7 @@ export default function AdminNavbar() {
             onMouseEnter={e => { e.currentTarget.style.background = "rgba(107,142,107,0.15)"; e.currentTarget.style.color = "#fff" }}
             onMouseLeave={e => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.55)" } }}
           >
-            <span style={{ fontSize: "0.9rem" }}>{link.icon}</span>
+            <link.icon size={16} />
             <span>{link.label}</span>
           </button>
         )
