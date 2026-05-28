@@ -1,10 +1,9 @@
-import { useEffect, useState, useRef, useCallback, type ReactNode } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, CALL_DISPLAY_MS } from "../core/engine"
 import { anunciarPaciente, primeAudioSystem, initAutomaticAudioSystem } from "../core/audio"
 import type { Pet, CallHistoryItem, TvVideo } from "../types"
-import { PawPrint, Volume2 } from "lucide-react"
 
 const PLAYLIST_INTERVAL_MS = 30000
 
@@ -12,7 +11,7 @@ interface TvPanelLayoutProps {
   activeCall: Pet | null
   history: CallHistoryItem[]
   title: string
-  icon: ReactNode
+  icon: string
 }
 
 export default function TvPanelLayout({ activeCall, history, title, icon }: TvPanelLayoutProps) {
@@ -170,7 +169,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
           fontSize: "1.1rem", fontWeight: 800, color: "var(--color-accent)",
           display: "flex", alignItems: "center", gap: 10, flexShrink: 0
         }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>{icon} HOVET {title.toUpperCase()}</span>
+          <span>{icon} HOVET {title.toUpperCase()}</span>
           <span style={{
             fontWeight: 300, fontSize: "0.9rem",
             borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 10
@@ -241,8 +240,8 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
               display: "flex", flexDirection: "column",
               alignItems: "center", justifyContent: "center"
             }}>
-              <div className="tv-no-call-paw" style={{ fontSize: "3rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <PawPrint size={48} />
+              <div className="tv-no-call-paw" style={{ fontSize: "3rem" }}>
+                🐾
               </div>
               <div style={{
                 fontSize: "1.1rem", fontWeight: 700, marginTop: 10,
@@ -377,7 +376,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
           padding: "16px 28px", display: "flex", alignItems: "center", gap: 20,
           boxShadow: "0 20px 40px rgba(0,0,0,0.5)", width: "min(650px, 90%)"
         }}>
-          <div style={{ fontSize: "2rem", flexShrink: 0, display: "flex", alignItems: "center" }}><Volume2 size={32} /></div>
+          <div style={{ fontSize: "2rem", flexShrink: 0 }}>🔊</div>
           <div style={{ textAlign: "left", flex: 1 }}>
             <h4 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 800, color: "#fff" }}>
               Som Desativado pelo Navegador

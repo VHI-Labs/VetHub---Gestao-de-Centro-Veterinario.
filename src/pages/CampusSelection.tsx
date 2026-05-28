@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
-import { TreeDeciduous, Sun } from "lucide-react"
 
 const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
@@ -93,8 +92,8 @@ export default function CampusSelection() {
                       }}
                     />
                   ) : (
-                    <span style={{ fontSize: "1.8rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {campus === "Vila Olímpia" ? <TreeDeciduous size={32} /> : <Sun size={32} />}
+                    <span style={{ fontSize: "1.8rem" }}>
+                      {campus === "Vila Olímpia" ? "🌳" : "☀️"}
                     </span>
                   )}
                   <span style={{ marginTop: campus === "Piracicaba" || campus === "São José dos Campos" || campus === "Mooca" || campus === "Paulista" ? 4 : 0 }}>{campus}</span>

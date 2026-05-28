@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { VolumeX, Volume2 } from "lucide-react"
 
 export default function AudioControl() {
   const [muted, setMuted] = useState(() => localStorage.getItem("hovet_video_muted") === "true")
@@ -28,7 +27,7 @@ export default function AudioControl() {
         </p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-        <span style={{ fontSize: "1.8rem", display: "flex", alignItems: "center" }}>{muted ? <VolumeX size={32} /> : <Volume2 size={32} />}</span>
+        <span style={{ fontSize: "1.8rem" }}>{muted ? "🔇" : "🔊"}</span>
         <label className="switch">
           <input type="checkbox" checked={!muted} onChange={() => setMuted(!muted)} />
           <span className="slider round" />

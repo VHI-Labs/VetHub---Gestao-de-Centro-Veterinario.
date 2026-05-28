@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
-import { PawPrint, LogOut, Shield, AlertTriangle, RefreshCw, UserPlus, Tv } from "lucide-react"
+import { PawPrint, LogOut, Shield, AlertTriangle, RefreshCw, UserPlus } from "lucide-react"
 import type { UserProfile } from "../types"
 
 const CAMPUSES = ["Todos", "Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
@@ -212,7 +212,7 @@ export default function AdminPage() {
                               }}>
                                 {checked && <span style={{ color: "#0f172a", fontSize: 7, lineHeight: 1 }}>✓</span>}
                               </span>
-                              {perm === "TV" ? <><Tv size={11} style={{ display: "inline", marginRight: 2 }} /> TV</> : perm}
+                              {perm === "TV" ? "📺 TV" : perm}
                             </label>
                           )
                         })}
