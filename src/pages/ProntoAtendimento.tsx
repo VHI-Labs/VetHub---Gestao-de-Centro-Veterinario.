@@ -2,7 +2,7 @@ import { useState } from "react"
 import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
-import { FileText, Megaphone, PawPrint, Bird } from "lucide-react"
+import { FileText, PawPrint, Bird } from "lucide-react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
@@ -75,7 +75,7 @@ const tabs = [
               className="btn-magnetic"
               style={{ marginBottom: 12, alignSelf: "flex-start", padding: "10px 24px", fontSize: "0.9rem" }}
             >
-              <Megaphone size={18} style={{ display: "inline", marginRight: 6, verticalAlign: "middle" }} /> Chamar Próximo
+              <img src="/emojis/megaphone.png" style={{ width: 18, height: 18, display: "inline", marginRight: 6, verticalAlign: "middle" }} alt="📣" /> Chamar Próximo
             </button>
           <div className="queue-layout" style={{ display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", flex: 1, paddingBottom: 20 }}>
             {prontos.length === 0 ? (

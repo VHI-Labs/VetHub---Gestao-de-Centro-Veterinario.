@@ -59,7 +59,7 @@ export default function TvSelection() {
             onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(59,130,246,0.4)" }}
             onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(59,130,246,0.3)" }}
           >
-            <span style={{ fontSize: "5rem" }}>🐶</span>
+            <img src="/emojis/dog.png" style={{ width: 80, height: 80 }} alt="Cães" />
             <span style={{ fontSize: "1.4rem", fontWeight: 700 }}>TV Cachorros</span>
           </button>
 
@@ -77,7 +77,7 @@ export default function TvSelection() {
             onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(236,72,153,0.4)" }}
             onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(236,72,153,0.3)" }}
           >
-            <span style={{ fontSize: "5rem" }}>🐱</span>
+            <img src="/emojis/cat.png" style={{ width: 80, height: 80 }} alt="Gatos" />
             <span style={{ fontSize: "1.4rem", fontWeight: 700 }}>TV Gatos & Silvestres</span>
           </button>
         </div>

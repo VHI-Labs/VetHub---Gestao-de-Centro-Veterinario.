@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase"
 import { updatePetStatus } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
 import { useQueueStore } from "../store/queueStore"
-import { PawPrint, Bird, Megaphone, MapPin } from "lucide-react"
+import { PawPrint, Bird, MapPin } from "lucide-react"
 
 interface PetListRowProps {
   pet: Pet
@@ -80,7 +80,7 @@ export default function PetListRow({
       <div className="pet-list-actions">
         {showCall && (
           <button className="action-btn-block btn-call" onClick={handleCall}>
-            <span className="btn-icon"><Megaphone size={16} /></span>
+            <span className="btn-icon"><img src="/emojis/megaphone.png" style={{ width: 16, height: 16 }} alt="📣" /></span>
             <span>{callLabel}</span>
           </button>
         )}

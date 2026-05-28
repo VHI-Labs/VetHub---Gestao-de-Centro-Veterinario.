@@ -4,7 +4,7 @@ import { useQueueStore } from "../store/queueStore"
 import { updatePetStatus, reCallPet } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
 import type { Pet, Species } from "../types"
-import { PawPrint, Bird, Megaphone, PhoneCall } from "lucide-react"
+import { PawPrint, Bird, PhoneCall } from "lucide-react"
 
 function CalledPetItem({ pet }: { pet: Pet }) {
   const waitLabel = useWaitTimer(pet.dataHora)
@@ -47,7 +47,7 @@ function CalledPetItem({ pet }: { pet: Pet }) {
       </div>
       <div className="called-queue-actions">
         <button className="cq-btn cq-btn-recall" onClick={handleRecall} title="Rechamar" disabled={recalling} style={{ opacity: recalling ? 0.5 : 1, cursor: recalling ? "not-allowed" : "pointer" }}>
-          <Megaphone size={16} />
+          <img src="/emojis/megaphone.png" style={{ width: 16, height: 16 }} alt="📣" />
         </button>
         <button className="cq-btn cq-btn-finish" onClick={handleFinish} title="Concluir">
           ✓

@@ -100,7 +100,7 @@ export default function Triagem() {
     printArea.id = "printTicketArea"
     printArea.innerHTML = `
       <div style="font-family: monospace; text-align: center; padding: 20px; color: black;">
-        <h2 style="margin: 0; font-size: 1.5rem;">🐾 HOVET Anhembi</h2>
+        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><img src="/emojis/patinhas.png" style="width: 28px; height: 28px;" alt="🐾"> HOVET Anhembi</h2>
         <p style="margin: 4px 0; font-size: 0.8rem;">Hospital Veterinário Universitário</p>
         <hr style="border: 0; border-top: 1px dashed black; margin: 10px 0;">
         <h1 style="margin: 10px 0; font-size: 3rem; font-weight: bold; letter-spacing: -1px;">${ultimoPet.senha}</h1>
