@@ -139,6 +139,7 @@ export default function Triagem() {
         display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100
       }}>
         <div className="species-modal antigravity-card" style={{ width: "90%", maxWidth: 500, padding: 40, textAlign: "center" }}>
+          <img src="/logo-uam.png" alt="UAM" style={{ height: 48, marginBottom: 16 }} />
           <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Selecione o Campus</h2>
           <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: "1.1rem" }}>Escolha o campus para atendimento:</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
