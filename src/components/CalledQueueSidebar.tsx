@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { supabase } from "../lib/supabase"
 import { useQueueStore } from "../store/queueStore"
 import { updatePetStatus, reCallPet } from "../core/engine"
@@ -8,6 +9,7 @@ import { PawPrint, Bird, Megaphone, PhoneCall } from "lucide-react"
 function CalledPetItem({ pet }: { pet: Pet }) {
   const waitLabel = useWaitTimer(pet.dataHora)
   const refresh = useQueueStore(s => s.refresh)
+  const [recalling, setRecalling] = useState(false)
 
   const especieBadge = pet.especie === "Cão"
     ? { bg: "rgba(59,130,246,0.1)", color: "#2563eb" }
@@ -16,9 +18,12 @@ function CalledPetItem({ pet }: { pet: Pet }) {
       : { bg: "rgba(16,185,129,0.1)", color: "#059669" }
 
   const handleRecall = () => {
+    if (recalling) return
+    setRecalling(true)
     setTimeout(async () => {
       await reCallPet(pet.id, pet.localDirecionado || "Triagem")
       await refresh()
+      setRecalling(false)
     }, 3000)
   }
 
@@ -41,7 +46,7 @@ function CalledPetItem({ pet }: { pet: Pet }) {
         </div>
       </div>
       <div className="called-queue-actions">
-        <button className="cq-btn cq-btn-recall" onClick={handleRecall} title="Rechamar">
+        <button className="cq-btn cq-btn-recall" onClick={handleRecall} title="Rechamar" disabled={recalling} style={{ opacity: recalling ? 0.5 : 1, cursor: recalling ? "not-allowed" : "pointer" }}>
           <Megaphone size={16} />
         </button>
         <button className="cq-btn cq-btn-finish" onClick={handleFinish} title="Concluir">
