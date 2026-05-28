@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { createTriagem, cleanText } from "../core/engine"
 import type { Pet, Species } from "../types"
 import { useSearchParams } from "react-router-dom"
-import { ThumbsUp, ThumbsDown, Printer } from "lucide-react"
+import { PawPrint, Bird, ThumbsUp, ThumbsDown, Printer, Maximize } from "lucide-react"
 
 const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
@@ -123,10 +123,10 @@ export default function Triagem() {
     }, 500)
   }
 
-  const speciesIcons: Record<Species, string> = {
-    "Cão": "🐶",
-    "Gato": "🐱",
-    "Animais Silvestres": "🦜"
+  const speciesIcons: Record<Species, ReactNode> = {
+    "Cão": <PawPrint size={80} />,
+    "Gato": <PawPrint size={80} />,
+    "Animais Silvestres": <Bird size={80} />
   }
 
   const stepOffset = `${(currentStep - 1) * 33.33333}%`
@@ -176,7 +176,7 @@ export default function Triagem() {
                   borderRadius: "var(--border-radius-lg)", border: "1px solid rgba(255,255,255,0.6)",
                   transition: "var(--transition-smooth)"
                 }}>
-                <span style={{ fontSize: "5rem", lineHeight: 1 }}>{speciesIcons[s]}</span>
+                <span style={{ fontSize: "5rem", lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>{speciesIcons[s]}</span>
                 <span style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-main)" }}>{s}</span>
               </div>
             ))}
@@ -201,7 +201,7 @@ export default function Triagem() {
           alignItems: "center", borderBottom: "1px solid rgba(15,118,110,0.05)"
         }}>
           <div className="totem-logo" style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-            <span>🐾 HOVET</span>
+            <span><PawPrint size={24} /> HOVET</span>
             <span style={{ fontWeight: 300, fontSize: "1.1rem", borderLeft: "1px solid rgba(15,118,110,0.2)", paddingLeft: 10 }}>Triagem</span>
             {triagemCampus && (
               <span style={{ fontSize: "0.75rem", background: "rgba(15,118,110,0.1)", padding: "2px 8px", borderRadius: 6, color: "var(--color-primary)" }}>
@@ -223,7 +223,7 @@ export default function Triagem() {
               background: "none", border: "1px solid rgba(15,118,110,0.2)", borderRadius: 6,
               cursor: "pointer", padding: "4px 8px", fontSize: "1rem", color: "var(--color-primary)"
             }}>
-              ⛶
+              <Maximize size={18} />
             </button>
           </div>
         </div>
