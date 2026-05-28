@@ -13,6 +13,7 @@ interface ReportRow {
 }
 
 const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
 function calcMinutos(d1: string, d2: string): number {
   return Math.round((new Date(d2).getTime() - new Date(d1).getTime()) / 60000)
@@ -23,13 +24,14 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
   const hoje = new Date()
   const [year, setYear] = useState(hoje.getFullYear())
   const [month, setMonth] = useState(hoje.getMonth())
+  const [reportCampus, setReportCampus] = useState(unidade === "Todos" ? "" : unidade)
   const [data, setData] = useState<ReportRow[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [totalGeral, setTotalGeral] = useState(0)
 
   const gerar = async () => {
     setLoading(true)
-    const u = (role === "admin" || unidade === "Todos") ? "" : unidade
+    const u = reportCampus === "Todos" ? "" : reportCampus
     const pets = await getMonthlyReport(year, month, u)
     setTotalGeral(pets.length)
 
@@ -108,6 +110,20 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
           >
             {MESES.map((m, i) => (
               <option key={i} value={i}>{m}</option>
+            ))}
+          </select>
+
+          <select
+            value={reportCampus}
+            onChange={e => setReportCampus(e.target.value)}
+            style={{
+              padding: "10px 14px", borderRadius: 8, border: "1px solid #e5e7eb",
+              fontSize: "0.9rem", fontWeight: 600, background: "#fff", cursor: "pointer"
+            }}
+          >
+            <option value="Todos">Todos os Campi</option>
+            {CAMPUSES.map(c => (
+              <option key={c} value={c}>{c}</option>
             ))}
           </select>
 
