@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { createTriagem, cleanText } from "../core/engine"
 import type { Pet, Species } from "../types"
 import { useSearchParams } from "react-router-dom"
+import { ThumbsUp, ThumbsDown, Printer } from "lucide-react"
 
 const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
@@ -285,13 +286,13 @@ export default function Triagem() {
                 <div className="attendance-options" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, marginTop: 10, marginBottom: 20, flex: 1, alignContent: "center" }}>
                   <div className="attendance-card" onClick={() => selectPatientSimplificado("Sim")}
                     style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                    <div style={{ fontSize: "4.5rem", marginBottom: 10 }}>👍</div>
+                    <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsUp size={64} /></div>
                     <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Sim</h3>
                     <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>Já possuo cadastro e registro no hospital.</p>
                   </div>
                   <div className="attendance-card" onClick={() => selectPatientSimplificado("Não")}
                     style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                    <div style={{ fontSize: "4.5rem", marginBottom: 10 }}>👎</div>
+                    <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsDown size={64} /></div>
                     <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Não</h3>
                     <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>É a primeira vez do meu pet no hospital.</p>
                   </div>
@@ -337,7 +338,7 @@ export default function Triagem() {
               <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 300, margin: "0 auto" }}>
                 <button className="btn-magnetic" onClick={imprimirSenhaFisica}
                   style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)", color: "white", border: "none", fontSize: "1rem", padding: "14px 20px", fontWeight: 700, borderRadius: "var(--border-radius-sm)", cursor: "pointer", width: "100%" }}>
-                  🖨️ Imprimir Senha
+                  <Printer size={20} style={{ display: "inline", marginRight: 8, verticalAlign: "middle" }} /> Imprimir Senha
                 </button>
                 <button className="btn-magnetic btn-secondary" onClick={resetToSpecies}
                   style={{ border: "1.5px dashed rgba(15,118,110,0.3)", fontSize: "0.85rem", width: "100%", padding: 12 }}>

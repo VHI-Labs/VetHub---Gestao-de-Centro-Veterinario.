@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
-import { Lock } from "lucide-react"
+import { Lock, TreeDeciduous } from "lucide-react"
 
 const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
@@ -125,7 +125,7 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
                           }}
                         />
                       ) : (
-                        <span style={{ fontSize: "3rem", display: "block", marginBottom: 8 }}>🌳</span>
+                          <span style={{ fontSize: "3rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}><TreeDeciduous size={48} /></span>
                       )}
                       <div style={{ fontWeight: 700, fontSize: "1.2rem", color: "#2d3a2d" }}>{campus}</div>
                     </div>
@@ -171,7 +171,7 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
                         }}
                       />
                     ) : (
-                      <span style={{ fontSize: "1.6rem" }}>🌳</span>
+                      <span style={{ fontSize: "1.6rem", display: "flex", alignItems: "center", justifyContent: "center" }}><TreeDeciduous size={28} /></span>
                     )}
                     <span style={{ marginTop: campusSvg(campus) ? 2 : 0, fontSize: "0.82rem" }}>
                       {campus}
