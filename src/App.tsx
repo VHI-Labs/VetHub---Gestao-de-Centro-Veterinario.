@@ -8,7 +8,7 @@ import PainelCaes from './pages/PainelCaes'
 import PainelGatos from './pages/PainelGatos'
 import AdminPage from './pages/AdminPage'
 import TvSelection from './pages/TvSelection'
-import AdminNavbar from './components/AdminNavbar'
+import BottomNavbar from './components/BottomNavbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useQueueStore } from './store/queueStore'
@@ -35,7 +35,7 @@ export default function App() {
 
   return (
     <>
-      <AdminNavbar />
+      <BottomNavbar />
       <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />

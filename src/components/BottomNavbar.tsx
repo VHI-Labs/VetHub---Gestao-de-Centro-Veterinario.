@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { Hospital, Ambulance, ClipboardList, PawPrint, Tv, Settings } from "lucide-react"
 
-const LINKS = [
+const ADMIN_LINKS = [
   { path: "/recepcao", label: "Recepção", icon: Hospital },
   { path: "/pronto-atendimento", label: "Pronto Atendimento", icon: Ambulance },
   { path: "/triagem", label: "Triagem", icon: ClipboardList },
@@ -12,12 +12,20 @@ const LINKS = [
   { path: "/admin", label: "Admin", icon: Settings },
 ]
 
-export default function AdminNavbar() {
+const COORD_LINKS = [
+  { path: "/selecionar-tv", label: "TV", icon: Tv },
+  { path: "/painel-caes", label: "Cães", icon: PawPrint },
+  { path: "/painel-gatos", label: "Gatos", icon: PawPrint },
+]
+
+export default function BottomNavbar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { role } = useAuth()
 
-  if (role !== "admin") return null
+  if (role !== "admin" && role !== "coordinator") return null
+
+  const links = role === "admin" ? ADMIN_LINKS : COORD_LINKS
 
   return (
     <nav style={{
@@ -30,7 +38,7 @@ export default function AdminNavbar() {
       border: "1px solid rgba(255,255,255,0.08)",
       boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
     }}>
-      {LINKS.map(link => {
+      {links.map(link => {
         const isActive = location.pathname === link.path
         return (
           <button
