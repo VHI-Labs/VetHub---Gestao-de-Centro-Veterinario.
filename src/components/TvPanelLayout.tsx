@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback, type ReactNode } from "react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
+import { useClock } from "../hooks/useClock"
 import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, CALL_DISPLAY_MS } from "../core/engine"
 import { anunciarPaciente, primeAudioSystem, initAutomaticAudioSystem } from "../core/audio"
 import type { Pet, CallHistoryItem, TvVideo } from "../types"
@@ -21,6 +22,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   const [videos, setVideos] = useState<TvVideo[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [audioUnlocked, setAudioUnlocked] = useState(false)
+  const time = useClock()
   const [showBanner, setShowBanner] = useState(false)
   const lastTokenRef = useRef("")
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -154,8 +156,6 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
     return () => document.removeEventListener("click", handler)
   }, [audioUnlocked])
 
-  const slots = Array.from({ length: 3 }, (_, i) => history[i] || null)
-
   return (
     <div style={{
       display: "grid", gridTemplateColumns: "7fr 4fr", height: "100vh",
@@ -265,52 +265,6 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
           )}
         </div>
 
-        <div className="tv-history-bar" style={{
-          width: "100%", maxWidth: 700, alignSelf: "center",
-          display: "flex", flexDirection: "column", gap: 10,
-          padding: "14px 18px", borderRadius: "var(--border-radius-md)",
-          background: "rgba(15,23,42,0.9)",
-          border: "2px solid rgba(52,211,153,0.28)", color: "#fff",
-          backdropFilter: "blur(12px)", flexShrink: 0
-        }}>
-          <div style={{
-            fontWeight: 800, fontSize: "0.9rem", textTransform: "uppercase",
-            letterSpacing: "0.04em", color: "var(--color-accent-light)", textAlign: "center"
-          }}>
-            Últimas chamadas
-          </div>
-          <div style={{
-            display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, width: "100%"
-          }}>
-            {slots.map((item, i) => (
-              <div key={i} className="tv-history-item" style={{
-                padding: "10px 14px", borderRadius: 12,
-                background: "rgba(15,23,42,0.85)", fontWeight: 800,
-                border: `2px solid ${item ? "rgba(0,178,142,0.35)" : "rgba(255,255,255,0.1)"}`,
-                display: "flex", flexDirection: "column", justifyContent: "center",
-                alignItems: "center", gap: 2, opacity: item ? 1 : 0.35
-              }}>
-                {item ? (
-                  <>
-                    <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>
-                      {item.senha}
-                    </div>
-                    <div style={{
-                      fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.7)",
-                      textTransform: "uppercase", letterSpacing: "0.5px"
-                    }}>
-                      {item.localDirecionado}
-                    </div>
-                  </>
-                ) : (
-                  <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "rgba(255,255,255,0.15)" }}>
-                    ---
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
       </main>
 
       <section className="queue-section" style={{
@@ -371,6 +325,15 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
               </div>
             </div>
           ))}
+        </div>
+
+        <div style={{
+          marginTop: "auto", paddingTop: 16, flexShrink: 0,
+          borderTop: "1px solid rgba(255,255,255,0.1)",
+          textAlign: "center", fontSize: "1.8rem", fontWeight: 800,
+          color: "#fff", fontVariantNumeric: "tabular-nums", letterSpacing: 2
+        }}>
+          {time}
         </div>
       </section>
 

@@ -77,6 +77,17 @@ export default function Topbar({ title, tabs }: TopbarProps) {
           </button>
         </nav>
 
+        {role && (
+          <div style={{
+            padding: "4px 14px", borderRadius: 100, whiteSpace: "nowrap",
+            background: role === "admin" ? "rgba(16,185,129,0.15)" : role === "coordinator" ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.05)",
+            color: role === "admin" ? "#34d399" : role === "coordinator" ? "#60a5fa" : "rgba(255,255,255,0.5)",
+            fontWeight: 700, fontSize: "0.82rem"
+          }}>
+            {role === "admin" ? "Admin" : role === "coordinator" ? "Coordenador" : "Usuário"}
+          </div>
+        )}
+
         <div style={{ fontWeight: 600, color: "var(--color-primary)", fontSize: "0.95rem" }}>{time}</div>
       </header>
 
