@@ -3,8 +3,12 @@ import { createPortal } from "react-dom"
 import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
-import { FileText, PawPrint, Bird } from "lucide-react"
+import { FileText } from "lucide-react"
 import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
+import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
+import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
+import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
+import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
@@ -95,7 +99,7 @@ const tabs = [
           <div className="queue-layout" style={{ display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", flex: 1, paddingBottom: 20 }}>
             {agendados.length === 0 ? (
               <div className="antigravity-card" style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontSize: "1.1rem" }}>
-                <PawPrint size={24} style={{ display: "inline", verticalAlign: "middle", marginRight: 8 }} /> Não há pacientes agendados na fila aguardando no momento.
+                <IconMPawPrints size={24} style={{ display: "inline", verticalAlign: "middle", marginRight: 8 }} /> Não há pacientes agendados na fila aguardando no momento.
               </div>
             ) : (
               agendados.map(pet => (
@@ -131,22 +135,22 @@ const tabs = [
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 30 }}>
             <div className="antigravity-card" style={{ padding: 22, borderLeft: "5px solid var(--color-primary)", background: "linear-gradient(135deg, rgba(15,118,110,0.08), transparent)" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><PawPrint size={32} /></div>
+              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><IconMPawPrints size={32} /></div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Total</div>
               <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--color-primary)", marginTop: 2 }}>{total}</div>
             </div>
             <div className="antigravity-card" style={{ padding: 22, borderLeft: "5px solid #3b82f6", background: "linear-gradient(135deg, rgba(59,130,246,0.08), transparent)" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><PawPrint size={32} /></div>
+              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><IconMDogFace size={32} /></div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Cães</div>
               <div style={{ fontSize: "2rem", fontWeight: 800, color: "#3b82f6", marginTop: 2 }}>{dogsCount}</div>
             </div>
             <div className="antigravity-card" style={{ padding: 22, borderLeft: "5px solid #ec4899", background: "linear-gradient(135deg, rgba(236,72,153,0.08), transparent)" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><PawPrint size={32} /></div>
+              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><IconMCatFace size={32} /></div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Gatos</div>
               <div style={{ fontSize: "2rem", fontWeight: 800, color: "#ec4899", marginTop: 2 }}>{catsCount}</div>
             </div>
             <div className="antigravity-card" style={{ padding: 22, borderLeft: "5px solid #10b981", background: "linear-gradient(135deg, rgba(16,185,129,0.08), transparent)" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><Bird size={32} /></div>
+              <div style={{ fontSize: "2rem", marginBottom: 4, display: "flex", alignItems: "center" }}><IconMBird size={32} /></div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Silvestres</div>
               <div style={{ fontSize: "2rem", fontWeight: 800, color: "#10b981", marginTop: 2 }}>{wildCount}</div>
             </div>
@@ -154,21 +158,21 @@ const tabs = [
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginBottom: 30 }}>
             <div className="antigravity-card" style={{ padding: 20, display: "flex", alignItems: "center", gap: 16, borderLeft: "5px solid #3b82f6" }}>
-              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(59,130,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><PawPrint size={24} color="#3b82f6" /></div>
+              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(59,130,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconMDogFace size={24} color="#3b82f6" /></div>
               <div>
                 <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Espera média • Cães</div>
                 <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#3b82f6", marginTop: 2 }}>{mediaCaes} min</div>
               </div>
             </div>
             <div className="antigravity-card" style={{ padding: 20, display: "flex", alignItems: "center", gap: 16, borderLeft: "5px solid #ec4899" }}>
-              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(236,72,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><PawPrint size={24} color="#ec4899" /></div>
+              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(236,72,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconMCatFace size={24} color="#ec4899" /></div>
               <div>
                 <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Espera média • Gatos</div>
                 <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#ec4899", marginTop: 2 }}>{mediaGatos} min</div>
               </div>
             </div>
             <div className="antigravity-card" style={{ padding: 20, display: "flex", alignItems: "center", gap: 16, borderLeft: "5px solid #10b981" }}>
-              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(16,185,129,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><Bird size={24} color="#10b981" /></div>
+              <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(16,185,129,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconMBird size={24} color="#10b981" /></div>
               <div>
                 <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>Espera média • Silvestres</div>
                 <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#10b981", marginTop: 2 }}>{mediaSilvestres} min</div>
