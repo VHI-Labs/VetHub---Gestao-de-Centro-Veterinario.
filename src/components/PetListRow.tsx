@@ -95,7 +95,7 @@ export default function PetListRow({
               <span>{pet.localDirecionado || directionLabel}</span>
             </button>
             <div className={`direction-popover ${showDirPopover ? "show" : ""}`}
-              style={{ top: "calc(100% + 5px)", right: 0, minWidth: 140, bottom: "auto" }}>
+              style={{ bottom: "calc(100% + 5px)", right: 0, minWidth: 140 }}>
               {["GUICHÊ 1", "GUICHÊ 2", "Triagem"].map(local => (
                 <div key={local} className="direction-opt" onClick={() => handleDirection(local)}>
                   {local}
