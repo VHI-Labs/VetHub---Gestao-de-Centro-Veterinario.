@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback, type ReactNode } from "react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { useClock } from "../hooks/useClock"
-import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, CALL_DISPLAY_MS } from "../core/engine"
+import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, isYoutubeShort, CALL_DISPLAY_MS } from "../core/engine"
 import { anunciarPaciente, primeAudioSystem, initAutomaticAudioSystem } from "../core/audio"
 import type { Pet, CallHistoryItem, TvVideo } from "../types"
 import { PawPrint, Volume2 } from "lucide-react"
@@ -29,8 +29,14 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   const playlistTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeCallTokenRef = useRef("")
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const bgIframeRef = useRef<HTMLIFrameElement>(null)
 
-  const youtubeEmbedUrl = videos.length > 0 ? buildYoutubeEmbedUrl(extractYoutubeId(videos[currentIndex].youtubeUrl) || '') : ""
+  const currentVideo = videos[currentIndex]
+  const videoId = currentVideo ? extractYoutubeId(currentVideo.youtubeUrl) : null
+  const isShort = currentVideo
+    ? (currentVideo.isShort ?? (videoId ? isYoutubeShort(currentVideo.youtubeUrl) : false))
+    : false
+  const youtubeEmbedUrl = videoId ? buildYoutubeEmbedUrl(videoId) : ""
 
   useEffect(() => {
     initAutomaticAudioSystem()
@@ -114,12 +120,15 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   const recentCalls = history.slice(0, 6)
 
   useEffect(() => {
-    const iframe = iframeRef.current
-    if (!iframe?.contentWindow) return
+    const sendCommand = (func: string) => {
+      const msg = JSON.stringify({ event: "command", func, args: "" })
+      iframeRef.current?.contentWindow?.postMessage(msg, '*')
+      bgIframeRef.current?.contentWindow?.postMessage(msg, '*')
+    }
     if (shouldShowCall) {
-      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+      sendCommand("pauseVideo")
     } else {
-      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
+      sendCommand("playVideo")
     }
   }, [shouldShowCall])
 
@@ -164,12 +173,31 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
       backgroundPosition: "center",
       color: "#f8fafc", overflow: "hidden", padding: "20px", gap: "20px", position: "relative"
     }}>
-      <div style={{ position: "absolute", inset: 0, background: "rgba(2,6,23,0.55)", zIndex: 0 }} />
+      {youtubeEmbedUrl && (
+        <iframe
+          ref={bgIframeRef}
+          src={youtubeEmbedUrl}
+          style={{
+            position: "absolute", top: "50%", left: "50%",
+            minWidth: "100%", minHeight: "100%",
+            width: "auto", height: "auto",
+            transform: "translate(-50%, -50%) scale(1.3)",
+            border: "none", zIndex: 0,
+            opacity: shouldShowCall ? 0 : 1,
+            transition: "opacity 0.6s ease",
+            pointerEvents: "none"
+          }}
+          allow="autoplay; encrypted-media"
+          title="YouTube Background"
+          sandbox="allow-scripts allow-same-origin allow-presentation"
+        />
+      )}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(2,6,23,0.55)", zIndex: 1 }} />
       <div className="tv-noise-overlay" />
 
       <main className="active-call-section" style={{
         display: "flex", flexDirection: "column", height: "100%",
-        gap: 16, position: "relative", zIndex: 1, minHeight: 0
+        gap: 16, position: "relative", zIndex: 2, minHeight: 0
       }}>
         <div className="tv-brand" style={{
           fontSize: "1.1rem", fontWeight: 800, color: "var(--color-accent)",
@@ -185,7 +213,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
         </div>
 
         <div id="megaCardContainer" style={{
-          flex: 1, display: "flex", justifyContent: "center", position: "relative", minHeight: 0
+          flex: 1, display: "flex", justifyContent: "center", alignItems: "center", position: "relative", minHeight: 0
         }}>
           {shouldShowCall ? (
             <div key={callToken} className="tv-mega-card active-call" style={{
@@ -222,15 +250,20 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
               </div>
             </div>
           ) : youtubeEmbedUrl ? (
-            <div className="tv-mega-card" style={{
-              width: "100%", maxWidth: 700, alignSelf: "stretch",
-              borderRadius: "var(--border-radius-lg)", overflow: "hidden",
-              background: "#020617"
+            <div className="tv-mega-card tv-video-mold" style={{
+              position: "relative",
+              borderRadius: "var(--border-radius-lg)",
+              overflow: "hidden",
+              border: "1px solid rgba(0,178,142,0.25)",
+              boxShadow: "0 0 50px rgba(0,178,142,0.06), 0 0 0 1px rgba(0,178,142,0.08) inset",
+              ...(isShort
+                ? { aspectRatio: "9/16", height: "100%", maxHeight: 700, width: "auto", maxWidth: 450 }
+                : { aspectRatio: "16/9", width: "100%", maxWidth: 800, height: "auto" }
+              )
             }}>
               <iframe
                 ref={iframeRef}
                 src={youtubeEmbedUrl}
-                style={{ width: "100%", height: "100%", border: "none" }}
                 allow="autoplay; encrypted-media"
                 allowFullScreen
                 sandbox="allow-scripts allow-same-origin allow-presentation"
@@ -272,7 +305,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
         WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.05)",
         borderRadius: "var(--border-radius-lg)", padding: "20px 20px",
         display: "flex", flexDirection: "column", height: "100%",
-        position: "relative", zIndex: 1, minHeight: 0
+        position: "relative", zIndex: 2, minHeight: 0
       }}>
         <div style={{
           fontSize: "1.1rem", fontWeight: 800, color: "#fff", marginBottom: 16,

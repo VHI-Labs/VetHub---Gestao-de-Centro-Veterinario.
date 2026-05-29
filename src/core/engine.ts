@@ -85,6 +85,10 @@ export function extractYoutubeId(url: string): string | null {
   return null
 }
 
+export function isYoutubeShort(url: string): boolean {
+  return /youtube\.com\/shorts\//.test(url)
+}
+
 export function buildYoutubeEmbedUrl(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0&rel=0`
 }
@@ -420,7 +424,8 @@ export async function getTvVideos(): Promise<TvVideo[]> {
   return (data || []).map(row => ({
     id: row.id as string,
     youtubeUrl: row.youtube_url as string,
-    ordem: row.ordem as number
+    ordem: row.ordem as number,
+    isShort: row.is_short as boolean || isYoutubeShort(row.youtube_url as string)
   }))
 }
 
@@ -428,7 +433,8 @@ export async function saveTvVideos(videos: TvVideo[]): Promise<void> {
   const rows = videos.map(v => ({
     id: v.id,
     youtube_url: v.youtubeUrl,
-    ordem: v.ordem
+    ordem: v.ordem,
+    is_short: v.isShort ?? isYoutubeShort(v.youtubeUrl)
   }))
 
   const { error } = await supabase.from('tv_videos').upsert(rows, { onConflict: 'id' })
@@ -436,20 +442,23 @@ export async function saveTvVideos(videos: TvVideo[]): Promise<void> {
   window.dispatchEvent(new Event('storage'))
 }
 
-export async function addTvVideo(youtubeUrl: string): Promise<TvVideo | null> {
+export async function addTvVideo(youtubeUrl: string, isShort?: boolean): Promise<TvVideo | null> {
   const existing = await getTvVideos()
   const maxOrdem = existing.reduce((max, v) => Math.max(max, v.ordem), -1)
 
+  const short = isShort ?? isYoutubeShort(youtubeUrl)
   const newVideo: TvVideo = {
     id: `tv-${Date.now()}`,
     youtubeUrl,
-    ordem: maxOrdem + 1
+    ordem: maxOrdem + 1,
+    isShort: short
   }
 
   const { error } = await supabase.from('tv_videos').insert({
     id: newVideo.id,
     youtube_url: newVideo.youtubeUrl,
-    ordem: newVideo.ordem
+    ordem: newVideo.ordem,
+    is_short: short
   })
 
   if (error) {

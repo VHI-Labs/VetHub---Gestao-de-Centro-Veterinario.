@@ -13,6 +13,7 @@ const ADMIN_LINKS = [
 ]
 
 const COORD_LINKS = [
+  { path: "/recepcao", label: "Recepção", icon: Hospital },
   { path: "/selecionar-tv", label: "TV", icon: Tv },
   { path: "/painel-caes", label: "Cães", icon: PawPrint },
   { path: "/painel-gatos", label: "Gatos", icon: PawPrint },
