@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import type { Pet, Species } from "../types"
 import { supabase } from "../lib/supabase"
 import { updatePetStatus } from "../core/engine"
@@ -25,8 +25,29 @@ export default function PetListRow({
   directionLabel = "Direcionar",
 }: PetListRowProps) {
   const [showDirPopover, setShowDirPopover] = useState(false)
+  const [dirPos, setDirPos] = useState({ top: 0, left: 0 })
+  const dirBtnRef = useRef<HTMLButtonElement>(null)
+  const dirPopoverRef = useRef<HTMLDivElement>(null)
   const waitLabel = useWaitTimer(pet.dataHora)
   const refresh = useQueueStore(s => s.refresh)
+
+  useEffect(() => {
+    if (!showDirPopover) return
+    const onScroll = () => setShowDirPopover(false)
+    window.addEventListener("scroll", onScroll, true)
+    return () => window.removeEventListener("scroll", onScroll, true)
+  }, [showDirPopover])
+
+  useEffect(() => {
+    if (!showDirPopover) return
+    const onClick = (e: MouseEvent) => {
+      if (dirPopoverRef.current && !dirPopoverRef.current.contains(e.target as Node)) {
+        setShowDirPopover(false)
+      }
+    }
+    document.addEventListener("mousedown", onClick)
+    return () => document.removeEventListener("mousedown", onClick)
+  }, [showDirPopover])
 
   const especieBadge = pet.especie === "Cão"
     ? { bg: "rgba(59,130,246,0.1)", color: "#2563eb", icon: <PawPrint size={14} />, label: "Cão" }
@@ -88,20 +109,32 @@ export default function PetListRow({
         {showDirection && (
           <div style={{ position: "relative" }}>
             <button
+              ref={dirBtnRef}
               className="action-btn-block btn-direct"
-              onClick={(e) => { e.stopPropagation(); setShowDirPopover(!showDirPopover) }}
+              onClick={(e) => {
+                e.stopPropagation()
+                const next = !showDirPopover
+                if (next && dirBtnRef.current) {
+                  const rect = dirBtnRef.current.getBoundingClientRect()
+                  setDirPos({ top: rect.bottom + 5, left: rect.left })
+                }
+                setShowDirPopover(next)
+              }}
             >
               <span className="btn-icon"><MapPin size={16} /></span>
               <span>{pet.localDirecionado || directionLabel}</span>
             </button>
-            <div className={`direction-popover ${showDirPopover ? "show" : ""}`}
-              style={{ bottom: "calc(100% + 5px)", right: 0, minWidth: 140 }}>
-              {["GUICHÊ 1", "GUICHÊ 2", "Triagem"].map(local => (
-                <div key={local} className="direction-opt" onClick={() => handleDirection(local)}>
-                  {local}
-                </div>
-              ))}
-            </div>
+            {showDirPopover && (
+              <div ref={dirPopoverRef} className="direction-popover show" style={{
+                position: "fixed", top: dirPos.top, left: dirPos.left, zIndex: 10000
+              }}>
+                {["GUICHÊ 1", "GUICHÊ 2", "Triagem"].map(local => (
+                  <div key={local} className="direction-opt" onClick={() => handleDirection(local)}>
+                    {local}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
