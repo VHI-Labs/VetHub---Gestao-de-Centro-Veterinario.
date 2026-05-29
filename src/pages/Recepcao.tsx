@@ -1,8 +1,10 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
 import { FileText, PawPrint, Bird } from "lucide-react"
+import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
@@ -17,6 +19,7 @@ export default function Recepcao() {
   const { dogs, cats, wild, history, loading } = useQueueStore()
   const [currentTab, setCurrentTab] = useState<Tab>(1)
   const [showReport, setShowReport] = useState(false)
+  const [redirectPet, setRedirectPet] = useState<Pet | null>(null)
 
   const allPets = [...dogs, ...cats, ...wild].sort(
     (a, b) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime()
@@ -41,13 +44,17 @@ export default function Recepcao() {
   const mediaGatos = calcMedia("Gato")
   const mediaSilvestres = calcMedia("Animais Silvestres")
 
-  const callNext = () => {
+  const openRedirect = () => {
     const next = getNextWaitingPet(agendados)
     if (!next) return
-    setTimeout(async () => {
-      await updatePetStatus(next.id, next.especie as Species, "Chamado", next.localDirecionado || "Triagem")
-      await useQueueStore.getState().refresh()
-    }, 3000)
+    setRedirectPet(next)
+  }
+
+  const handleRedirect = async (local: string) => {
+    if (!redirectPet) return
+    await updatePetStatus(redirectPet.id, redirectPet.especie as Species, "Chamado", local)
+    await useQueueStore.getState().refresh()
+    setRedirectPet(null)
   }
 
 const tabs = [
@@ -58,6 +65,13 @@ const tabs = [
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0,
+        backgroundImage: "url(/cmv_tv.png)",
+        backgroundSize: "cover", backgroundPosition: "center",
+        opacity: 0.015, pointerEvents: "none",
+        backgroundRepeat: "no-repeat"
+      }} />
       <Topbar tabs={tabs} />
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
@@ -71,12 +85,12 @@ const tabs = [
           display: "flex", flexDirection: "column"
         }}>
           <button
-              onClick={callNext}
+              onClick={openRedirect}
               disabled={agendados.length === 0}
               className="btn-magnetic"
               style={{ marginBottom: 12, alignSelf: "flex-start", padding: "10px 24px", fontSize: "0.9rem" }}
             >
-              <img src="/emojis/megaphone.png" style={{ width: 18, height: 18, display: "inline", marginRight: 6, verticalAlign: "middle" }} alt="📣" /> Chamar Próximo
+              <IconMMegaphone size={18} style={{ marginRight: 6 }} /> Redirecionar Próximo
             </button>
           <div className="queue-layout" style={{ display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", flex: 1, paddingBottom: 20 }}>
             {agendados.length === 0 ? (
@@ -178,6 +192,40 @@ const tabs = [
         <CalledQueueSidebar senhaPrefix="A" />
       </div>
       {showReport && <MonthlyReport onClose={() => setShowReport(false)} />}
+      {redirectPet && createPortal(
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 999,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 20
+          }}
+          onClick={() => setRedirectPet(null)}
+        >
+          <div className="antigravity-card redirect-modal" onClick={e => e.stopPropagation()}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <h2 style={{ fontSize: "1.6rem", fontWeight: 700, color: "#2d3a2d", marginBottom: 4 }}>
+                Redirecionar Paciente
+              </h2>
+              <p style={{ fontSize: "1.1rem", color: "#6b7280" }}>
+                <strong>{redirectPet.senha}</strong> • {redirectPet.especie}
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {["GUICHÊ 1", "GUICHÊ 2", "Pronto Atendimento"].map(local => (
+                <button
+                  key={local}
+                  onClick={() => handleRedirect(local)}
+                  className="redirect-opt"
+                >
+                  {local}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
 import { FileText, PawPrint, Bird } from "lucide-react"
+import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
@@ -58,6 +59,13 @@ const tabs = [
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0,
+        backgroundImage: "url(/cmv_tv.png)",
+        backgroundSize: "cover", backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        opacity: 0.015, pointerEvents: "none"
+      }} />
       <Topbar title="Pronto Atendimento" tabs={tabs} />
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
@@ -75,7 +83,7 @@ const tabs = [
               className="btn-magnetic"
               style={{ marginBottom: 12, alignSelf: "flex-start", padding: "10px 24px", fontSize: "0.9rem" }}
             >
-              <img src="/emojis/megaphone.png" style={{ width: 18, height: 18, display: "inline", marginRight: 6, verticalAlign: "middle" }} alt="📣" /> Chamar Próximo
+              <IconMMegaphone size={18} style={{ marginRight: 6 }} /> Chamar Próximo
             </button>
           <div className="queue-layout" style={{ display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", flex: 1, paddingBottom: 20 }}>
             {prontos.length === 0 ? (

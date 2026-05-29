@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { PawPrint, Monitor, LogOut } from "lucide-react"
+import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
+import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 
 export default function TvSelection() {
   const navigate = useNavigate()
@@ -59,7 +61,7 @@ export default function TvSelection() {
             onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(59,130,246,0.4)" }}
             onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(59,130,246,0.3)" }}
           >
-            <img src="/emojis/dog.png" style={{ width: 80, height: 80 }} alt="Cães" />
+            <IconMDogFace size={80} />
             <span style={{ fontSize: "1.4rem", fontWeight: 700 }}>TV Cachorros</span>
           </button>
 
@@ -77,7 +79,7 @@ export default function TvSelection() {
             onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(236,72,153,0.4)" }}
             onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(236,72,153,0.3)" }}
           >
-            <img src="/emojis/cat.png" style={{ width: 80, height: 80 }} alt="Gatos" />
+            <IconMCatFace size={80} />
             <span style={{ fontSize: "1.4rem", fontWeight: 700 }}>TV Gatos & Silvestres</span>
           </button>
         </div>

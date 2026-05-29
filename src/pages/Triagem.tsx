@@ -2,7 +2,11 @@ import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { createTriagem, cleanText } from "../core/engine"
 import type { Pet, Species } from "../types"
 import { useSearchParams } from "react-router-dom"
-import { PawPrint, Bird, ThumbsUp, ThumbsDown, Printer, Maximize } from "lucide-react"
+import { ThumbsUp, ThumbsDown, Printer, Maximize } from "lucide-react"
+import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
+import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
+import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
+import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
 
 const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
 
@@ -100,7 +104,7 @@ export default function Triagem() {
     printArea.id = "printTicketArea"
     printArea.innerHTML = `
       <div style="font-family: monospace; text-align: center; padding: 20px; color: black;">
-        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><img src="/emojis/patinhas.png" style="width: 28px; height: 28px;" alt="🐾"> HOVET Anhembi</h2>
+        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><span style="font-size: 28px;">🐾</span> HOVET Anhembi</h2>
         <p style="margin: 4px 0; font-size: 0.8rem;">Hospital Veterinário Universitário</p>
         <hr style="border: 0; border-top: 1px dashed black; margin: 10px 0;">
         <h1 style="margin: 10px 0; font-size: 3rem; font-weight: bold; letter-spacing: -1px;">${ultimoPet.senha}</h1>
@@ -124,9 +128,9 @@ export default function Triagem() {
   }
 
   const speciesIcons: Record<Species, ReactNode> = {
-    "Cão": <PawPrint size={80} />,
-    "Gato": <PawPrint size={80} />,
-    "Animais Silvestres": <Bird size={80} />
+    "Cão": <IconMDogFace size={80} />,
+    "Gato": <IconMCatFace size={80} />,
+    "Animais Silvestres": <IconMBird size={80} />
   }
 
   const stepOffset = `${(currentStep - 1) * 33.33333}%`
@@ -202,7 +206,7 @@ export default function Triagem() {
           alignItems: "center", borderBottom: "1px solid rgba(15,118,110,0.05)"
         }}>
           <div className="totem-logo" style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-            <span><PawPrint size={24} /> HOVET</span>
+            <span><IconMPawPrints size={24} /> HOVET</span>
             <span style={{ fontWeight: 300, fontSize: "1.1rem", borderLeft: "1px solid rgba(15,118,110,0.2)", paddingLeft: 10 }}>Triagem</span>
             {triagemCampus && (
               <span style={{ fontSize: "0.75rem", background: "rgba(15,118,110,0.1)", padding: "2px 8px", borderRadius: 6, color: "var(--color-primary)" }}>

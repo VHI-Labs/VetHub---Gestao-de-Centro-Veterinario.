@@ -4,7 +4,11 @@ import { useQueueStore } from "../store/queueStore"
 import { updatePetStatus, reCallPet } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
 import type { Pet, Species } from "../types"
-import { PawPrint, Bird, PhoneCall } from "lucide-react"
+import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
+import IconMTelephoneReceiver from "react-fluentui-emoji/lib/modern/icons/IconMTelephoneReceiver"
+import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
+import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
+import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
 
 function CalledPetItem({ pet }: { pet: Pet }) {
   const waitLabel = useWaitTimer(pet.dataHora)
@@ -37,7 +41,7 @@ function CalledPetItem({ pet }: { pet: Pet }) {
     <div className="called-queue-item">
       <div className="called-queue-main">
         <span className="called-queue-specie" style={{ background: especieBadge.bg, color: especieBadge.color }}>
-          {pet.especie === "Cão" ? <PawPrint size={16} /> : pet.especie === "Gato" ? <PawPrint size={16} /> : <Bird size={16} />}
+          {pet.especie === "Cão" ? <IconMDogFace size={16} /> : pet.especie === "Gato" ? <IconMCatFace size={16} /> : <IconMBird size={16} />}
         </span>
         <div className="called-queue-info">
           <strong className="called-queue-senha">{pet.senha}</strong>
@@ -47,7 +51,7 @@ function CalledPetItem({ pet }: { pet: Pet }) {
       </div>
       <div className="called-queue-actions">
         <button className="cq-btn cq-btn-recall" onClick={handleRecall} title="Rechamar" disabled={recalling} style={{ opacity: recalling ? 0.5 : 1, cursor: recalling ? "not-allowed" : "pointer" }}>
-          <img src="/emojis/megaphone.png" style={{ width: 16, height: 16 }} alt="📣" />
+          <IconMMegaphone size={16} />
         </button>
         <button className="cq-btn cq-btn-finish" onClick={handleFinish} title="Concluir">
           ✓
@@ -73,7 +77,7 @@ export default function CalledQueueSidebar({ senhaPrefix }: Props) {
   return (
     <aside className="called-queue-sidebar">
       <div className="called-queue-header">
-        <span><PhoneCall size={14} /> Chamados</span>
+        <span><IconMTelephoneReceiver size={14} /> Chamados</span>
         <span className="called-queue-count">{calledPets.length}</span>
       </div>
       <div className="called-queue-list">
