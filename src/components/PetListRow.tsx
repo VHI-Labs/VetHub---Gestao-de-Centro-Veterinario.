@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef } from "react"
+import { createPortal } from "react-dom"
 import type { Pet, Species } from "../types"
 import { supabase } from "../lib/supabase"
 import { updatePetStatus } from "../core/engine"
@@ -27,27 +28,8 @@ export default function PetListRow({
   const [showDirPopover, setShowDirPopover] = useState(false)
   const [dirPos, setDirPos] = useState({ top: 0, left: 0 })
   const dirBtnRef = useRef<HTMLButtonElement>(null)
-  const dirPopoverRef = useRef<HTMLDivElement>(null)
   const waitLabel = useWaitTimer(pet.dataHora)
   const refresh = useQueueStore(s => s.refresh)
-
-  useEffect(() => {
-    if (!showDirPopover) return
-    const onScroll = () => setShowDirPopover(false)
-    window.addEventListener("scroll", onScroll, true)
-    return () => window.removeEventListener("scroll", onScroll, true)
-  }, [showDirPopover])
-
-  useEffect(() => {
-    if (!showDirPopover) return
-    const onClick = (e: MouseEvent) => {
-      if (dirPopoverRef.current && !dirPopoverRef.current.contains(e.target as Node)) {
-        setShowDirPopover(false)
-      }
-    }
-    document.addEventListener("mousedown", onClick)
-    return () => document.removeEventListener("mousedown", onClick)
-  }, [showDirPopover])
 
   const especieBadge = pet.especie === "Cão"
     ? { bg: "rgba(59,130,246,0.1)", color: "#2563eb", icon: <PawPrint size={14} />, label: "Cão" }
@@ -124,16 +106,21 @@ export default function PetListRow({
               <span className="btn-icon"><MapPin size={16} /></span>
               <span>{pet.localDirecionado || directionLabel}</span>
             </button>
-            {showDirPopover && (
-              <div ref={dirPopoverRef} className="direction-popover show" style={{
-                position: "fixed", top: dirPos.top, left: dirPos.left, zIndex: 10000
-              }}>
-                {["GUICHÊ 1", "GUICHÊ 2", "Triagem"].map(local => (
-                  <div key={local} className="direction-opt" onClick={() => handleDirection(local)}>
-                    {local}
-                  </div>
-                ))}
-              </div>
+            {showDirPopover && createPortal(
+              <>
+                <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}
+                  onClick={() => setShowDirPopover(false)} />
+                <div className="direction-popover show" style={{
+                  position: "fixed", top: dirPos.top, left: dirPos.left, zIndex: 10000
+                }}>
+                  {["GUICHÊ 1", "GUICHÊ 2", "Triagem"].map(local => (
+                    <div key={local} className="direction-opt" onClick={() => handleDirection(local)}>
+                      {local}
+                    </div>
+                  ))}
+                </div>
+              </>,
+              document.body
             )}
           </div>
         )}
