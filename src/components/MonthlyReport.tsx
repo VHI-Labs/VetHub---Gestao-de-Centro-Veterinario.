@@ -1,7 +1,11 @@
 import { useState } from "react"
 import { getMonthlyReport } from "../core/engine"
 import { useAuth } from "../context/AuthContext"
-import { X, FileText, PawPrint, Bird } from "lucide-react"
+import { X, FileText } from "lucide-react"
+import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
+import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
+import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
+import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
 import type { Pet } from "../types"
 
 interface ReportRow {
@@ -63,7 +67,7 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
   }
 
   const icone = (especie: string) =>
-    especie === "Cão" ? <PawPrint size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} /> : especie === "Gato" ? <PawPrint size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} /> : <Bird size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
+    especie === "Cão" ? <IconMDogFace size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} /> : especie === "Gato" ? <IconMCatFace size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} /> : <IconMBird size={18} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
 
   return (
     <div style={{
