@@ -309,14 +309,20 @@ export async function updatePetStatus(id: string, species: Species, status: stri
 }
 
 export async function reCallPet(id: string, local: string) {
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from('pets')
     .update({ called_at: new Date().toISOString(), local_direcionado: local })
     .eq('id', id)
+    .select()
 
   if (error) {
     console.error('[Supabase] reCallPet error:', error)
     return
+  }
+
+  if (data && data.length > 0) {
+    const pet = formatDbToPet(data[0])
+    await addCallToHistory(pet.especie, { ...pet, calledAt: new Date().toISOString() })
   }
 
   window.dispatchEvent(new Event('storage'))

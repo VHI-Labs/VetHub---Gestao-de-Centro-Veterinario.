@@ -24,10 +24,10 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   const [audioUnlocked, setAudioUnlocked] = useState(false)
   const time = useClock()
   const [showBanner, setShowBanner] = useState(false)
-  const lastTokenRef = useRef("")
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [showCallCard, setShowCallCard] = useState(false)
   const playlistTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const activeCallTokenRef = useRef("")
+  const prevCallTokenRef = useRef("")
+  const callCardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const bgIframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -70,8 +70,35 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   }, [handleStorage])
 
   const call = activeCall
-  const shouldShowCall = call && (call.calledAt ? Date.now() - new Date(call.calledAt).getTime() < CALL_DISPLAY_MS : true)
   const callToken = call ? `${call.id}-${call.calledAt || ""}` : ""
+
+  // Detect new call or re-call → show card, play audio, start local 10s timer
+  useEffect(() => {
+    if (!call || !callToken) {
+      setShowCallCard(false)
+      return
+    }
+    if (callToken !== prevCallTokenRef.current) {
+      prevCallTokenRef.current = callToken
+      setShowCallCard(true)
+      if (audioUnlocked) {
+        anunciarPaciente(
+          { senha: call.senha, localDirecionado: call.localDirecionado },
+          { senha: "", local: call.localDirecionado || "Triagem" }
+        )
+      }
+      if (callCardTimerRef.current) clearTimeout(callCardTimerRef.current)
+      callCardTimerRef.current = setTimeout(() => {
+        setShowCallCard(false)
+        useQueueStore.getState().refresh()
+      }, CALL_DISPLAY_MS)
+    }
+    return () => {
+      if (callCardTimerRef.current) clearTimeout(callCardTimerRef.current)
+    }
+  }, [callToken, call, audioUnlocked])
+
+  const shouldShowCall = !!(call && showCallCard)
 
   useEffect(() => {
     if (videos.length < 2 || shouldShowCall) {
@@ -88,34 +115,6 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
       if (playlistTimerRef.current) clearInterval(playlistTimerRef.current)
     }
   }, [videos.length, shouldShowCall])
-
-  useEffect(() => {
-    if (shouldShowCall && callToken !== lastTokenRef.current) {
-      lastTokenRef.current = callToken
-      if (audioUnlocked) {
-        anunciarPaciente(
-          { senha: call?.senha, localDirecionado: call?.localDirecionado },
-          { senha: "", local: call?.localDirecionado || "Triagem" }
-        )
-      }
-    }
-  }, [shouldShowCall, callToken, call, audioUnlocked])
-
-  useEffect(() => {
-    if (shouldShowCall && callToken !== activeCallTokenRef.current) {
-      activeCallTokenRef.current = callToken
-      const startedAt = call?.calledAt ? new Date(call.calledAt).getTime() : Date.now()
-      const remaining = Math.max(0, CALL_DISPLAY_MS - (Date.now() - startedAt))
-      if (timerRef.current) clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => {
-        activeCallTokenRef.current = ""
-        useQueueStore.getState().refresh()
-      }, remaining)
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
-  }, [shouldShowCall, callToken])
 
   const recentCalls = history.slice(0, 6)
 
