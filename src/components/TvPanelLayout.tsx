@@ -75,11 +75,17 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   callRef.current = call
   const audioUnlockedRef = useRef(audioUnlocked)
   audioUnlockedRef.current = audioUnlocked
+  const initializedRef = useRef(false)
 
   // Detect new call or re-call → show card, play audio, start local 10s timer
   useEffect(() => {
     if (!callToken) {
       setShowCallCard(false)
+      return
+    }
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      prevCallTokenRef.current = callToken
       return
     }
     if (callToken !== prevCallTokenRef.current) {
