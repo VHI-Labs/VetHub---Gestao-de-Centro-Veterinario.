@@ -184,8 +184,6 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
             width: "auto", height: "auto",
             transform: "translate(-50%, -50%) scale(1.3)",
             border: "none", zIndex: 0,
-            opacity: shouldShowCall ? 0 : 1,
-            transition: "opacity 0.6s ease",
             pointerEvents: "none"
           }}
           allow="autoplay; encrypted-media"
@@ -193,6 +191,15 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
           sandbox="allow-scripts allow-same-origin allow-presentation"
         />
       )}
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 0,
+        backgroundImage: "url(/cmv_tv.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        opacity: shouldShowCall ? 1 : 0,
+        transition: "opacity 0.6s ease",
+        pointerEvents: "none"
+      }} />
       <div style={{ position: "absolute", inset: 0, background: "rgba(2,6,23,0.55)", zIndex: 1 }} />
       <div className="tv-noise-overlay" />
 
