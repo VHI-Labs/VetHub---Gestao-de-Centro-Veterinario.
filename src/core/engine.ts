@@ -234,6 +234,8 @@ export async function getCallHistory(species: Species, unidade = ''): Promise<Ca
 }
 
 export async function addCallToHistory(species: Species, pet: Pet): Promise<void> {
+  await supabase.from('call_history').delete().eq('pet_id', pet.id)
+
   const { error } = await supabase
     .from('call_history')
     .insert({
