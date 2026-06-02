@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react"
-import { getTvVideos, addTvVideo, removeTvVideo, extractYoutubeId, buildYoutubeEmbedUrl, isYoutubeShort } from "../core/engine"
+import { getTvVideos, addTvVideo, removeTvVideo, extractYoutubeId } from "../core/engine"
 import type { TvVideo } from "../types"
 
 export default function VideoManager() {
   const [videos, setVideos] = useState<TvVideo[]>([])
   const [inputUrl, setInputUrl] = useState("")
-  const [isShort, setIsShort] = useState(false)
   const [status, setStatus] = useState("")
   const [adding, setAdding] = useState(false)
 
@@ -17,12 +16,6 @@ export default function VideoManager() {
 
   useEffect(() => { loadVideos() }, [])
 
-  useEffect(() => {
-    if (inputUrl.trim()) {
-      setIsShort(isYoutubeShort(inputUrl.trim()))
-    }
-  }, [inputUrl])
-
   const handleAdd = async () => {
     const trimmed = inputUrl.trim()
     if (!trimmed) return
@@ -32,11 +25,10 @@ export default function VideoManager() {
       return
     }
     setAdding(true)
-    const result = await addTvVideo(trimmed, isShort)
+    const result = await addTvVideo(trimmed)
     setAdding(false)
     if (result) {
       setInputUrl("")
-      setIsShort(false)
       setStatus("Vídeo adicionado à playlist!")
       await loadVideos()
     } else {
@@ -70,16 +62,6 @@ export default function VideoManager() {
           onKeyDown={e => { if (e.key === "Enter") handleAdd() }}
           style={{ flex: 1, padding: "12px 16px" }}
         />
-        <label style={{
-          display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
-          fontSize: "0.85rem", fontWeight: 600, color: "var(--text-muted)", whiteSpace: "nowrap"
-        }}>
-          <span role="img" aria-label="short">🎬</span> Short
-          <div className="switch" style={{ width: 36, height: 20, transform: "scale(0.85)" }}>
-            <input type="checkbox" checked={isShort} onChange={e => setIsShort(e.target.checked)} />
-            <span className="slider" />
-          </div>
-        </label>
         <button className="btn-magnetic" onClick={handleAdd} disabled={adding}
           style={{ padding: "10px 24px", fontSize: "0.9rem", whiteSpace: "nowrap" }}>
           {adding ? "Adicionando..." : "+ Adicionar"}
@@ -92,7 +74,6 @@ export default function VideoManager() {
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {videos.map((video, idx) => {
             const vid = videoId(video.youtubeUrl)
-            const isShortVideo = video.isShort ?? isYoutubeShort(video.youtubeUrl)
             return (
               <div key={video.id} className="antigravity-card" style={{
                 display: "flex", gap: 16, padding: 12, alignItems: "center",
@@ -108,7 +89,7 @@ export default function VideoManager() {
                 </div>
                 {vid ? (
                   <div style={{
-                    width: 160, aspectRatio: isShortVideo ? "9/16" : "16/9", borderRadius: 8,
+                    width: 160, aspectRatio: "16/9", borderRadius: 8,
                     overflow: "hidden", background: "#020617", flexShrink: 0
                   }}>
                     <img
@@ -123,19 +104,8 @@ export default function VideoManager() {
                   </div>
                 )}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {video.youtubeUrl}
-                    </div>
-                    {isShortVideo && (
-                      <span style={{
-                        fontSize: "0.65rem", fontWeight: 700, textTransform: "uppercase",
-                        background: "rgba(239,68,68,0.1)", color: "#ef4444",
-                        padding: "2px 8px", borderRadius: 100, letterSpacing: "0.05em", flexShrink: 0
-                      }}>
-                        Short
-                      </span>
-                    )}
+                  <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {video.youtubeUrl}
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: 2 }}>
                     {vid ? `youtube.com/watch?v=${vid}` : "URL inválida"}

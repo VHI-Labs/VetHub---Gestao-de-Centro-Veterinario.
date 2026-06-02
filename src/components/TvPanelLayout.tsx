@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback, type ReactNode } from "react"
 import { useQueueStore } from "../store/queueStore"
 import { useStorageSync } from "../hooks/useStorageSync"
 import { useClock } from "../hooks/useClock"
-import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, isYoutubeShort, CALL_DISPLAY_MS } from "../core/engine"
+import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, CALL_DISPLAY_MS } from "../core/engine"
 import { anunciarPaciente, primeAudioSystem, initAutomaticAudioSystem } from "../core/audio"
 import type { Pet, CallHistoryItem, TvVideo } from "../types"
 import { PawPrint, Volume2 } from "lucide-react"
@@ -33,9 +33,6 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
 
   const currentVideo = videos[currentIndex]
   const videoId = currentVideo ? extractYoutubeId(currentVideo.youtubeUrl) : null
-  const isShort = currentVideo
-    ? (currentVideo.isShort ?? (videoId ? isYoutubeShort(currentVideo.youtubeUrl) : false))
-    : false
   const youtubeEmbedUrl = videoId ? buildYoutubeEmbedUrl(videoId) : ""
 
   useEffect(() => {
@@ -270,10 +267,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
               overflow: "hidden",
               border: "1px solid rgba(0,178,142,0.25)",
               boxShadow: "0 0 50px rgba(0,178,142,0.06), 0 0 0 1px rgba(0,178,142,0.08) inset",
-              ...(isShort
-                ? { aspectRatio: "9/16", height: "100%", maxHeight: 700, width: "auto", maxWidth: 450 }
-                : { aspectRatio: "16/9", width: "100%", maxWidth: 800, height: "auto" }
-              )
+              aspectRatio: "16/9", width: "100%", maxWidth: 800, height: "auto"
             }}>
               <iframe
                 ref={iframeRef}

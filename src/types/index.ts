@@ -48,7 +48,6 @@ export interface TvVideo {
   id: string
   youtubeUrl: string
   ordem: number
-  isShort?: boolean
 }
 
 export type AttendanceType =

@@ -75,18 +75,13 @@ export function extractYoutubeId(url: string): string | null {
   const patterns = [
     /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
     /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-    /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/
+    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
   ]
   for (const pattern of patterns) {
     const match = url.match(pattern)
     if (match) return match[1]
   }
   return null
-}
-
-export function isYoutubeShort(url: string): boolean {
-  return /youtube\.com\/shorts\//.test(url)
 }
 
 export function buildYoutubeEmbedUrl(videoId: string): string {
@@ -463,8 +458,7 @@ export async function getTvVideos(): Promise<TvVideo[]> {
   return (data || []).map(row => ({
     id: row.id as string,
     youtubeUrl: row.youtube_url as string,
-    ordem: row.ordem as number,
-    isShort: row.is_short as boolean || isYoutubeShort(row.youtube_url as string)
+    ordem: row.ordem as number
   }))
 }
 
@@ -472,8 +466,7 @@ export async function saveTvVideos(videos: TvVideo[]): Promise<void> {
   const rows = videos.map(v => ({
     id: v.id,
     youtube_url: v.youtubeUrl,
-    ordem: v.ordem,
-    is_short: v.isShort ?? isYoutubeShort(v.youtubeUrl)
+    ordem: v.ordem
   }))
 
   const { error } = await supabase.from('tv_videos').upsert(rows, { onConflict: 'id' })
@@ -481,23 +474,20 @@ export async function saveTvVideos(videos: TvVideo[]): Promise<void> {
   window.dispatchEvent(new Event('storage'))
 }
 
-export async function addTvVideo(youtubeUrl: string, isShort?: boolean): Promise<TvVideo | null> {
+export async function addTvVideo(youtubeUrl: string): Promise<TvVideo | null> {
   const existing = await getTvVideos()
   const maxOrdem = existing.reduce((max, v) => Math.max(max, v.ordem), -1)
 
-  const short = isShort ?? isYoutubeShort(youtubeUrl)
   const newVideo: TvVideo = {
     id: `tv-${Date.now()}`,
     youtubeUrl,
-    ordem: maxOrdem + 1,
-    isShort: short
+    ordem: maxOrdem + 1
   }
 
   const { error } = await supabase.from('tv_videos').insert({
     id: newVideo.id,
     youtube_url: newVideo.youtubeUrl,
-    ordem: newVideo.ordem,
-    is_short: short
+    ordem: newVideo.ordem
   })
 
   if (error) {
