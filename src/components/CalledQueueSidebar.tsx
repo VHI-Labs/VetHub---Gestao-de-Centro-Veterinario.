@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { supabase } from "../lib/supabase"
 import { useQueueStore } from "../store/queueStore"
 import { updatePetStatus, reCallPet } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
@@ -32,7 +31,6 @@ function CalledPetItem({ pet }: { pet: Pet }) {
   }
 
   const handleFinish = async () => {
-    await supabase.from("call_history").delete().eq("pet_id", pet.id)
     await updatePetStatus(pet.id, pet.especie as Species, "Finalizado")
     await refresh()
   }
@@ -69,10 +67,12 @@ export default function CalledQueueSidebar({ senhaPrefix }: Props) {
   const { dogs, cats, wild } = useQueueStore()
 
   const allPets = [...dogs, ...cats, ...wild]
-  const calledPets = allPets.filter(
-    p => p.status && !["Aguardando direcionamento", "Finalizado", "Atendido"].includes(p.status)
-      && (!senhaPrefix || p.senha?.startsWith(senhaPrefix))
-  )
+  const calledPets = allPets
+    .filter(
+      p => p.status && !["Aguardando direcionamento", "Finalizado", "Atendido"].includes(p.status)
+        && (!senhaPrefix || p.senha?.startsWith(senhaPrefix))
+    )
+    .sort((a, b) => new Date(b.calledAt || '').getTime() - new Date(a.calledAt || '').getTime())
 
   return (
     <aside className="called-queue-sidebar">

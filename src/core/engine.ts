@@ -250,6 +250,37 @@ export async function addCallToHistory(species: Species, pet: Pet): Promise<void
 }
 
 export async function getActiveCall(species: Species, unidade = ''): Promise<Pet | null> {
+  let historyQuery = supabase
+    .from('call_history')
+    .select('pet_id')
+    .eq('especie', getSpeciesEspecie(species))
+    .order('called_at', { ascending: false })
+    .limit(1)
+
+  if (unidade && unidade !== "Todos") historyQuery = historyQuery.eq('unidade', unidade)
+
+  const { data: historyData } = await historyQuery
+
+  if (historyData && historyData.length > 0) {
+    const petId = historyData[0].pet_id as string
+
+    let petQuery = supabase
+      .from('pets')
+      .select('*')
+      .eq('id', petId)
+      .in('status', ['Chamado', 'Direcionado'])
+
+    if (unidade && unidade !== "Todos") petQuery = petQuery.eq('unidade', unidade)
+
+    const { data, error } = await petQuery
+
+    if (!error && data && data.length > 0) {
+      return formatDbToPet(data[0])
+    }
+
+    return null
+  }
+
   let query = supabase
     .from('pets')
     .select('*')

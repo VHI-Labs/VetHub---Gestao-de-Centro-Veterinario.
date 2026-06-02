@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import type { Pet, Species } from "../types"
-import { supabase } from "../lib/supabase"
 import { updatePetStatus } from "../core/engine"
 import { useWaitTimer } from "../hooks/useWaitTimer"
 import { useQueueStore } from "../store/queueStore"
@@ -71,7 +70,6 @@ export default function PetListRow({
   }
 
   const handleFinish = async () => {
-    await supabase.from("call_history").delete().eq("pet_id", pet.id)
     await updatePetStatus(pet.id, pet.especie as Species, "Finalizado")
     await refresh()
   }
