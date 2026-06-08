@@ -351,7 +351,7 @@ export async function reCallPet(id: string, local: string) {
   window.dispatchEvent(new Event('storage-sync'))
 }
 
-export async function createTriagem(data: Record<string, string>, unidade = ''): Promise<Pet> {
+export async function createTriagem(data: Record<string, string>, unidade = '', tentativa = 1): Promise<Pet> {
   const species = data.especie as Species
 
   const isPronto = cleanText(data.tipoAtendimento) === 'Pronto Atendimento'
@@ -372,7 +372,7 @@ export async function createTriagem(data: Record<string, string>, unidade = ''):
   const senha = `${prefix}${orderNumber}`
 
   const novaTriagem: Pet = {
-    id: 'T-' + Date.now(),
+    id: 'T-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
     senha,
     especie: species,
     tipoAtendimento: cleanText(data.tipoAtendimento),
@@ -388,7 +388,11 @@ export async function createTriagem(data: Record<string, string>, unidade = ''):
     .insert(formatPetForDb(novaTriagem))
 
   if (insertError) {
+    if (insertError.code === '23505' && tentativa < 3) {
+      return createTriagem(data, unidade, tentativa + 1)
+    }
     console.error('[Supabase] createTriagem insert error:', insertError)
+    throw new Error(`Erro ao cadastrar paciente: ${insertError.message}`)
   }
 
   window.dispatchEvent(new Event('storage'))
