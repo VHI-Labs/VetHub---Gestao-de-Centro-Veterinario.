@@ -97,6 +97,7 @@ function speakCall(petData: { senha?: string; localDirecionado?: string } | null
     )
 
     if (voiceFeminine) utterance.voice = voiceFeminine
+    else if (voices[0]) utterance.voice = voices[0]
     window.speechSynthesis.speak(utterance)
   }
 }

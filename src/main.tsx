@@ -9,7 +9,7 @@ import { initDatabase } from './core/engine'
 import { loadQueueStore } from './store/queueStore'
 
 initAutomaticAudioSystem()
-initDatabase().then(() => loadQueueStore())
+initDatabase().then(() => loadQueueStore()).catch(console.warn)
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')

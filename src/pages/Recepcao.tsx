@@ -95,7 +95,11 @@ const tabs = [
               <IconMMegaphone size={18} style={{ marginRight: 6 }} /> Redirecionar Próximo
             </button>
           <div className="queue-layout" style={{ display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", flex: 1, paddingBottom: 20 }}>
-            {agendados.length === 0 ? (
+            {loading ? (
+              <div className="antigravity-card" style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontSize: "1.1rem" }}>
+                Carregando fila de pacientes...
+              </div>
+            ) : agendados.length === 0 ? (
               <div className="antigravity-card" style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontSize: "1.1rem" }}>
                 <IconMPawPrints size={24} style={{ display: "inline", verticalAlign: "middle", marginRight: 8 }} /> Não há pacientes agendados na fila aguardando no momento.
               </div>
