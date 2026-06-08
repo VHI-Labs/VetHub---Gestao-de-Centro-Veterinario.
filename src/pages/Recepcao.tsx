@@ -10,7 +10,6 @@ import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
 import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
 import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import { useQueueStore } from "../store/queueStore"
-import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
 import type { Pet, Species } from "../types"
 import CalledQueueSidebar from "../components/CalledQueueSidebar"
@@ -19,7 +18,6 @@ import MonthlyReport from "../components/MonthlyReport"
 type Tab = 1 | 3 | 4
 
 export default function Recepcao() {
-  useStorageSync()
   const { dogs, cats, wild, history, loading } = useQueueStore()
   const [currentTab, setCurrentTab] = useState<Tab>(1)
   const [showReport, setShowReport] = useState(false)

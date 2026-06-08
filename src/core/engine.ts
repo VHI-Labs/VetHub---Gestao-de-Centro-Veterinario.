@@ -85,7 +85,8 @@ export function extractYoutubeId(url: string): string | null {
 }
 
 export function buildYoutubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0&rel=0`
+  const muted = localStorage.getItem("hovet_video_muted") !== "false"
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=${muted ? 1 : 0}&controls=0&rel=0&enablejsapi=1`
 }
 
 export function getNextWaitingPet(pets: Pet[]): Pet | null {
@@ -164,7 +165,7 @@ export async function getHistory(unidade = ''): Promise<Pet[]> {
 
   if (unidade && unidade !== "Todos") query = query.eq('unidade', unidade)
 
-  const { data, error } = await query.order('data_hora', { ascending: false })
+  const { data, error } = await query.order('data_hora', { ascending: false }).limit(200)
 
   if (error) {
     console.error('[Supabase] getHistory error:', error)

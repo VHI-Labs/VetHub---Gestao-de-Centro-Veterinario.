@@ -12,9 +12,9 @@ export default function DonutChart({ total, redCount, yellowCount, greenCount }:
   const pctYellow = total > 0 ? (yellowCount / total) * 100 : 0
   const pctGreen = total > 0 ? (greenCount / total) * 100 : 0
 
-  const offsetRed = total > 0 ? TOTAL_STROKE - (TOTAL_STROKE * (pctRed / 100)) : TOTAL_STROKE
-  const offsetYellow = total > 0 ? TOTAL_STROKE - (TOTAL_STROKE * ((pctRed + pctYellow) / 100)) : TOTAL_STROKE
-  const offsetGreen = total > 0 ? 0 : TOTAL_STROKE
+  const redLen = (TOTAL_STROKE * pctRed) / 100
+  const yellowLen = (TOTAL_STROKE * pctYellow) / 100
+  const greenLen = (TOTAL_STROKE * pctGreen) / 100
 
   return (
     <div className="chart-panel antigravity-card" style={{ padding: 24 }}>
@@ -25,15 +25,15 @@ export default function DonutChart({ total, redCount, yellowCount, greenCount }:
         <div className="donut-chart">
           <svg width="140" height="140">
             <circle className="donut-circle-bg" cx="70" cy="70" r="60" />
-            <circle className="donut-circle-val" cx="70" cy="70" r="60"
-              stroke="var(--priority-red)"
-              style={{ strokeDashoffset: offsetRed, strokeDasharray: String(TOTAL_STROKE) }} />
-            <circle className="donut-circle-val" cx="70" cy="70" r="60"
-              stroke="var(--priority-yellow)"
-              style={{ strokeDashoffset: offsetYellow, strokeDasharray: `${TOTAL_STROKE} ${TOTAL_STROKE}` }} />
-            <circle className="donut-circle-val" cx="70" cy="70" r="60"
+            {greenLen > 0 && <circle className="donut-circle-val" cx="70" cy="70" r="60"
               stroke="var(--priority-green)"
-              style={{ strokeDashoffset: offsetGreen, strokeDasharray: `${TOTAL_STROKE} ${TOTAL_STROKE}` }} />
+              style={{ strokeDasharray: `${greenLen} ${TOTAL_STROKE}`, strokeDashoffset: 0 }} />}
+            {yellowLen > 0 && <circle className="donut-circle-val" cx="70" cy="70" r="60"
+              stroke="var(--priority-yellow)"
+              style={{ strokeDasharray: `${yellowLen} ${TOTAL_STROKE}`, strokeDashoffset: -greenLen || 0 }} />}
+            {redLen > 0 && <circle className="donut-circle-val" cx="70" cy="70" r="60"
+              stroke="var(--priority-red)"
+              style={{ strokeDasharray: `${redLen} ${TOTAL_STROKE}`, strokeDashoffset: -(greenLen + yellowLen) || 0 }} />}
           </svg>
           <div className="donut-center-text">
             <span className="num">{total}</span><br />

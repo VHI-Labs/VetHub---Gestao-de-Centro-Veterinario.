@@ -20,6 +20,8 @@ interface QueueState {
   refresh: () => Promise<void>
 }
 
+let refreshPromise: Promise<void> | null = null
+
 export const useQueueStore = create<QueueState>((set, get) => ({
   dogs: [],
   cats: [],
@@ -39,28 +41,37 @@ export const useQueueStore = create<QueueState>((set, get) => ({
     get().refresh()
   },
   refresh: async () => {
-    const { unidade, isAdmin } = get()
-    const u = unidade === "Todos" ? '' : unidade
-    const [dogs, cats, wild, history, activeCallDog, activeCallCat, activeCallWild, callHistoryDog, callHistoryCat, callHistoryWild] = await Promise.all([
-      getQueue('Cão', u),
-      getQueue('Gato', u),
-      getQueue('Animais Silvestres', u),
-      getHistory(u),
-      getActiveCall('Cão', u),
-      getActiveCall('Gato', u),
-      getActiveCall('Animais Silvestres', u),
-      getCallHistory('Cão', u),
-      getCallHistory('Gato', u),
-      getCallHistory('Animais Silvestres', u),
-    ])
-    set({
-      dogs, cats, wild, history,
-      activeCallDog, activeCallCat, activeCallWild,
-      callHistoryDog, callHistoryCat, callHistoryWild,
-      loading: false
-    })
+    if (refreshPromise) return refreshPromise
+    refreshPromise = doRefresh(get, set).finally(() => { refreshPromise = null })
+    return refreshPromise
   }
 }))
+
+async function doRefresh(
+  get: () => QueueState,
+  set: (partial: Partial<QueueState>) => void
+): Promise<void> {
+  const { unidade } = get()
+  const u = unidade === "Todos" ? '' : unidade
+  const [dogs, cats, wild, history, activeCallDog, activeCallCat, activeCallWild, callHistoryDog, callHistoryCat, callHistoryWild] = await Promise.all([
+    getQueue('Cão', u),
+    getQueue('Gato', u),
+    getQueue('Animais Silvestres', u),
+    getHistory(u),
+    getActiveCall('Cão', u),
+    getActiveCall('Gato', u),
+    getActiveCall('Animais Silvestres', u),
+    getCallHistory('Cão', u),
+    getCallHistory('Gato', u),
+    getCallHistory('Animais Silvestres', u),
+  ])
+  set({
+    dogs, cats, wild, history,
+    activeCallDog, activeCallCat, activeCallWild,
+    callHistoryDog, callHistoryCat, callHistoryWild,
+    loading: false
+  })
+}
 
 export async function loadQueueStore() {
   await useQueueStore.getState().refresh()

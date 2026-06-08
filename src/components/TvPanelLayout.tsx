@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef, useCallback, type ReactNode } from "react"
 import { useQueueStore } from "../store/queueStore"
-import { useStorageSync } from "../hooks/useStorageSync"
 import { useClock } from "../hooks/useClock"
 import { getTvVideos, extractYoutubeId, buildYoutubeEmbedUrl, CALL_DISPLAY_MS } from "../core/engine"
 import { anunciarPaciente, primeAudioSystem, initAutomaticAudioSystem } from "../core/audio"
@@ -17,7 +16,6 @@ interface TvPanelLayoutProps {
 }
 
 export default function TvPanelLayout({ activeCall, history, title, icon }: TvPanelLayoutProps) {
-  useStorageSync()
   const store = useQueueStore()
   const [videos, setVideos] = useState<TvVideo[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -86,7 +84,15 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
     }
     if (!initializedRef.current) {
       initializedRef.current = true
-      prevCallTokenRef.current = callToken
+      if (callToken) {
+        prevCallTokenRef.current = callToken
+        setShowCallCard(true)
+        if (callCardTimerRef.current) clearTimeout(callCardTimerRef.current)
+        callCardTimerRef.current = setTimeout(() => {
+          setShowCallCard(false)
+          useQueueStore.getState().refresh()
+        }, CALL_DISPLAY_MS)
+      }
       return
     }
     if (callToken !== prevCallTokenRef.current) {
@@ -148,8 +154,8 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
       } else {
         setAudioUnlocked(true)
         setShowBanner(false)
-        testCtx.close()
       }
+      testCtx.close()
     } catch {
       setShowBanner(true)
     }

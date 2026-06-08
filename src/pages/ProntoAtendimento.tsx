@@ -9,7 +9,6 @@ import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
 import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
 import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import { useQueueStore } from "../store/queueStore"
-import { useStorageSync } from "../hooks/useStorageSync"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
 import type { Pet, Species } from "../types"
 import CalledQueueSidebar from "../components/CalledQueueSidebar"
@@ -18,7 +17,6 @@ import MonthlyReport from "../components/MonthlyReport"
 type Tab = 1 | 3 | 4
 
 export default function ProntoAtendimento() {
-  useStorageSync()
   const { dogs, cats, wild, history } = useQueueStore()
   const [currentTab, setCurrentTab] = useState<Tab>(1)
   const [showReport, setShowReport] = useState(false)
@@ -46,12 +44,17 @@ export default function ProntoAtendimento() {
   const mediaGatos = calcMedia("Gato")
   const mediaSilvestres = calcMedia("Animais Silvestres")
 
+  const [calling, setCalling] = useState(false)
+
   const callNext = () => {
+    if (calling) return
     const next = getNextWaitingPet(prontos)
     if (!next) return
+    setCalling(true)
     setTimeout(async () => {
       await updatePetStatus(next.id, next.especie as Species, "Chamado", "PRONTO ATENDIMENTO")
       await useQueueStore.getState().refresh()
+      setCalling(false)
     }, 3000)
   }
 
@@ -83,7 +86,7 @@ const tabs = [
         }}>
           <button
               onClick={callNext}
-              disabled={prontos.length === 0}
+              disabled={prontos.length === 0 || calling}
               className="btn-magnetic"
               style={{ marginBottom: 12, alignSelf: "flex-start", padding: "10px 24px", fontSize: "0.9rem" }}
             >

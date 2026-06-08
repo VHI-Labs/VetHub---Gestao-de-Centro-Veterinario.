@@ -20,7 +20,7 @@ export default function CampusSelection() {
     if (unidade && unidade !== "Todos" && role !== "admin" && role !== "coordinator") {
       navigate("/recepcao", { replace: true })
     }
-  }, [unidade, funcoes, navigate])
+  }, [unidade, funcoes, role, navigate])
 
   const handleConfirm = async () => {
     if (!selected || saving || !user) return
