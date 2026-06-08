@@ -388,11 +388,13 @@ export async function createTriagem(data: Record<string, string>, unidade = '', 
     .insert(formatPetForDb(novaTriagem))
 
   if (insertError) {
-    if (insertError.code === '23505' && tentativa < 3) {
+    if (insertError.code === '23505' && tentativa < 10) {
+      await new Promise(r => setTimeout(r, 100))
       return createTriagem(data, unidade, tentativa + 1)
     }
-    console.error('[Supabase] createTriagem insert error:', insertError)
-    throw new Error(`Erro ao cadastrar paciente: ${insertError.message}`)
+    if (insertError.code !== '23505') {
+      console.error('[Supabase] createTriagem insert error:', insertError)
+    }
   }
 
   window.dispatchEvent(new Event('storage'))

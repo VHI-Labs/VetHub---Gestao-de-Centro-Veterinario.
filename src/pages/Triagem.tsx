@@ -83,20 +83,15 @@ export default function Triagem() {
 
     if (!species) return
 
-    try {
-      const pet = await createTriagem({
-        especie: species,
-        tipoAtendimento,
-        prioridade: "Verde"
-      }, triagemCampus)
+    const pet = await createTriagem({
+      especie: species,
+      tipoAtendimento,
+      prioridade: "Verde"
+    }, triagemCampus)
 
-      setUltimoPet(pet)
-      goToStep(3)
-      startAutoReset()
-    } catch (e) {
-      console.error('[Triagem] createTriagem failed:', e)
-      alert(e instanceof Error ? e.message : 'Erro ao cadastrar paciente')
-    }
+    setUltimoPet(pet)
+    goToStep(3)
+    startAutoReset()
   }
 
   const goToStep = (step: Step) => {
