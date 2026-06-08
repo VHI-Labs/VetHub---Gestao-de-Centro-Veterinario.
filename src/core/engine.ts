@@ -190,7 +190,7 @@ export async function getMonthlyReport(year: number, month: number, unidade = ''
 
   let query = supabase
     .from('pets')
-    .select('*')
+    .select('especie,data_hora,called_at,finalized_at')
     .gte('data_hora', start)
     .lt('data_hora', end)
 
@@ -208,7 +208,7 @@ export async function getMonthlyReport(year: number, month: number, unidade = ''
 export async function getCallHistory(species: Species, unidade = ''): Promise<CallHistoryItem[]> {
   let query = supabase
     .from('call_history')
-    .select('*')
+    .select('id,senha,local_direcionado,called_at')
     .eq('especie', getSpeciesEspecie(species))
 
   if (unidade && unidade !== "Todos") query = query.eq('unidade', unidade)
@@ -301,6 +301,9 @@ export async function updatePetStatus(id: string, species: Species, status: stri
   if (status === 'Chamado' || status === 'Direcionado') {
     updates.called_at = new Date().toISOString()
   }
+  if (status === 'Finalizado') {
+    updates.finalized_at = new Date().toISOString()
+  }
 
   const { error, data } = await supabase
     .from('pets')
@@ -312,16 +315,6 @@ export async function updatePetStatus(id: string, species: Species, status: stri
     console.error('[Supabase] updatePetStatus error:', error)
     window.dispatchEvent(new CustomEvent('petActionError', { detail: `Erro ao atualizar: ${error.message}` }))
     return
-  }
-
-  if (status === 'Finalizado') {
-    const { error: finalizeError } = await supabase
-      .from('pets')
-      .update({ finalized_at: new Date().toISOString() })
-      .eq('id', id)
-    if (finalizeError) {
-      console.warn('[Supabase] finalized_at not saved (non-fatal):', finalizeError.message)
-    }
   }
 
   if (status === 'Chamado' || status === 'Direcionado') {
@@ -363,20 +356,16 @@ export async function createTriagem(data: Record<string, string>, unidade = ''):
   const isPronto = cleanText(data.tipoAtendimento) === 'Pronto Atendimento'
   const prefix = isPronto ? 'N' : 'A'
 
-  const { data: allPets, error: petError } = await supabase
+  const { count, error: petError } = await supabase
     .from('pets')
-    .select('senha')
-    .order('data_hora', { ascending: false })
+    .select('senha', { count: 'exact', head: true })
+    .like('senha', `${prefix}%`)
 
   if (petError) {
     console.error('[Supabase] createTriagem count error:', petError)
   }
 
-  const allSenhas = (allPets || []).map(r => r.senha as string).filter(Boolean)
-  const countSameType = allSenhas.filter(s => {
-    const sIsPronto = s.startsWith('N')
-    return isPronto ? sIsPronto : !sIsPronto
-  }).length
+  const countSameType = count || 0
 
   const orderNumber = String(countSameType + 1).padStart(3, '0')
   const senha = `${prefix}${orderNumber}`
@@ -431,7 +420,7 @@ export async function saveSelectedUnit(userId: string, unit: string, roles: stri
 export async function getSelectedUnitProfile(userId: string): Promise<UserProfile | null> {
   const { data, error } = await supabase
     .from('user_profiles')
-    .select('*')
+    .select('unidade,funcoes,atualizado_em')
     .eq('id', userId)
     .single()
 
@@ -447,7 +436,7 @@ export async function getSelectedUnitProfile(userId: string): Promise<UserProfil
 export async function getTvVideos(): Promise<TvVideo[]> {
   const { data, error } = await supabase
     .from('tv_videos')
-    .select('*')
+    .select('id,youtube_url,ordem')
     .order('ordem', { ascending: true })
 
   if (error) {

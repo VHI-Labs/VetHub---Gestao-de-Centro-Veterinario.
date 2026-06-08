@@ -29,7 +29,7 @@ export default function App() {
   useEffect(() => {
     const id = setInterval(() => {
       useQueueStore.getState().refresh()
-    }, 2000)
+    }, 15000)
     return () => clearInterval(id)
   }, [])
 

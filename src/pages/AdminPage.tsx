@@ -36,13 +36,13 @@ export default function AdminPage() {
 
   const loadUsers = async () => {
     setLoading(true)
-    const { data } = await supabase.from("user_profiles").select("*").order("email")
+    const { data } = await supabase.from("user_profiles").select("id,email,role,unidade,funcoes").order("email")
     setUsers((data || []) as UserProfile[])
     setLoading(false)
   }
 
   const loadUsersSilent = async () => {
-    const { data } = await supabase.from("user_profiles").select("*").order("email")
+    const { data } = await supabase.from("user_profiles").select("id,email,role,unidade,funcoes").order("email")
     if (data) setUsers(data as UserProfile[])
   }
 

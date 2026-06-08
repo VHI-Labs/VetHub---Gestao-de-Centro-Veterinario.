@@ -78,6 +78,10 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   useEffect(() => {
     if (!callToken) {
       setShowCallCard(false)
+      if (!initializedRef.current) {
+        initializedRef.current = true
+        prevCallTokenRef.current = ""
+      }
       return
     }
     if (!initializedRef.current) {
@@ -267,7 +271,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
               overflow: "hidden",
               border: "1px solid rgba(0,178,142,0.25)",
               boxShadow: "0 0 50px rgba(0,178,142,0.06), 0 0 0 1px rgba(0,178,142,0.08) inset",
-              aspectRatio: "16/9", width: "100%", maxWidth: 800, height: "auto"
+              aspectRatio: "16/9", width: "100%", maxWidth: 1000, height: "auto"
             }}>
               <iframe
                 ref={iframeRef}
