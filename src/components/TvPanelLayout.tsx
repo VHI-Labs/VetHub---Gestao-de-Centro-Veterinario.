@@ -23,6 +23,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
   const time = useClock()
   const [showBanner, setShowBanner] = useState(false)
   const [showCallCard, setShowCallCard] = useState(false)
+  const [showBgVideo, setShowBgVideo] = useState(false)
   const playlistTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevCallTokenRef = useRef("")
   const callCardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -37,6 +38,11 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
     initAutomaticAudioSystem()
     checkAudioStatus()
     loadVideos()
+  }, [])
+
+  useEffect(() => {
+    const id = setTimeout(() => setShowBgVideo(true), 3000)
+    return () => clearTimeout(id)
   }, [])
 
   useEffect(() => {
@@ -187,7 +193,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
       backgroundPosition: "center",
       color: "#f8fafc", overflow: "hidden", padding: "20px", gap: "20px", position: "relative"
     }}>
-      {youtubeEmbedUrl && (
+      {showBgVideo && youtubeEmbedUrl && (
         <iframe
           ref={bgIframeRef}
           src={youtubeEmbedUrl}
