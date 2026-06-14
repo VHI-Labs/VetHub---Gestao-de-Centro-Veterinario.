@@ -1,14 +1,12 @@
 <div align="center">
 
-<img src="./public/logo-uam.png" alt="Universidade Anhembi Morumbi" width="120" />
-
 <br />
 
 # 🐾 HOVET
 
 ### Sistema de Gerenciamento de Filas para Centros Médicos Veterinários
 
-> Projeto desenvolvido para os **CMVs** (Centros Médicos Veterinários) de todas as unidades da **Universidade Anhembi Morumbi**
+> Sistema de gerenciamento de filas para **Centros Médicos Veterinários (CMVs)**
 
 <br />
 
@@ -28,11 +26,11 @@
 
 ## 📋 Sobre o Projeto
 
-O **HOVET** é uma plataforma web moderna para gerenciamento de filas de atendimento em Centros Médicos Veterinários. Desenvolvido especialmente para os CMVs da Universidade Anhembi Morumbi, o sistema otimiza o fluxo de pacientes desde a **triagem** até o **atendimento**, com painéis digitais para salas de espera e televisores.
+O **HOVET** é uma plataforma web moderna para gerenciamento de filas de atendimento em Centros Médicos Veterinários. O sistema otimiza o fluxo de pacientes desde a **triagem** até o **atendimento**, com painéis digitais para salas de espera e televisores.
 
 ### 🎯 Propósito
 
-Digitalizar e organizar o atendimento veterinário nas unidades da Anhembi Morumbi, proporcionando uma experiência mais fluida tanto para os tutores quanto para a equipe veterinária.
+Digitalizar e organizar o atendimento veterinário, proporcionando uma experiência mais fluida tanto para os tutores quanto para a equipe veterinária.
 
 ---
 
@@ -117,22 +115,6 @@ Digitalizar e organizar o atendimento veterinário nas unidades da Anhembi Morum
   </tr>
 </table>
 
----
-
-## 🏛️ Unidades Atendidas
-
-Todas as unidades da **Universidade Anhembi Morumbi** com CMV:
-
-| Unidade | Campus |
-|:---|---:|
-| 🏙️ **Mooca** | cmv-mooca |
-| 🌆 **Vila Olímpia** | cmv-olimpia |
-| 🏬 **Paulista** | cmv-paulista |
-| 🌳 **Piracicaba** | cmv-piracicaba |
-| 🏗️ **São José dos Campos** | cmv-sjc |
-
----
-
 ## 📚 Documentação
 
 Documentação detalhada disponível na pasta [`docs/`](docs/):
@@ -187,6 +169,6 @@ Documentação detalhada disponível na pasta [`docs/`](docs/):
 
 <div align="center">
 
-  <sub>© 2026 — HOVET · Universidade Anhembi Morumbi · Capybara Holding</sub>
+  <sub>© 2026 — HOVET · Capybara Holding</sub>
 
 </div>

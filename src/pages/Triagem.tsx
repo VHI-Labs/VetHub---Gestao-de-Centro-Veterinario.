@@ -104,7 +104,7 @@ export default function Triagem() {
     printArea.id = "printTicketArea"
     printArea.innerHTML = `
       <div style="font-family: monospace; text-align: center; padding: 20px; color: black;">
-        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><span style="font-size: 28px;">🐾</span> HOVET Anhembi</h2>
+        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><span style="font-size: 28px;">🐾</span> HOVET</h2>
         <p style="margin: 4px 0; font-size: 0.8rem;">Hospital Veterinário Universitário</p>
         <hr style="border: 0; border-top: 1px dashed black; margin: 10px 0;">
         <h1 style="margin: 10px 0; font-size: 3rem; font-weight: bold; letter-spacing: -1px;">${ultimoPet.senha}</h1>
@@ -143,7 +143,6 @@ export default function Triagem() {
         display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100
       }}>
         <div className="species-modal antigravity-card" style={{ width: "90%", maxWidth: 500, padding: 40, textAlign: "center" }}>
-          <img src="/logo-uam.png" alt="UAM" style={{ height: 48, marginBottom: 16 }} />
           <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Selecione o Campus</h2>
           <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: "1.1rem" }}>Escolha o campus para atendimento:</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -286,7 +285,7 @@ export default function Triagem() {
               <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", height: "100%", width: "100%" }}>
                 <div className="info-header" style={{ marginBottom: 24 }}>
                   <h2 style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 700 }}>Identificação</h2>
-                  <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no HOVET Anhembi?</p>
+                  <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no HOVET?</p>
                 </div>
                 <div className="attendance-options" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, marginTop: 10, marginBottom: 20, flex: 1, alignContent: "center" }}>
                   <div className="attendance-card" onClick={() => selectPatientSimplificado("Sim")}

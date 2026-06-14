@@ -21,8 +21,8 @@ export function triggerPrintPrescription(petData: Pet) {
       <div class="print-corner-decor bottom-right"></div>
       <div class="print-watermark" style="font-size: 60px; opacity: 0.15;">🐾</div>
       <div class="print-header">
-        <div class="print-header-logo">Anhembi Morumbi | <span style="font-weight: 400;">HOVET</span></div>
-        <div class="print-header-info">Hospital Veterinário Universitário<br>Universidade Anhembi Morumbi - Grupo Ânima<br>São Paulo - SP</div>
+        <div class="print-header-logo">HOVET</div>
+        <div class="print-header-info">Hospital Veterinário Universitário</div>
       </div>
       <div class="print-title">Ficha de Encaminhamento</div>
       <div class="print-section">
@@ -40,7 +40,7 @@ export function triggerPrintPrescription(petData: Pet) {
       </div>
       <div class="print-footer">
         <div class="print-signature-line"></div>
-        <div class="print-signature-text">Médico Veterinário Residente / Supervisor<br>HOVET Anhembi Morumbi<br>Data de Emissão: ${dataFormatada}</div>
+        <div class="print-signature-text">Médico Veterinário Residente / Supervisor<br>HOVET<br>Data de Emissão: ${dataFormatada}</div>
       </div>
     </div>
   `

@@ -15,7 +15,7 @@ export default function Footer() {
         style={{ color: "inherit", textDecoration: "underline", textDecorationColor: "rgba(0,0,0,0.15)" }}>
         Ingrid Brito
       </a>
-      {" (NSI — Campus Mooca) — HOVET Anhembi © 2026"}
+      {" (NSI — Campus Mooca) — HOVET © 2026"}
     </footer>
   )
 }
