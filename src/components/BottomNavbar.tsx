@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
-import { Hospital, Ambulance, ClipboardList, PawPrint, Tv, Settings } from "lucide-react"
+import { Hospital, Ambulance, ClipboardList, PawPrint, Tv, Settings, BookOpen } from "lucide-react"
 
 const ADMIN_LINKS = [
   { path: "/recepcao", label: "Recepção", icon: Hospital },
   { path: "/pronto-atendimento", label: "Pronto Atendimento", icon: Ambulance },
   { path: "/triagem", label: "Triagem", icon: ClipboardList },
+  { path: "/prontuario", label: "Prontuário", icon: BookOpen },
   { path: "/painel-caes", label: "Cães", icon: PawPrint },
   { path: "/painel-gatos", label: "Gatos", icon: PawPrint },
   { path: "/selecionar-tv", label: "TV", icon: Tv },
@@ -14,6 +15,7 @@ const ADMIN_LINKS = [
 
 const COORD_LINKS = [
   { path: "/recepcao", label: "Recepção", icon: Hospital },
+  { path: "/prontuario", label: "Prontuário", icon: BookOpen },
   { path: "/selecionar-tv", label: "TV", icon: Tv },
   { path: "/painel-caes", label: "Cães", icon: PawPrint },
   { path: "/painel-gatos", label: "Gatos", icon: PawPrint },

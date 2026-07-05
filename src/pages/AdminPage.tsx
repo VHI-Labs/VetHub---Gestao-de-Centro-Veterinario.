@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
-import { PawPrint, LogOut, Shield, AlertTriangle, RefreshCw, UserPlus, Tv } from "lucide-react"
+import { PawPrint, LogOut, Shield, AlertTriangle, RefreshCw, UserPlus, Tv, ClipboardList } from "lucide-react"
 import type { UserProfile } from "../types"
 
 const CAMPUSES = ["Todos", "Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
-const PERMISSIONS = ["Recepcao", "Fila", "Videos", "Relatorios", "TV"]
+const PERMISSIONS = ["Recepcao", "Fila", "Videos", "Relatorios", "TV", "Prontuario", "Agendamentos"]
 
 export default function AdminPage() {
   const navigate = useNavigate()
@@ -142,6 +142,14 @@ export default function AdminPage() {
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 2 }}>Gerencie os usuários e seus campus.</p>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => navigate('/admin/auditoria')} style={{
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(16,185,129,0.2)",
+                background: "rgba(16,185,129,0.1)", cursor: "pointer", fontSize: "0.82rem",
+                color: "#34d399", fontWeight: 600
+              }}>
+                <ClipboardList size={13} /> Auditoria
+              </button>
               <button onClick={syncUsers} disabled={syncing} style={{
                 display: "flex", alignItems: "center", gap: 6,
                 padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)",

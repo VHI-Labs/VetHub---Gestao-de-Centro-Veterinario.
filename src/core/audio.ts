@@ -11,7 +11,8 @@ function getAudioContext(): AudioContext {
   return sharedAudioCtx
 }
 
-function formatSenhaForSpeech(senha: string): string {
+/** @internal Exported for testing */
+export function formatSenhaForSpeech(senha: string): string {
   const digits: Record<string, string> = {
     '0': 'zero', '1': 'um', '2': 'dois', '3': 'três', '4': 'quatro',
     '5': 'cinco', '6': 'seis', '7': 'sete', '8': 'oito', '9': 'nove'
@@ -25,7 +26,8 @@ function formatSenhaForSpeech(senha: string): string {
     .trim()
 }
 
-function buildCallSpeechText(petData: { senha?: string; localDirecionado?: string } | null, fallback: { senha?: string; local?: string }) {
+/** @internal Exported for testing */
+export function buildCallSpeechText(petData: { senha?: string; localDirecionado?: string } | null, fallback: { senha?: string; local?: string }) {
   const senha = formatSenhaForSpeech(petData?.senha || fallback.senha || '')
   const local = String(petData?.localDirecionado || fallback.local || 'Triagem')
   return `Senha ${senha}. Comparecer ao ${local}.`

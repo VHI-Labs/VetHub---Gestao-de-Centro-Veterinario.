@@ -3,7 +3,7 @@ import { createPortal } from "react-dom"
 import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
-import { FileText } from "lucide-react"
+import { FileText, Search } from "lucide-react"
 import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
 import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
 import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
@@ -11,7 +11,8 @@ import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
 import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import { useQueueStore } from "../store/queueStore"
 import { getNextWaitingPet, updatePetStatus } from "../core/engine"
-import type { Pet, Species } from "../types"
+import { searchPatients, linkPetToPatient } from "../core/ehr"
+import type { Pet, Species, Patient } from "../types"
 import CalledQueueSidebar from "../components/CalledQueueSidebar"
 import MonthlyReport from "../components/MonthlyReport"
 
@@ -22,6 +23,8 @@ export default function Recepcao() {
   const [currentTab, setCurrentTab] = useState<Tab>(1)
   const [showReport, setShowReport] = useState(false)
   const [redirectPet, setRedirectPet] = useState<Pet | null>(null)
+  const [patientSearch, setPatientSearch] = useState("")
+  const [patientResults, setPatientResults] = useState<Patient[]>([])
 
   const allPets = [...dogs, ...cats, ...wild].sort(
     (a, b) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime()
@@ -57,6 +60,23 @@ export default function Recepcao() {
     await updatePetStatus(redirectPet.id, redirectPet.especie as Species, "Chamado", local)
     await useQueueStore.getState().refresh()
     setRedirectPet(null)
+    setPatientSearch("")
+    setPatientResults([])
+  }
+
+  const handleSearchPatient = async (q: string) => {
+    setPatientSearch(q)
+    if (q.trim().length < 2) { setPatientResults([]); return }
+    const results = await searchPatients(q, redirectPet?.unidade || '')
+    setPatientResults(results)
+  }
+
+  const handleLinkPatient = async (patientId: string) => {
+    if (!redirectPet) return
+    await linkPetToPatient(redirectPet.id, patientId)
+    setRedirectPet(null)
+    setPatientSearch("")
+    setPatientResults([])
   }
 
 const tabs = [
@@ -217,6 +237,37 @@ const tabs = [
                 <strong>{redirectPet.senha}</strong> • {redirectPet.especie}
               </p>
             </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 6 }}>
+                Vincular ao Prontuário (opcional)
+              </div>
+              <div style={{ position: "relative" }}>
+                <Search size={16} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
+                <input
+                  value={patientSearch}
+                  onChange={e => handleSearchPatient(e.target.value)}
+                  placeholder="Buscar paciente por nome..."
+                  style={{
+                    width: "100%", padding: "10px 10px 10px 34px", borderRadius: 8,
+                    border: "1.5px solid rgba(15,118,110,0.15)", fontSize: "0.9rem",
+                    background: "rgba(255,255,255,0.8)", outline: "none"
+                  }}
+                />
+              </div>
+              {patientResults.length > 0 && (
+                <div style={{ marginTop: 6, maxHeight: 120, overflowY: "auto", border: "1px solid rgba(15,118,110,0.1)", borderRadius: 8 }}>
+                  {patientResults.slice(0, 5).map(p => (
+                    <div key={p.id} onClick={() => handleLinkPatient(p.id)}
+                      style={{ padding: "8px 12px", cursor: "pointer", fontSize: "0.85rem", borderBottom: "1px solid rgba(15,118,110,0.05)", display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontWeight: 600 }}>{p.nome}</span>
+                      <span style={{ color: "var(--text-muted)" }}>{p.especie} {p.raca && `• ${p.raca}`}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {["GUICHÊ 1", "GUICHÊ 2", "Pronto Atendimento"].map(local => (
                 <button

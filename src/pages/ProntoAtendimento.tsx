@@ -2,7 +2,10 @@ import { useState } from "react"
 import Topbar from "../components/Topbar"
 import VideoManager from "../components/VideoManager"
 import PetListRow from "../components/PetListRow"
+import { Search, Check, X } from "lucide-react"
 import { FileText } from "lucide-react"
+import { searchPatients, linkPetToPatient } from "../core/ehr"
+import type { Patient } from "../types"
 import IconMMegaphone from "react-fluentui-emoji/lib/modern/icons/IconMMegaphone"
 import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
 import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
@@ -45,6 +48,25 @@ export default function ProntoAtendimento() {
   const mediaSilvestres = calcMedia("Animais Silvestres")
 
   const [calling, setCalling] = useState(false)
+  const [linkTarget, setLinkTarget] = useState<Pet | null>(null)
+  const [linkQuery, setLinkQuery] = useState("")
+  const [linkResults, setLinkResults] = useState<Patient[]>([])
+
+  const handleLinkSearch = async (q: string) => {
+    setLinkQuery(q)
+    if (q.trim().length < 2) { setLinkResults([]); return }
+    const results = await searchPatients(q, linkTarget?.unidade || '')
+    setLinkResults(results)
+  }
+
+  const handleLinkPatient = async (patientId: string) => {
+    if (!linkTarget) return
+    await linkPetToPatient(linkTarget.id, patientId)
+    setLinkTarget(null)
+    setLinkQuery("")
+    setLinkResults([])
+    await useQueueStore.getState().refresh()
+  }
 
   const callNext = () => {
     if (calling) return
@@ -103,14 +125,34 @@ const tabs = [
               </div>
             ) : (
               prontos.map(pet => (
-                <PetListRow
-                  key={pet.id}
-                  pet={pet}
-                  showCall={true}
-                  showDirection={false}
-                  showFinish={false}
-                  callLabel="PRONTO ATENDIMENTO"
-                />
+                <div key={pet.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <PetListRow
+                    pet={pet}
+                    showCall={true}
+                    showDirection={false}
+                    showFinish={false}
+                    callLabel="PRONTO ATENDIMENTO"
+                  />
+                  {!pet.patientId && (
+                    <button onClick={() => setLinkTarget(pet)}
+                      style={{
+                        padding: "6px 10px", borderRadius: 8, border: "1px solid rgba(15,118,110,0.2)",
+                        background: "rgba(15,118,110,0.05)", cursor: "pointer", whiteSpace: "nowrap",
+                        display: "flex", alignItems: "center", gap: 4, fontSize: "0.78rem", fontWeight: 600,
+                        color: "var(--color-primary)", flexShrink: 0
+                      }}>
+                      <Search size={13} /> Vincular
+                    </button>
+                  )}
+                  {pet.patientId && (
+                    <span style={{
+                      fontSize: "0.72rem", padding: "3px 8px", borderRadius: 6,
+                      background: "rgba(16,185,129,0.1)", color: "#059669", fontWeight: 600, whiteSpace: "nowrap"
+                    }}>
+                      ✓ Vinculado
+                    </span>
+                  )}
+                </div>
               ))
             )}
           </div>
@@ -194,6 +236,65 @@ const tabs = [
         <CalledQueueSidebar senhaPrefix="N" />
       </div>
       {showReport && <MonthlyReport onClose={() => setShowReport(false)} />}
+
+      {linkTarget && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: 20
+        }}>
+          <div className="antigravity-card" style={{ width: "100%", maxWidth: 500, padding: 32 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--text-main)" }}>Vincular Paciente</h3>
+              <button onClick={() => { setLinkTarget(null); setLinkQuery(""); setLinkResults([]) }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
+            <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 16 }}>
+              Busque pelo paciente para vincular ao pet <strong>{linkTarget.senha}</strong>:
+            </p>
+            <div style={{ position: "relative", marginBottom: 16 }}>
+              <Search size={18} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", pointerEvents: "none" }} />
+              <input autoFocus type="text" value={linkQuery} onChange={e => handleLinkSearch(e.target.value)}
+                placeholder="Nome ou microchip..."
+                style={{
+                  width: "100%", padding: "12px 12px 12px 42px", borderRadius: 10,
+                  border: "2px solid rgba(15,118,110,0.15)", fontSize: "1rem",
+                  outline: "none", boxSizing: "border-box"
+                }}
+              />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 300, overflowY: "auto" }}>
+              {linkQuery.trim().length >= 2 && linkResults.length === 0 && (
+                <div style={{ textAlign: "center", padding: 16, color: "var(--text-muted)", fontSize: "0.9rem" }}>
+                  Nenhum paciente encontrado.
+                </div>
+              )}
+              {linkResults.map(p => {
+                const petEmoji = p.especie === "Cão" ? "🐕" : p.especie === "Gato" ? "🐈" : "🦜"
+                return (
+                  <div key={p.id} onClick={() => handleLinkPatient(p.id)}
+                    style={{
+                      padding: "12px 16px", borderRadius: 10, cursor: "pointer",
+                      background: "rgba(255,255,255,0.5)", border: "1px solid rgba(15,118,110,0.06)",
+                      display: "flex", alignItems: "center", gap: 12
+                    }}>
+                    <span style={{ fontSize: "1.5rem" }}>{petEmoji}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700 }}>{p.nome}</div>
+                      <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                        {p.especie}{p.raca ? ` • ${p.raca}` : ""}{p.idade ? ` • ${p.idade}` : ""}
+                      </div>
+                    </div>
+                    <Check size={18} style={{ color: "var(--color-accent)" }} />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -10,7 +10,8 @@ function formatPetForDb(p: Pet): Record<string, unknown> {
     status: p.status, local_direcionado: p.localDirecionado,
     data_hora: p.dataHora, called_at: p.calledAt || null,
     finalized_at: p.finalizedAt || null,
-    unidade: p.unidade || ''
+    unidade: p.unidade || '',
+    patient_id: p.patientId || null
   }
 }
 
@@ -24,7 +25,8 @@ function formatDbToPet(row: Record<string, unknown>): Pet {
     dataHora: (row.data_hora as string) || new Date().toISOString(),
     calledAt: (row.called_at as string) || undefined,
     finalizedAt: (row.finalized_at as string) || undefined,
-    unidade: (row.unidade as string) || ''
+    unidade: (row.unidade as string) || '',
+    patientId: (row.patient_id as string) || undefined
   }
 }
 

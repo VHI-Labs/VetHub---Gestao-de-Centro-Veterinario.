@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { createTriagem, cleanText } from "../core/engine"
-import type { Pet, Species } from "../types"
+import { searchPatients, linkPetToPatient } from "../core/ehr"
+import type { Pet, Species, Patient } from "../types"
 import { useSearchParams } from "react-router-dom"
-import { ThumbsUp, ThumbsDown, Printer, Maximize } from "lucide-react"
+import { ThumbsUp, ThumbsDown, Printer, Maximize, Search, Check } from "lucide-react"
 import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
 import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
@@ -18,6 +19,10 @@ export default function Triagem() {
   const [tipoAtendimento, setTipoAtendimento] = useState("")
   const [fluxoAtendimento, setFluxoAtendimento] = useState("")
   const [ultimoPet, setUltimoPet] = useState<Pet | null>(null)
+  const [showPatientSearch, setShowPatientSearch] = useState(false)
+  const [patientQuery, setPatientQuery] = useState("")
+  const [patientResults, setPatientResults] = useState<Patient[]>([])
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [autoResetSec, setAutoResetSec] = useState(15)
   const [searchParams] = useSearchParams()
   const urlCampus = searchParams.get("campus")
@@ -38,6 +43,10 @@ export default function Triagem() {
     setTipoAtendimento("")
     setFluxoAtendimento("")
     setUltimoPet(null)
+    setShowPatientSearch(false)
+    setPatientQuery("")
+    setPatientResults([])
+    setSelectedPatient(null)
     cancelAutoReset()
     setAutoResetSec(15)
   }, [cancelAutoReset])
@@ -77,8 +86,20 @@ export default function Triagem() {
     setTimeout(() => goToStep(2), 350)
   }
 
+  const handleSearchPatient = async (q: string) => {
+    setPatientQuery(q)
+    if (q.trim().length < 2) { setPatientResults([]); return }
+    const results = await searchPatients(q, triagemCampus)
+    setPatientResults(results)
+  }
+
   const selectPatientSimplificado = async (opcao: string) => {
-    const fluxo = opcao === "Sim" ? "Já é Paciente" : "Primeiro Atendimento"
+    if (opcao === "Sim") {
+      setShowPatientSearch(true)
+      return
+    }
+
+    const fluxo = "Primeiro Atendimento"
     setFluxoAtendimento(fluxo)
 
     if (!species) return
@@ -88,6 +109,26 @@ export default function Triagem() {
       tipoAtendimento,
       prioridade: "Verde"
     }, triagemCampus)
+
+    setUltimoPet(pet)
+    goToStep(3)
+    startAutoReset()
+  }
+
+  const selectExistingPatient = async (patient: Patient) => {
+    setSelectedPatient(patient)
+    const fluxo = "Já é Paciente"
+    setFluxoAtendimento(fluxo)
+
+    if (!species) return
+
+    const pet = await createTriagem({
+      especie: species,
+      tipoAtendimento,
+      prioridade: "Verde"
+    }, triagemCampus)
+
+    await linkPetToPatient(pet.id, patient.id)
 
     setUltimoPet(pet)
     goToStep(3)
@@ -282,29 +323,86 @@ export default function Triagem() {
 
             {/* Step 2 */}
             <section className="step-panel" style={{ width: "33.333%", flexShrink: 0, height: "100%", display: "flex", flexDirection: "column", padding: "0 40px", boxSizing: "border-box" }}>
-              <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", height: "100%", width: "100%" }}>
-                <div className="info-header" style={{ marginBottom: 24 }}>
-                  <h2 style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 700 }}>Identificação</h2>
-                  <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no HOVET?</p>
-                </div>
-                <div className="attendance-options" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, marginTop: 10, marginBottom: 20, flex: 1, alignContent: "center" }}>
-                  <div className="attendance-card" onClick={() => selectPatientSimplificado("Sim")}
-                    style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                    <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsUp size={64} /></div>
-                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Sim</h3>
-                    <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>Já possuo cadastro e registro no hospital.</p>
+              {showPatientSearch ? (
+                <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
+                  <div className="info-header">
+                    <h2 style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 700 }}>Buscar Paciente</h2>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Digite o nome ou microchip do seu pet:</p>
                   </div>
-                  <div className="attendance-card" onClick={() => selectPatientSimplificado("Não")}
-                    style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                    <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsDown size={64} /></div>
-                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Não</h3>
-                    <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>É a primeira vez do meu pet no hospital.</p>
+                  <div style={{ position: "relative" }}>
+                    <Search size={18} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", pointerEvents: "none" }} />
+                    <input
+                      autoFocus
+                      type="text"
+                      value={patientQuery}
+                      onChange={e => handleSearchPatient(e.target.value)}
+                      placeholder="Nome do pet..."
+                      style={{
+                        width: "100%", padding: "14px 14px 14px 42px", borderRadius: 12,
+                        border: "2px solid rgba(15,118,110,0.15)", fontSize: "1.1rem",
+                        outline: "none", boxSizing: "border-box"
+                      }}
+                    />
+                  </div>
+                  <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
+                    {patientQuery.trim().length >= 2 && patientResults.length === 0 && (
+                      <div style={{ textAlign: "center", padding: 20, color: "var(--text-muted)" }}>
+                        Nenhum paciente encontrado.
+                      </div>
+                    )}
+                    {patientResults.map(p => {
+                      const petEmoji = p.especie === "Cão" ? "🐕" : p.especie === "Gato" ? "🐈" : "🦜"
+                      return (
+                        <div key={p.id} className="attendance-card" onClick={() => selectExistingPatient(p)}
+                          style={{
+                            padding: "14px 18px", borderRadius: "var(--border-radius-md)",
+                            background: "rgba(255,255,255,0.4)", cursor: "pointer",
+                            display: "flex", alignItems: "center", gap: 12,
+                            border: "1px solid rgba(255,255,255,0.4)"
+                          }}>
+                          <span style={{ fontSize: "2rem" }}>{petEmoji}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 700, fontSize: "1.05rem" }}>{p.nome}</div>
+                            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                              {p.especie}{p.raca ? ` • ${p.raca}` : ""}{p.idade ? ` • ${p.idade}` : ""}
+                            </div>
+                          </div>
+                          <Check size={20} style={{ color: "var(--color-accent)" }} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="form-actions" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12 }}>
+                    <button className="btn-magnetic btn-secondary" onClick={() => { setShowPatientSearch(false); setPatientQuery(""); setPatientResults([]) }}>
+                      Voltar
+                    </button>
                   </div>
                 </div>
-                <div className="form-actions" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 20 }}>
-                  <button className="btn-magnetic btn-secondary" onClick={() => goToStep(1)}>Voltar</button>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", height: "100%", width: "100%" }}>
+                  <div className="info-header" style={{ marginBottom: 24 }}>
+                    <h2 style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 700 }}>Identificação</h2>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no HOVET?</p>
+                  </div>
+                  <div className="attendance-options" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, marginTop: 10, marginBottom: 20, flex: 1, alignContent: "center" }}>
+                    <div className="attendance-card" onClick={() => selectPatientSimplificado("Sim")}
+                      style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                      <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsUp size={64} /></div>
+                      <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Sim</h3>
+                      <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>Já possuo cadastro e registro no hospital.</p>
+                    </div>
+                    <div className="attendance-card" onClick={() => selectPatientSimplificado("Não")}
+                      style={{ padding: "32px 20px", borderRadius: "var(--border-radius-md)", background: "rgba(255,255,255,0.4)", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                      <div style={{ fontSize: "4.5rem", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsDown size={64} /></div>
+                      <h3 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Não</h3>
+                      <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>É a primeira vez do meu pet no hospital.</p>
+                    </div>
+                  </div>
+                  <div className="form-actions" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 20 }}>
+                    <button className="btn-magnetic btn-secondary" onClick={() => goToStep(1)}>Voltar</button>
+                  </div>
                 </div>
-              </div>
+              )}
             </section>
 
             {/* Step 3: Final */}

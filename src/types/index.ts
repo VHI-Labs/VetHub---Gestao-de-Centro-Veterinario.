@@ -10,6 +10,7 @@ export interface Pet {
   calledAt?: string
   finalizedAt?: string
   unidade?: string
+  patientId?: string
 }
 
 export interface UserProfile {
@@ -55,3 +56,100 @@ export type AttendanceType =
   | 'Consulta Marcada'
   | 'Cirurgia Agendada'
   | 'Exames'
+
+export interface Owner {
+  id: string
+  nome: string
+  cpf?: string
+  telefone?: string
+  email?: string
+  endereco?: string
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export interface Patient {
+  id: string
+  ownerId?: string
+  nome: string
+  especie: Species
+  raca?: string
+  sexo?: string
+  pelagem?: string
+  peso?: number
+  idade?: string
+  microchip?: string
+  alergias?: string
+  fotoUrl?: string
+  observacoes?: string
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export interface Consulta {
+  id: string
+  patientId: string
+  petId?: string
+  veterinario: string
+  motivo: string
+  exameFisico?: string
+  diagnostico?: string
+  prescricao?: string
+  observacoes?: string
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export interface Vacina {
+  id: string
+  patientId: string
+  nome: string
+  dataAplicacao: string
+  dataProxima?: string
+  lote?: string
+  veterinario?: string
+  unidade?: string
+  criadoEm: string
+}
+
+export interface Cirurgia {
+  id: string
+  patientId: string
+  tipo: string
+  dataCirurgia: string
+  veterinario?: string
+  observacoes?: string
+  unidade?: string
+  criadoEm: string
+}
+
+export interface Exame {
+  id: string
+  patientId: string
+  tipoExame: string
+  resultado?: string
+  arquivoUrl?: string
+  dataExame: string
+  veterinario?: string
+  unidade?: string
+  criadoEm: string
+}
+
+export type AgendamentoStatus = 'Pendente' | 'Confirmado' | 'Cancelado' | 'Concluido'
+
+export interface Agendamento {
+  id: string
+  patientId: string
+  ownerId?: string
+  dataHora: string
+  tipo: string
+  veterinario?: string
+  status: AgendamentoStatus
+  observacoes?: string
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}

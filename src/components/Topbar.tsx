@@ -40,6 +40,18 @@ export default function Topbar({ title, tabs }: TopbarProps) {
               color: location.pathname === "/pronto-atendimento" ? "var(--color-primary)" : "var(--text-muted)",
               boxShadow: location.pathname === "/pronto-atendimento" ? "0 4px 15px -2px rgba(15,118,110,0.1)" : "none"
             }}>Pronto Atendimento</Link>
+            <Link to="/prontuario" className="tab-btn" style={{
+              textDecoration: "none", padding: "6px 14px", borderRadius: 100, display: "inline-block",
+              fontWeight: 700, background: location.pathname.startsWith("/prontuario") ? "#fff" : "transparent",
+              color: location.pathname.startsWith("/prontuario") ? "var(--color-primary)" : "var(--text-muted)",
+              boxShadow: location.pathname.startsWith("/prontuario") ? "0 4px 15px -2px rgba(15,118,110,0.1)" : "none"
+            }}>Prontuário</Link>
+            <Link to="/agendamentos" className="tab-btn" style={{
+              textDecoration: "none", padding: "6px 14px", borderRadius: 100, display: "inline-block",
+              fontWeight: 700, background: location.pathname === "/agendamentos" ? "#fff" : "transparent",
+              color: location.pathname === "/agendamentos" ? "var(--color-primary)" : "var(--text-muted)",
+              boxShadow: location.pathname === "/agendamentos" ? "0 4px 15px -2px rgba(15,118,110,0.1)" : "none"
+            }}>Agendamentos</Link>
 
           </div>
         </div>
