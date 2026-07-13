@@ -1,17 +1,18 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import type { Consulta } from "../types"
-import { createConsulta } from "../core/ehr"
+import { createConsulta, updateConsulta } from "../core/ehr"
 import { X } from "lucide-react"
 
 interface ConsultaFormProps {
   patientId: string
   unidade?: string
+  consulta?: Consulta
   onSave: (consulta: Consulta) => void
   onClose: () => void
 }
 
-export default function ConsultaForm({ patientId, unidade = '', onSave, onClose }: ConsultaFormProps) {
+export default function ConsultaForm({ patientId, unidade = '', consulta, onSave, onClose }: ConsultaFormProps) {
   const [veterinario, setVeterinario] = useState("")
   const [motivo, setMotivo] = useState("")
   const [exameFisico, setExameFisico] = useState("")
@@ -20,22 +21,45 @@ export default function ConsultaForm({ patientId, unidade = '', onSave, onClose 
   const [observacoes, setObservacoes] = useState("")
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => {
+    if (consulta) {
+      setVeterinario(consulta.veterinario || '')
+      setMotivo(consulta.motivo || '')
+      setExameFisico(consulta.exameFisico || '')
+      setDiagnostico(consulta.diagnostico || '')
+      setPrescricao(consulta.prescricao || '')
+      setObservacoes(consulta.observacoes || '')
+    }
+  }, [consulta])
+
   const handleSave = async () => {
     if (!motivo.trim() || !veterinario.trim()) return
     setSaving(true)
-    const result = await createConsulta({
-      id: '',
-      patientId,
-      veterinario: veterinario.trim(),
-      motivo: motivo.trim(),
-      exameFisico: exameFisico.trim() || undefined,
-      diagnostico: diagnostico.trim() || undefined,
-      prescricao: prescricao.trim() || undefined,
-      observacoes: observacoes.trim() || undefined,
-      unidade
-    })
+    if (consulta?.id) {
+      await updateConsulta(consulta.id, {
+        veterinario: veterinario.trim(),
+        motivo: motivo.trim(),
+        exameFisico: exameFisico.trim() || undefined,
+        diagnostico: diagnostico.trim() || undefined,
+        prescricao: prescricao.trim() || undefined,
+        observacoes: observacoes.trim() || undefined
+      })
+      onSave({ ...consulta, veterinario: veterinario.trim(), motivo: motivo.trim() })
+    } else {
+      const result = await createConsulta({
+        id: '',
+        patientId,
+        veterinario: veterinario.trim(),
+        motivo: motivo.trim(),
+        exameFisico: exameFisico.trim() || undefined,
+        diagnostico: diagnostico.trim() || undefined,
+        prescricao: prescricao.trim() || undefined,
+        observacoes: observacoes.trim() || undefined,
+        unidade
+      })
+      onSave(result)
+    }
     setSaving(false)
-    onSave(result)
   }
 
   const inputStyle: React.CSSProperties = {
@@ -52,7 +76,7 @@ export default function ConsultaForm({ patientId, unidade = '', onSave, onClose 
     <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={onClose}>
       <div className="antigravity-card" onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 640, padding: 32, maxHeight: "90vh", overflowY: "auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>Nova Consulta</h2>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>{consulta ? 'Editar Consulta' : 'Nova Consulta'}</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
             <X size={22} />
           </button>
@@ -89,7 +113,7 @@ export default function ConsultaForm({ patientId, unidade = '', onSave, onClose 
           <button className="btn-magnetic btn-secondary" onClick={onClose} style={{ padding: "10px 20px" }}>Cancelar</button>
           <button className="btn-magnetic" onClick={handleSave} disabled={saving || !motivo.trim() || !veterinario.trim()}
             style={{ padding: "10px 24px", opacity: saving || !motivo.trim() || !veterinario.trim() ? 0.5 : 1 }}>
-            {saving ? "Salvando..." : "Salvar Consulta"}
+            {saving ? "Salvando..." : (consulta ? "Atualizar" : "Salvar Consulta")}
           </button>
         </div>
       </div>

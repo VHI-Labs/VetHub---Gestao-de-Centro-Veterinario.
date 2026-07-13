@@ -13,17 +13,28 @@ import Prontuario from './pages/Prontuario'
 import TutorDetail from './pages/TutorDetail'
 import PacienteDetail from './pages/PacienteDetail'
 import Agendamentos from './pages/Agendamentos'
+import Veterinarios from './pages/Veterinarios'
+import Estoque from './pages/Estoque'
 import AuditLog from './pages/AuditLog'
+import Financeiro from './pages/Financeiro'
+import Servicos from './pages/Servicos'
+import Register from './pages/Register'
+import ResetPassword from './pages/ResetPassword'
 import BottomNavbar from './components/BottomNavbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import PaywallCard from './components/PaywallCard'
+import UpsellBanner from './components/UpsellBanner'
+import TrialExpiredModal from './components/TrialExpiredModal'
 import { useQueueStore } from './store/queueStore'
 import { useEffect } from 'react'
 import { useStorageSync } from './hooks/useStorageSync'
+import { useRealtimeQueue } from './hooks/useRealtimeQueue'
 import { useAuth } from './context/AuthContext'
 
 export default function App() {
   useStorageSync()
+  useRealtimeQueue()
   const { unidade, role } = useAuth()
   const location = useLocation()
   const hideFooter = ["/login", "/triagem", "/painel-caes", "/painel-gatos"].includes(location.pathname)
@@ -35,18 +46,19 @@ export default function App() {
   useEffect(() => {
     const id = setInterval(() => {
       useQueueStore.getState().refresh()
-    }, 15000)
+    }, 5000)
     return () => clearInterval(id)
   }, [])
 
   return (
     <>
+      <TrialExpiredModal />
       <BottomNavbar />
       <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/selecionar-campus" element={<ProtectedRoute><CampusSelection /></ProtectedRoute>} />
-      <Route path="/recepcao" element={<ProtectedRoute><Recepcao /></ProtectedRoute>} />
+      <Route path="/recepcao" element={<ProtectedRoute><UpsellBanner /><Recepcao /></ProtectedRoute>} />
       <Route path="/triagem" element={<Triagem />} />
       <Route path="/pronto-atendimento" element={<ProtectedRoute><ProntoAtendimento /></ProtectedRoute>} />
       <Route path="/painel-caes" element={<PainelCaes />} />
@@ -56,8 +68,14 @@ export default function App() {
       <Route path="/prontuario/tutor/:id" element={<ProtectedRoute><TutorDetail /></ProtectedRoute>} />
       <Route path="/prontuario/paciente/:id" element={<ProtectedRoute><PacienteDetail /></ProtectedRoute>} />
       <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
+      <Route path="/veterinarios" element={<ProtectedRoute><PaywallCard feature="veterinarios"><Veterinarios /></PaywallCard></ProtectedRoute>} />
+      <Route path="/estoque" element={<ProtectedRoute><PaywallCard feature="estoque"><Estoque /></PaywallCard></ProtectedRoute>} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
       <Route path="/admin/auditoria" element={<ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute>} />
+      <Route path="/financeiro" element={<ProtectedRoute><PaywallCard feature="faturamento"><Financeiro /></PaywallCard></ProtectedRoute>} />
+      <Route path="/financeiro/servicos" element={<ProtectedRoute><PaywallCard feature="faturamento"><Servicos /></PaywallCard></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
       {!hideFooter && <Footer />}

@@ -6,7 +6,7 @@ import ConsultaForm from "../components/ConsultaForm"
 import VacinaForm from "../components/VacinaForm"
 import CirurgiaForm from "../components/CirurgiaForm"
 import ExameForm from "../components/ExameForm"
-import { getPatient, deletePatient, getConsultasByPatient, getVacinasByPatient, getCirurgiasByPatient, getExamesByPatient, getAgendamentosByPatient } from "../core/ehr"
+import { getPatient, deletePatient, getConsultasByPatient, getVacinasByPatient, getCirurgiasByPatient, getExamesByPatient, getAgendamentosByPatient, deleteConsulta, deleteVacina, deleteCirurgia, deleteExame } from "../core/ehr"
 import type { Patient, Consulta, Vacina, Cirurgia, Exame, Agendamento } from "../types"
 import { ArrowLeft, Edit, Trash2, Plus, Calendar } from "lucide-react"
 
@@ -28,6 +28,10 @@ export default function PacienteDetail() {
   const [showVacinaForm, setShowVacinaForm] = useState(false)
   const [showCirurgiaForm, setShowCirurgiaForm] = useState(false)
   const [showExameForm, setShowExameForm] = useState(false)
+  const [editingConsulta, setEditingConsulta] = useState<Consulta | null>(null)
+  const [editingVacina, setEditingVacina] = useState<Vacina | null>(null)
+  const [editingCirurgia, setEditingCirurgia] = useState<Cirurgia | null>(null)
+  const [editingExame, setEditingExame] = useState<Exame | null>(null)
 
   const loadAll = async () => {
     if (!id) return
@@ -55,6 +59,27 @@ export default function PacienteDetail() {
     if (!id || !confirm("Tem certeza que deseja excluir este paciente?")) return
     await deletePatient(id)
     navigate('/prontuario')
+  }
+
+  const handleDeleteConsulta = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta consulta?")) return
+    await deleteConsulta(id)
+    setConsultas(prev => prev.filter(c => c.id !== id))
+  }
+  const handleDeleteVacina = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta vacina?")) return
+    await deleteVacina(id)
+    setVacinas(prev => prev.filter(v => v.id !== id))
+  }
+  const handleDeleteCirurgia = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta cirurgia?")) return
+    await deleteCirurgia(id)
+    setCirurgias(prev => prev.filter(c => c.id !== id))
+  }
+  const handleDeleteExame = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este exame?")) return
+    await deleteExame(id)
+    setExames(prev => prev.filter(e => e.id !== id))
   }
 
   const speciesBadge = (especie: string) => {
@@ -160,7 +185,17 @@ export default function PacienteDetail() {
                   <div key={c.id} className="antigravity-card" style={{ padding: 20 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                       <div style={{ fontWeight: 700, color: "var(--color-primary)" }}>{formatDateTime(c.criadoEm)}</div>
-                      <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Dr(a). {c.veterinario}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Dr(a). {c.veterinario}</div>
+                        <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                          <button onClick={() => setEditingConsulta(c)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(15,118,110,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                            <Edit size={12} /> Editar
+                          </button>
+                          <button onClick={() => handleDeleteConsulta(c.id)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(239,68,68,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "#ef4444" }}>
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                       <div>
@@ -221,6 +256,14 @@ export default function PacienteDetail() {
                       </div>
                     </div>
                     {v.lote && <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Lote: {v.lote}</span>}
+                    <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                      <button onClick={() => setEditingVacina(v)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(15,118,110,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        <Edit size={12} /> Editar
+                      </button>
+                      <button onClick={() => handleDeleteVacina(v.id)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(239,68,68,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "#ef4444" }}>
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -248,6 +291,14 @@ export default function PacienteDetail() {
                         {formatDateTime(c.dataCirurgia)}
                         {c.veterinario && ` • Dr(a). ${c.veterinario}`}
                       </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                      <button onClick={() => setEditingCirurgia(c)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(15,118,110,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        <Edit size={12} /> Editar
+                      </button>
+                      <button onClick={() => handleDeleteCirurgia(c.id)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(239,68,68,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "#ef4444" }}>
+                        <Trash2 size={12} />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -277,6 +328,14 @@ export default function PacienteDetail() {
                         {e.veterinario && ` • Dr(a). ${e.veterinario}`}
                       </div>
                       {e.resultado && <div style={{ fontSize: "0.85rem", marginTop: 4 }}>{e.resultado}</div>}
+                    </div>
+                    <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                      <button onClick={() => setEditingExame(e)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(15,118,110,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        <Edit size={12} /> Editar
+                      </button>
+                      <button onClick={() => handleDeleteExame(e.id)} style={{ padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(239,68,68,0.15)", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontSize: "0.75rem", color: "#ef4444" }}>
+                        <Trash2 size={12} />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -324,17 +383,29 @@ export default function PacienteDetail() {
       {showEditForm && (
         <PacienteForm patient={patient} onSave={(p) => { setPatient(p); setShowEditForm(false) }} onClose={() => setShowEditForm(false)} />
       )}
-      {showConsultaForm && (
+      {showConsultaForm && !editingConsulta && (
         <ConsultaForm patientId={patient.id} unidade={patient.unidade} onSave={(c) => { setConsultas(prev => [c, ...prev]); setShowConsultaForm(false) }} onClose={() => setShowConsultaForm(false)} />
       )}
-      {showVacinaForm && (
+      {editingConsulta && (
+        <ConsultaForm patientId={patient.id} unidade={patient.unidade} consulta={editingConsulta} onSave={(c) => { setConsultas(prev => prev.map(x => x.id === c.id ? c : x)); setEditingConsulta(null) }} onClose={() => setEditingConsulta(null)} />
+      )}
+      {showVacinaForm && !editingVacina && (
         <VacinaForm patientId={patient.id} unidade={patient.unidade} onSave={(v) => { setVacinas(prev => [v, ...prev]); setShowVacinaForm(false) }} onClose={() => setShowVacinaForm(false)} />
       )}
-      {showCirurgiaForm && (
+      {editingVacina && (
+        <VacinaForm patientId={patient.id} unidade={patient.unidade} vacina={editingVacina} onSave={(v) => { setVacinas(prev => prev.map(x => x.id === v.id ? v : x)); setEditingVacina(null) }} onClose={() => setEditingVacina(null)} />
+      )}
+      {showCirurgiaForm && !editingCirurgia && (
         <CirurgiaForm patientId={patient.id} unidade={patient.unidade} onSave={(c) => { setCirurgias(prev => [c, ...prev]); setShowCirurgiaForm(false) }} onClose={() => setShowCirurgiaForm(false)} />
       )}
-      {showExameForm && (
+      {editingCirurgia && (
+        <CirurgiaForm patientId={patient.id} unidade={patient.unidade} cirurgia={editingCirurgia} onSave={(c) => { setCirurgias(prev => prev.map(x => x.id === c.id ? c : x)); setEditingCirurgia(null) }} onClose={() => setEditingCirurgia(null)} />
+      )}
+      {showExameForm && !editingExame && (
         <ExameForm patientId={patient.id} unidade={patient.unidade} onSave={(e) => { setExames(prev => [e, ...prev]); setShowExameForm(false) }} onClose={() => setShowExameForm(false)} />
+      )}
+      {editingExame && (
+        <ExameForm patientId={patient.id} unidade={patient.unidade} exame={editingExame} onSave={(e) => { setExames(prev => prev.map(x => x.id === e.id ? e : x)); setEditingExame(null) }} onClose={() => setEditingExame(null)} />
       )}
     </div>
   )

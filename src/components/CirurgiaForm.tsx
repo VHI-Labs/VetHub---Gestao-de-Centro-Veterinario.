@@ -1,37 +1,57 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import type { Cirurgia } from "../types"
-import { createCirurgia } from "../core/ehr"
+import { createCirurgia, updateCirurgia } from "../core/ehr"
 import { X } from "lucide-react"
 
 interface CirurgiaFormProps {
   patientId: string
   unidade?: string
+  cirurgia?: Cirurgia
   onSave: (cirurgia: Cirurgia) => void
   onClose: () => void
 }
 
-export default function CirurgiaForm({ patientId, unidade = '', onSave, onClose }: CirurgiaFormProps) {
+export default function CirurgiaForm({ patientId, unidade = '', cirurgia, onSave, onClose }: CirurgiaFormProps) {
   const [tipo, setTipo] = useState("")
   const [dataCirurgia, setDataCirurgia] = useState("")
   const [veterinario, setVeterinario] = useState("")
   const [observacoes, setObservacoes] = useState("")
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => {
+    if (cirurgia) {
+      setTipo(cirurgia.tipo || '')
+      setDataCirurgia(cirurgia.dataCirurgia ? new Date(cirurgia.dataCirurgia).toISOString().slice(0, 16) : '')
+      setVeterinario(cirurgia.veterinario || '')
+      setObservacoes(cirurgia.observacoes || '')
+    }
+  }, [cirurgia])
+
   const handleSave = async () => {
     if (!tipo.trim() || !dataCirurgia) return
     setSaving(true)
-    const result = await createCirurgia({
-      id: '',
-      patientId,
-      tipo: tipo.trim(),
-      dataCirurgia: new Date(dataCirurgia).toISOString(),
-      veterinario: veterinario.trim() || undefined,
-      observacoes: observacoes.trim() || undefined,
-      unidade
-    })
+    if (cirurgia?.id) {
+      await updateCirurgia(cirurgia.id, {
+        tipo: tipo.trim(),
+        dataCirurgia: new Date(dataCirurgia).toISOString(),
+        veterinario: veterinario.trim() || undefined,
+        observacoes: observacoes.trim() || undefined
+      })
+      onSave({ ...cirurgia, tipo: tipo.trim(), dataCirurgia: new Date(dataCirurgia).toISOString() })
+    } else {
+      const result = await createCirurgia({
+        id: '',
+        patientId,
+        tipo: tipo.trim(),
+        dataCirurgia: new Date(dataCirurgia).toISOString(),
+        veterinario: veterinario.trim() || undefined,
+        observacoes: observacoes.trim() || undefined,
+        unidade
+      })
+      onSave(result)
+    }
     setSaving(false)
-    onSave(result)
   }
 
   const inputStyle: React.CSSProperties = {
@@ -48,7 +68,7 @@ export default function CirurgiaForm({ patientId, unidade = '', onSave, onClose 
     <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={onClose}>
       <div className="antigravity-card" onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 480, padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>Nova Cirurgia</h2>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>{cirurgia ? 'Editar Cirurgia' : 'Nova Cirurgia'}</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
             <X size={22} />
           </button>
@@ -77,7 +97,7 @@ export default function CirurgiaForm({ patientId, unidade = '', onSave, onClose 
           <button className="btn-magnetic btn-secondary" onClick={onClose} style={{ padding: "10px 20px" }}>Cancelar</button>
           <button className="btn-magnetic" onClick={handleSave} disabled={saving || !tipo.trim()}
             style={{ padding: "10px 24px", opacity: saving || !tipo.trim() ? 0.5 : 1 }}>
-            {saving ? "Salvando..." : "Salvar"}
+            {saving ? "Salvando..." : (cirurgia ? "Atualizar" : "Salvar")}
           </button>
         </div>
       </div>

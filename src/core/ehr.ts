@@ -310,6 +310,13 @@ export async function updateConsulta(id: string, data: Partial<Consulta>): Promi
   await logAudit('consultas', 'UPDATE', id, null, updates)
 }
 
+export async function deleteConsulta(id: string): Promise<void> {
+  const { data: old } = await supabase.from('consultas').select('*').eq('id', id).single()
+  const { error } = await supabase.from('consultas').delete().eq('id', id)
+  if (error) console.error('[EHR] deleteConsulta error:', error)
+  await logAudit('consultas', 'DELETE', id, old || undefined, null)
+}
+
 // ============================================================
 // VACINAS
 // ============================================================
@@ -340,6 +347,18 @@ export async function createVacina(data: Omit<Vacina, 'criadoEm'>): Promise<Vaci
   if (error) console.error('[EHR] createVacina error:', error)
   await logAudit('vacinas', 'INSERT', row.id, null, row)
   return { ...data, criadoEm: now }
+}
+
+export async function updateVacina(id: string, data: Partial<Vacina>): Promise<void> {
+  const updates: Record<string, unknown> = {}
+  if (data.nome !== undefined) updates.nome = data.nome
+  if (data.dataAplicacao !== undefined) updates.data_aplicacao = data.dataAplicacao
+  if (data.dataProxima !== undefined) updates.data_proxima = data.dataProxima || null
+  if (data.lote !== undefined) updates.lote = data.lote || null
+  if (data.veterinario !== undefined) updates.veterinario = data.veterinario || null
+  const { error } = await supabase.from('vacinas').update(updates).eq('id', id)
+  if (error) console.error('[EHR] updateVacina error:', error)
+  await logAudit('vacinas', 'UPDATE', id, null, updates)
 }
 
 export async function deleteVacina(id: string): Promise<void> {
@@ -380,6 +399,24 @@ export async function createCirurgia(data: Omit<Cirurgia, 'criadoEm'>): Promise<
   return { ...data, criadoEm: now }
 }
 
+export async function updateCirurgia(id: string, data: Partial<Cirurgia>): Promise<void> {
+  const updates: Record<string, unknown> = {}
+  if (data.tipo !== undefined) updates.tipo = data.tipo
+  if (data.dataCirurgia !== undefined) updates.data_cirurgia = data.dataCirurgia
+  if (data.veterinario !== undefined) updates.veterinario = data.veterinario || null
+  if (data.observacoes !== undefined) updates.observacoes = data.observacoes || null
+  const { error } = await supabase.from('cirurgias').update(updates).eq('id', id)
+  if (error) console.error('[EHR] updateCirurgia error:', error)
+  await logAudit('cirurgias', 'UPDATE', id, null, updates)
+}
+
+export async function deleteCirurgia(id: string): Promise<void> {
+  const { data: old } = await supabase.from('cirurgias').select('*').eq('id', id).single()
+  const { error } = await supabase.from('cirurgias').delete().eq('id', id)
+  if (error) console.error('[EHR] deleteCirurgia error:', error)
+  await logAudit('cirurgias', 'DELETE', id, old || undefined, null)
+}
+
 // ============================================================
 // EXAMES
 // ============================================================
@@ -410,6 +447,25 @@ export async function createExame(data: Omit<Exame, 'criadoEm'>): Promise<Exame>
   if (error) console.error('[EHR] createExame error:', error)
   await logAudit('exames', 'INSERT', row.id, null, row)
   return { ...data, criadoEm: now }
+}
+
+export async function updateExame(id: string, data: Partial<Exame>): Promise<void> {
+  const updates: Record<string, unknown> = {}
+  if (data.tipoExame !== undefined) updates.tipo_exame = data.tipoExame
+  if (data.resultado !== undefined) updates.resultado = data.resultado || null
+  if (data.arquivoUrl !== undefined) updates.arquivo_url = data.arquivoUrl || null
+  if (data.dataExame !== undefined) updates.data_exame = data.dataExame
+  if (data.veterinario !== undefined) updates.veterinario = data.veterinario || null
+  const { error } = await supabase.from('exames').update(updates).eq('id', id)
+  if (error) console.error('[EHR] updateExame error:', error)
+  await logAudit('exames', 'UPDATE', id, null, updates)
+}
+
+export async function deleteExame(id: string): Promise<void> {
+  const { data: old } = await supabase.from('exames').select('*').eq('id', id).single()
+  const { error } = await supabase.from('exames').delete().eq('id', id)
+  if (error) console.error('[EHR] deleteExame error:', error)
+  await logAudit('exames', 'DELETE', id, old || undefined, null)
 }
 
 // ============================================================

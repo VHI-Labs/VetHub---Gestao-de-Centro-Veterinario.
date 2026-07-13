@@ -153,3 +153,106 @@ export interface Agendamento {
   criadoEm: string
   atualizadoEm: string
 }
+
+export interface Veterinario {
+  id: string
+  nome: string
+  crmv?: string
+  especialidade?: string
+  telefone?: string
+  email?: string
+  ativo: boolean
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export interface Medicamento {
+  id: string
+  nome: string
+  principioAtivo?: string
+  fabricante?: string
+  formaFarmaceutica?: string
+  concentracao?: string
+  unidadeMedida?: string
+  precoCusto?: number
+  precoVenda?: number
+  estoqueMinimo: number
+  estoqueAtual: number
+  validade?: string
+  unidade?: string
+  ativo: boolean
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export type EstoqueMovimentacaoTipo = 'Entrada' | 'Saida' | 'Ajuste' | 'Perda'
+
+export interface EstoqueMovimentacao {
+  id: string
+  medicamentoId: string
+  tipo: EstoqueMovimentacaoTipo
+  quantidade: number
+  motivo?: string
+  consultaId?: string
+  pacienteId?: string
+  veterinarioId?: string
+  usuarioId?: string
+  unidade?: string
+  criadoEm: string
+}
+
+export interface Servico {
+  id: string
+  nome: string
+  descricao?: string
+  categoria?: string
+  preco: number
+  ativo: boolean
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export type FaturaStatus = 'Aberta' | 'Paga' | 'Parcial' | 'Cancelada'
+
+export interface Fatura {
+  id: string
+  pacienteId: string
+  ownerId?: string
+  consultaId?: string
+  cirurgiaId?: string
+  status: FaturaStatus
+  valorTotal: number
+  valorPago: number
+  desconto?: number
+  observacoes?: string
+  unidade?: string
+  criadoEm: string
+  atualizadoEm: string
+}
+
+export interface FaturaItem {
+  id: string
+  faturaId: string
+  servicoId?: string
+  descricao: string
+  quantidade: number
+  precoUnitario: number
+  subtotal: number
+  criadoEm: string
+}
+
+export type PagamentoMetodo = 'Dinheiro' | 'Cartao Credito' | 'Cartao Debito' | 'Pix' | 'Transferencia'
+
+export interface Pagamento {
+  id: string
+  faturaId: string
+  valor: number
+  metodo: PagamentoMetodo
+  dataPagamento: string
+  referencia?: string
+  usuarioId?: string
+  unidade?: string
+  criadoEm: string
+}

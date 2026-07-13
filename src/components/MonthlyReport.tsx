@@ -2,6 +2,8 @@ import { useState } from "react"
 import { getMonthlyReport } from "../core/engine"
 import { useAuth } from "../context/AuthContext"
 import { X, FileText } from "lucide-react"
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
 import IconMDogFace from "react-fluentui-emoji/lib/modern/icons/IconMDogFace"
 import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
@@ -64,6 +66,54 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
 
     setData(rows)
     setLoading(false)
+  }
+
+  const exportCSV = () => {
+    if (!data) return
+    const header = "Espécie,Total,Espera Média (min),Finalizados,Atendimento Médio (min)"
+    const rows = data.map(r => `${r.especie},${r.total},${r.esperaMediaMin},${r.finalizados},${r.atendimentoMedioMin}`)
+    const total = `TOTAL,${totalGeral},,,`
+    const csv = [header, ...rows, total].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `relatorio-hovet-${MESES[month]}-${year}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const exportPDF = () => {
+    if (!data) return
+    const doc = new jsPDF()
+    doc.setFontSize(18)
+    doc.text('HOVET - Relatório Mensal', 14, 22)
+    doc.setFontSize(11)
+    doc.text(`${MESES[month]} de ${year} — ${reportCampus || 'Todos os Campi'}`, 14, 30)
+    doc.text(`Total de pacientes: ${totalGeral}`, 14, 36)
+
+    const tableData = data.map(r => [
+      r.especie,
+      String(r.total),
+      r.esperaMediaMin > 0 ? `${r.esperaMediaMin} min` : '—',
+      String(r.finalizados),
+      r.atendimentoMedioMin > 0 ? `${r.atendimentoMedioMin} min` : '—'
+    ])
+
+    ;(doc as any).autoTable({
+      startY: 42,
+      head: [['Espécie', 'Total', 'Espera Média', 'Finalizados', 'Atendimento Médio']],
+      body: tableData,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [45, 58, 45] },
+      margin: { left: 14 }
+    })
+
+    doc.setFontSize(8)
+    doc.setTextColor(150)
+    doc.text('* Espera média: tempo entre cadastro e chamada. Atendimento médio: tempo entre cadastro e finalização.', 14, doc.internal.pageSize.height - 10)
+
+    doc.save(`relatorio-hovet-${MESES[month]}-${year}.pdf`)
   }
 
   const icone = (especie: string) =>
@@ -139,6 +189,25 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
             {loading ? "Gerando..." : "Gerar"}
           </button>
         </div>
+
+        {data && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <button onClick={exportCSV} style={{
+              padding: "8px 16px", border: "1px solid #e5e7eb", borderRadius: 8, cursor: "pointer",
+              fontWeight: 600, fontSize: "0.82rem", background: "#fff", color: "#374151",
+              display: "flex", alignItems: "center", gap: 6
+            }}>
+              📥 CSV
+            </button>
+            <button onClick={exportPDF} style={{
+              padding: "8px 16px", border: "1px solid #e5e7eb", borderRadius: 8, cursor: "pointer",
+              fontWeight: 600, fontSize: "0.82rem", background: "#fff", color: "#374151",
+              display: "flex", alignItems: "center", gap: 6
+            }}>
+              📄 PDF
+            </button>
+          </div>
+        )}
 
         {data && (
           <>

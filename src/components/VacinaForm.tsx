@@ -1,17 +1,18 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import type { Vacina } from "../types"
-import { createVacina } from "../core/ehr"
+import { createVacina, updateVacina } from "../core/ehr"
 import { X } from "lucide-react"
 
 interface VacinaFormProps {
   patientId: string
   unidade?: string
+  vacina?: Vacina
   onSave: (vacina: Vacina) => void
   onClose: () => void
 }
 
-export default function VacinaForm({ patientId, unidade = '', onSave, onClose }: VacinaFormProps) {
+export default function VacinaForm({ patientId, unidade = '', vacina, onSave, onClose }: VacinaFormProps) {
   const [nome, setNome] = useState("")
   const [dataAplicacao, setDataAplicacao] = useState(new Date().toISOString().split('T')[0])
   const [dataProxima, setDataProxima] = useState("")
@@ -19,21 +20,42 @@ export default function VacinaForm({ patientId, unidade = '', onSave, onClose }:
   const [veterinario, setVeterinario] = useState("")
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => {
+    if (vacina) {
+      setNome(vacina.nome || '')
+      setDataAplicacao(vacina.dataAplicacao || '')
+      setDataProxima(vacina.dataProxima || '')
+      setLote(vacina.lote || '')
+      setVeterinario(vacina.veterinario || '')
+    }
+  }, [vacina])
+
   const handleSave = async () => {
     if (!nome.trim() || !dataAplicacao) return
     setSaving(true)
-    const result = await createVacina({
-      id: '',
-      patientId,
-      nome: nome.trim(),
-      dataAplicacao,
-      dataProxima: dataProxima || undefined,
-      lote: lote.trim() || undefined,
-      veterinario: veterinario.trim() || undefined,
-      unidade
-    })
+    if (vacina?.id) {
+      await updateVacina(vacina.id, {
+        nome: nome.trim(),
+        dataAplicacao,
+        dataProxima: dataProxima || undefined,
+        lote: lote.trim() || undefined,
+        veterinario: veterinario.trim() || undefined
+      })
+      onSave({ ...vacina, nome: nome.trim(), dataAplicacao })
+    } else {
+      const result = await createVacina({
+        id: '',
+        patientId,
+        nome: nome.trim(),
+        dataAplicacao,
+        dataProxima: dataProxima || undefined,
+        lote: lote.trim() || undefined,
+        veterinario: veterinario.trim() || undefined,
+        unidade
+      })
+      onSave(result)
+    }
     setSaving(false)
-    onSave(result)
   }
 
   const inputStyle: React.CSSProperties = {
@@ -50,7 +72,7 @@ export default function VacinaForm({ patientId, unidade = '', onSave, onClose }:
     <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={onClose}>
       <div className="antigravity-card" onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 480, padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>Nova Vacina</h2>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--color-primary)" }}>{vacina ? 'Editar Vacina' : 'Nova Vacina'}</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
             <X size={22} />
           </button>
@@ -87,7 +109,7 @@ export default function VacinaForm({ patientId, unidade = '', onSave, onClose }:
           <button className="btn-magnetic btn-secondary" onClick={onClose} style={{ padding: "10px 20px" }}>Cancelar</button>
           <button className="btn-magnetic" onClick={handleSave} disabled={saving || !nome.trim()}
             style={{ padding: "10px 24px", opacity: saving || !nome.trim() ? 0.5 : 1 }}>
-            {saving ? "Salvando..." : "Salvar"}
+            {saving ? "Salvando..." : (vacina ? "Atualizar" : "Salvar")}
           </button>
         </div>
       </div>

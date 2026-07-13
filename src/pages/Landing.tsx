@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import Footer from "../components/Footer"
 
 const features = [
   {
@@ -139,8 +140,8 @@ const howItWorks = [
   {
     step: 1,
     icon: ClipboardList,
-    title: "Cadastre sua clínica",
-    desc: "Crie sua conta em segundos. Sem papelada, sem burocracia — apenas preencha os dados básicos e pronto."
+    title: "Fale com nosso time",
+    desc: "Entre em contato com nosso time de vendas, conheça o sistema e comece a usar."
   },
   {
     step: 2,
@@ -1150,7 +1151,7 @@ export default function Landing() {
                     const LinkIcon = link.icon
                     return (
                     <motion.a
-                      key={link.href}
+                      key={`${member.name}-${j}`}
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1449,168 +1450,26 @@ export default function Landing() {
               Vamos transformar sua clínica?
             </h2>
             <p className="text-white/50 max-w-md mx-auto text-sm leading-relaxed mb-8">
-              Cadastre-se agora e comece a usar o VetHub de graça. Sem compromisso, sem cartão de crédito.
+              Fale com nosso time de vendas e descubra como o VetHub pode transformar sua clínica.
             </p>
-            <motion.button
+            <motion.a
+              href="https://wa.me/5500000000000"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => navigate("/login")}
               className="group inline-flex items-center gap-2.5 bg-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-xl"
               style={{ color: "#2d3a2d" }}
             >
-              Começar agora
+              Falar com vendas
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
+            </motion.a>
           </div>
         </FadeInView>
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="relative overflow-hidden" style={{ background: "#e8e6e0", borderTop: "1px solid rgba(0,0,0,0.04)" }}>
-        <style>{`
-          @keyframes floatParticle {
-            0% { transform: translateY(0) scale(1); opacity: 0.2; }
-            100% { transform: translateY(-24px) scale(1.3); opacity: 0.4; }
-          }
-        `}</style>
-
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                width: `${2 + (i % 2) * 2}px`,
-                height: `${2 + (i % 2) * 2}px`,
-                background: "rgba(107,142,107,0.2)",
-                left: `${10 + i * 15}%`,
-                top: `${20 + (i * 12) % 60}%`,
-                animation: `floatParticle ${3 + i * 0.5}s ease-in-out ${i * 0.4}s infinite alternate`,
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(107,142,107,0.12)" }}>
-                  <PawPrint className="w-4 h-4" style={{ color: "#6b8e6b" }} />
-                </div>
-                <span className="text-[#2d3a2d] font-semibold text-sm">VetHub</span>
-              </div>
-              <p className="text-[#2d3a2d]/35 text-xs leading-relaxed mb-5">
-                Sistema de gestão veterinária desenvolvido por estudantes de NSI para transformar o atendimento em clínicas de todo o Brasil.
-              </p>
-              {/* Newsletter */}
-              <div>
-                <p className="text-[#2d3a2d]/40 text-xs font-medium mb-2">Receba novidades</p>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    placeholder="Seu email"
-                    className="flex-1 px-3 py-2 rounded-lg text-xs outline-none"
-                    style={{ background: "rgba(107,142,107,0.06)", border: "1px solid rgba(107,142,107,0.1)", color: "#2d3a2d" }}
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-3 py-2 rounded-lg text-xs font-medium"
-                    style={{ background: "#6b8e6b", color: "white" }}
-                  >
-                    <Send className="w-3 h-3" />
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-
-            {[
-              {
-                title: "Produto",
-                links: [
-                  { label: "Funcionalidades", id: "funcionalidades" },
-                  { label: "Como Funciona", id: "como-funciona" },
-                  { label: "Preços", id: "precos" },
-                  { label: "FAQ", id: "faq" },
-                ]
-              },
-              {
-                title: "Empresa",
-                links: [
-                  { label: "Quem Somos", id: "quem-somos" },
-                  { label: "Contato", id: "contato" },
-                  { label: "Blog", href: "#" },
-                ]
-              },
-              {
-                title: "Redes",
-                links: [
-                  { label: "GitHub", href: "https://github.com/vihisantos" },
-                  { label: "Portfolio Vitor", href: "https://vihisantos.github.io/My.Portfolio/" },
-                  { label: "Portfolio Ingrid", href: "https://ingridbrito.dev" },
-                ]
-              },
-            ].map((col) => (
-              <motion.div
-                key={col.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-              >
-                <h4 className="text-[#2d3a2d]/50 text-xs font-semibold uppercase tracking-widest mb-4">{col.title}</h4>
-                <ul className="space-y-3">
-                  {col.links.map((link: { label: string; id?: string; href?: string }) => (
-                    <li key={link.label}>
-                      <motion.button
-                        whileHover={{ x: 3 }}
-                        onClick={() => {
-                          if ("id" in link && link.id) scrollTo(link.id)
-                          else if ("href" in link && link.href) window.open(link.href, "_blank")
-                        }}
-                        className="text-[#2d3a2d]/30 hover:text-[#2d3a2d]/60 text-sm transition-colors duration-200"
-                      >
-                        {link.label}
-                      </motion.button>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative z-10 border-t border-black/5 py-6 px-6">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[#2d3a2d]/25 text-xs text-center sm:text-left">
-              &copy; {new Date().getFullYear()} VetHub. Feito com dedicação por{" "}
-              <a href="https://vihisantos.github.io/My.Portfolio/" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-[#2d3a2d]/50 transition-colors">Vitor Santos</a>
-              {" "}&{" "}
-              <a href="https://ingridbrito.dev" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-[#2d3a2d]/50 transition-colors">Ingrid Brito</a>
-              .
-            </p>
-            <p className="text-[#2d3a2d]/15 text-[11px] tracking-widest">v 1.0.0</p>
-            <div className="flex items-center gap-4">
-              {[Github, Linkedin, Mail].map((Icon, i) => (
-                <motion.a
-                  key={i}
-                  href="#"
-                  whileHover={{ y: -2, scale: 1.1 }}
-                  className="transition-colors"
-                  style={{ color: "rgba(45,58,45,0.2)" }}
-                >
-                  <Icon className="w-4 h-4" />
-                </motion.a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* ===== BACK TO TOP ===== */}
       <AnimatePresence>

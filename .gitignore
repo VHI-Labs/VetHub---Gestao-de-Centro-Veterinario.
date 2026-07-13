@@ -66,6 +66,9 @@ coverage/
 # Supabase migrations
 supabase-*.sql
 
+# Supabase local
+supa/
+
 # Docs
 docs/
 
@@ -74,3 +77,5 @@ docs/
 .tmp/
 .parcel-cache/
 *.local
+*.tmp
+.mimocode/

@@ -9,7 +9,9 @@ interface AuthContextType {
   funcoes: string[]
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
+  signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   refreshProfile: () => Promise<void>
 }
 
@@ -92,6 +94,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error }
   }
 
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({ email, password })
+    return { error }
+  }
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/reset-password'
+    })
+    return { error }
+  }
+
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
@@ -101,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, role, unidade, funcoes, loading, signIn, signOut, refreshProfile: () => user ? fetchProfile(user.id) : Promise.resolve() }}>
+    <AuthContext.Provider value={{ user, role, unidade, funcoes, loading, signIn, signUp, signOut, resetPassword, refreshProfile: () => user ? fetchProfile(user.id) : Promise.resolve() }}>
       {children}
     </AuthContext.Provider>
   )
