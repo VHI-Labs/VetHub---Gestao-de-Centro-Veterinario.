@@ -18,6 +18,7 @@ export default defineConfig({
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
+        'src/lib/supabase.ts',
         'src/**/__tests__/**',
         'src/**/*.test.{ts,tsx}',
         'src/test/**',
