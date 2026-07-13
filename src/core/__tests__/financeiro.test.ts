@@ -34,34 +34,8 @@ vi.mock('../ehr', () => ({
 }))
 
 import { supabase } from '../../lib/supabase'
+import { makeChain, makeErrorChain } from '../../test/mocks'
 const mockFrom = supabase.from as ReturnType<typeof vi.fn>
-
-function mockChain(resolvedData: unknown = []) {
-  const resolveValue = { data: resolvedData, error: null }
-  const promise = Promise.resolve(resolveValue)
-  const chain = {
-    select: vi.fn(() => chain),
-    insert: vi.fn(() => chain),
-    update: vi.fn(() => chain),
-    delete: vi.fn(() => chain),
-    eq: vi.fn(() => chain),
-    neq: vi.fn(() => chain),
-    or: vi.fn(() => chain),
-    order: vi.fn(() => chain),
-    limit: vi.fn(() => chain),
-    single: vi.fn(() => chain),
-    gte: vi.fn(() => chain),
-    lte: vi.fn(() => chain),
-    match: vi.fn(() => chain),
-    not: vi.fn(() => chain),
-    in: vi.fn(() => chain),
-    contains: vi.fn(() => chain),
-    then: promise.then.bind(promise),
-    catch: promise.catch.bind(promise),
-    finally: promise.finally.bind(promise),
-  }
-  return chain
-}
 
 describe('searchServicos', () => {
   beforeEach(() => {
@@ -69,7 +43,7 @@ describe('searchServicos', () => {
   })
 
   it('should return servicos list', async () => {
-    mockFrom.mockReturnValue(mockChain([
+    mockFrom.mockReturnValue(makeChain([
       { id: 'srv-1', nome: 'Consulta', preco: 150, ativo: true },
       { id: 'srv-2', nome: 'Vacina V10', preco: 80, ativo: true },
     ]))
@@ -80,13 +54,7 @@ describe('searchServicos', () => {
   })
 
   it('should return empty on error', async () => {
-    const promise = Promise.resolve({ data: null, error: new Error('Err') })
-    const errChain = {
-      select: vi.fn(() => errChain), eq: vi.fn(() => errChain), or: vi.fn(() => errChain),
-      order: vi.fn(() => errChain), limit: vi.fn(() => errChain),
-      then: promise.then.bind(promise), catch: promise.catch.bind(promise), finally: promise.finally.bind(promise),
-    }
-    mockFrom.mockReturnValue(errChain)
+    mockFrom.mockReturnValue(makeErrorChain())
     const result = await searchServicos('', '')
     expect(result).toEqual([])
   })
@@ -98,7 +66,7 @@ describe('createServico', () => {
   })
 
   it('should create and return servico', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     const result = await createServico({
       id: '', nome: 'Raio-X', preco: 200, ativo: true,
     })
@@ -114,7 +82,7 @@ describe('updateServico', () => {
   })
 
   it('should update servico', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     await expect(updateServico('srv-1', { preco: 250 })).resolves.not.toThrow()
   })
 })
@@ -125,7 +93,7 @@ describe('deleteServico', () => {
   })
 
   it('should soft delete servico', async () => {
-    mockFrom.mockReturnValue(mockChain({ id: 'srv-1' }))
+    mockFrom.mockReturnValue(makeChain({ id: 'srv-1' }))
     await expect(deleteServico('srv-1')).resolves.not.toThrow()
   })
 })
@@ -136,7 +104,7 @@ describe('getFaturas', () => {
   })
 
   it('should return faturas', async () => {
-    mockFrom.mockReturnValue(mockChain([
+    mockFrom.mockReturnValue(makeChain([
       { id: 'fat-1', paciente_id: 'pac-1', status: 'Aberta', valor_total: 300, valor_pago: 0 },
       { id: 'fat-2', paciente_id: 'pac-2', status: 'Paga', valor_total: 150, valor_pago: 150 },
     ]))
@@ -147,7 +115,7 @@ describe('getFaturas', () => {
   })
 
   it('should filter by status', async () => {
-    mockFrom.mockReturnValue(mockChain([]))
+    mockFrom.mockReturnValue(makeChain([]))
     await getFaturas('', 'Aberta')
     expect(mockFrom).toHaveBeenCalledWith('faturas')
   })
@@ -159,19 +127,14 @@ describe('getFatura', () => {
   })
 
   it('should return single fatura', async () => {
-    mockFrom.mockReturnValue(mockChain({ id: 'fat-1', paciente_id: 'pac-1', status: 'Aberta', valor_total: 300, valor_pago: 0 }))
+    mockFrom.mockReturnValue(makeChain({ id: 'fat-1', paciente_id: 'pac-1', status: 'Aberta', valor_total: 300, valor_pago: 0 }))
     const result = await getFatura('fat-1')
     expect(result).not.toBeNull()
     expect(result!.status).toBe('Aberta')
   })
 
   it('should return null on error', async () => {
-    const promise = Promise.resolve({ data: null, error: new Error('Err') })
-    const chain = {
-      select: vi.fn(() => chain), eq: vi.fn(() => chain), single: vi.fn(() => chain),
-      then: promise.then.bind(promise), catch: promise.catch.bind(promise), finally: promise.finally.bind(promise),
-    }
-    mockFrom.mockReturnValue(chain)
+    mockFrom.mockReturnValue(makeErrorChain())
     const result = await getFatura('fat-1')
     expect(result).toBeNull()
   })
@@ -183,7 +146,7 @@ describe('createFatura', () => {
   })
 
   it('should create fatura', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     const result = await createFatura({
       id: '', pacienteId: 'pac-1', status: 'Aberta', valorTotal: 400, valorPago: 0,
     })
@@ -198,7 +161,7 @@ describe('updateFatura', () => {
   })
 
   it('should update fatura', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     await expect(updateFatura('fat-1', { status: 'Paga' })).resolves.not.toThrow()
   })
 })
@@ -209,7 +172,7 @@ describe('deleteFatura', () => {
   })
 
   it('should delete fatura', async () => {
-    mockFrom.mockReturnValue(mockChain({ id: 'fat-1' }))
+    mockFrom.mockReturnValue(makeChain({ id: 'fat-1' }))
     await expect(deleteFatura('fat-1')).resolves.not.toThrow()
   })
 })
@@ -220,7 +183,7 @@ describe('getItensByFatura', () => {
   })
 
   it('should return itens', async () => {
-    mockFrom.mockReturnValue(mockChain([
+    mockFrom.mockReturnValue(makeChain([
       { id: 'fi-1', fatura_id: 'fat-1', descricao: 'Consulta', quantidade: 1, preco_unitario: 150, subtotal: 150 },
     ]))
     const result = await getItensByFatura('fat-1')
@@ -235,7 +198,7 @@ describe('addFaturaItem', () => {
   })
 
   it('should add item to fatura', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     const result = await addFaturaItem({
       faturaId: 'fat-1', descricao: 'Exame', quantidade: 1, precoUnitario: 80, subtotal: 80,
     })
@@ -250,7 +213,7 @@ describe('removeFaturaItem', () => {
   })
 
   it('should remove item', async () => {
-    mockFrom.mockReturnValue(mockChain())
+    mockFrom.mockReturnValue(makeChain())
     await expect(removeFaturaItem('fi-1')).resolves.not.toThrow()
   })
 })
@@ -261,7 +224,7 @@ describe('getPagamentosByFatura', () => {
   })
 
   it('should return pagamentos', async () => {
-    mockFrom.mockReturnValue(mockChain([
+    mockFrom.mockReturnValue(makeChain([
       { id: 'pgt-1', fatura_id: 'fat-1', valor: 150, metodo: 'Pix' },
     ]))
     const result = await getPagamentosByFatura('fat-1')
@@ -277,9 +240,9 @@ describe('addPagamento', () => {
 
   it('should add pagamento and update fatura', async () => {
     mockFrom
-      .mockReturnValueOnce(mockChain()) // insert pagamento
-      .mockReturnValueOnce(mockChain({ valor_pago: 100, valor_total: 300 })) // select fatura
-      .mockReturnValueOnce(mockChain()) // update fatura
+      .mockReturnValueOnce(makeChain()) // insert pagamento
+      .mockReturnValueOnce(makeChain({ valor_pago: 100, valor_total: 300 })) // select fatura
+      .mockReturnValueOnce(makeChain()) // update fatura
     const result = await addPagamento({
       faturaId: 'fat-1', valor: 200, metodo: 'Pix', dataPagamento: new Date().toISOString(),
     })
@@ -295,12 +258,12 @@ describe('getFinanceiroDashboard', () => {
 
   it('should return dashboard metrics', async () => {
     mockFrom
-      .mockReturnValueOnce(mockChain([
+      .mockReturnValueOnce(makeChain([
         { id: 'fat-1', status: 'Paga', valor_total: 300, valor_pago: 300 },
         { id: 'fat-2', status: 'Aberta', valor_total: 200, valor_pago: 0 },
         { id: 'fat-3', status: 'Parcial', valor_total: 400, valor_pago: 100 },
       ]))
-      .mockReturnValueOnce(mockChain([
+      .mockReturnValueOnce(makeChain([
         { id: 'pgt-1', fatura_id: 'fat-1', valor: 300, metodo: 'Pix' },
       ]))
     const result = await getFinanceiroDashboard('')
@@ -311,13 +274,7 @@ describe('getFinanceiroDashboard', () => {
   })
 
   it('should return zeros on error', async () => {
-    const errPromise = Promise.resolve({ data: null, error: new Error('Err') })
-    const errChain = {
-      select: vi.fn(() => errChain), eq: vi.fn(() => errChain),
-      order: vi.fn(() => errChain), limit: vi.fn(() => errChain),
-      then: errPromise.then.bind(errPromise), catch: errPromise.catch.bind(errPromise), finally: errPromise.finally.bind(errPromise),
-    }
-    mockFrom.mockReturnValue(errChain)
+    mockFrom.mockReturnValue(makeErrorChain())
     const result = await getFinanceiroDashboard('')
     expect(result.totalReceita).toBe(0)
     expect(result.totalAberto).toBe(0)
@@ -330,7 +287,7 @@ describe('getFechamentoCaixa', () => {
   })
 
   it('should return fechamento by metodo', async () => {
-    mockFrom.mockReturnValue(mockChain([
+    mockFrom.mockReturnValue(makeChain([
       { metodo: 'Pix', valor: 300 },
       { metodo: 'Dinheiro', valor: 150 },
       { metodo: 'Pix', valor: 200 },

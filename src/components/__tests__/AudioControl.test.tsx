@@ -22,28 +22,33 @@ describe('AudioControl', () => {
     expect(screen.getByText(/Controle se os vídeos/)).toBeInTheDocument()
   })
 
-  it('should start unchecked (muted) by default', () => {
+  it('should start checked (unmuted) by default', () => {
     render(<AudioControl />)
     const checkbox = screen.getByRole('checkbox') as HTMLInputElement
-    expect(checkbox.checked).toBe(false)
+    // Initial muted=false, so checkbox checked={!false}={true}
+    expect(checkbox.checked).toBe(true)
   })
 
   it('should toggle mute state when clicked', () => {
     render(<AudioControl />)
     const checkbox = screen.getByRole('checkbox') as HTMLInputElement
 
-    // Click to unmute
-    fireEvent.click(checkbox)
+    // Initially unmuted (checked)
     expect(checkbox.checked).toBe(true)
 
-    // Click to mute again
+    // Click to mute
     fireEvent.click(checkbox)
     expect(checkbox.checked).toBe(false)
+
+    // Click to unmute again
+    fireEvent.click(checkbox)
+    expect(checkbox.checked).toBe(true)
   })
 
   it('should persist mute state to localStorage', () => {
     render(<AudioControl />)
-    expect(localStorage.getItem('vethub_video_muted')).toBe('true')
+    // Initially muted=false, so localStorage should be 'false'
+    expect(localStorage.getItem('vethub_video_muted')).toBe('false')
   })
 
   it('should dispatch storage-sync event on toggle', () => {

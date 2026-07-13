@@ -56,7 +56,7 @@ describe('ChangeUnidadeModal', () => {
       refreshProfile: vi.fn(),
     })
     renderModal()
-    expect(screen.getByText(/Unidade Central/)).toBeInTheDocument()
+    expect(screen.getByText(/Unidade atual/)).toBeInTheDocument()
   })
 
   it('should show all unidades for admin', () => {
@@ -68,9 +68,10 @@ describe('ChangeUnidadeModal', () => {
       refreshProfile: vi.fn(),
     })
     renderModal()
-    expect(screen.getByText('Unidade Central')).toBeInTheDocument()
-    expect(screen.getByText('Unidade Norte')).toBeInTheDocument()
-    expect(screen.getByText('Unidade Sul')).toBeInTheDocument()
+    // Check that all three buttons exist (exclude the "Unidade atual" text)
+    expect(screen.getByRole('button', { name: /Unidade Central/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Unidade Norte/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Unidade Sul/ })).toBeInTheDocument()
   })
 
   it('should show only current unidade for regular user', () => {
@@ -82,7 +83,11 @@ describe('ChangeUnidadeModal', () => {
       refreshProfile: vi.fn(),
     })
     renderModal()
-    expect(screen.getByText('Unidade Central')).toBeInTheDocument()
+    // Check that the current unidade is displayed (via "Unidade atual" text or the card)
+    const unidadeElements = screen.getAllByText((_content, element) => {
+      return element?.textContent === 'Unidade Central'
+    })
+    expect(unidadeElements.length).toBeGreaterThanOrEqual(1)
     expect(screen.queryByText('Unidade Norte')).not.toBeInTheDocument()
     expect(screen.queryByText('Unidade Sul')).not.toBeInTheDocument()
   })

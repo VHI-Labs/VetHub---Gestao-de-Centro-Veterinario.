@@ -1,6 +1,107 @@
 import { vi } from 'vitest'
 
-/** Mock Supabase client for testing */
+// ── Supabase chain builders ─────────────────────────────────
+
+/**
+ * Build a self-referencing thenable Supabase chain.
+ * All methods return `this` so you can chain `.select().eq().order()`.
+ * Awaiting resolves to `{ data: resolvedData, error: null }`.
+ */
+export function makeChain<T = unknown>(resolvedData: T = [] as unknown as T) {
+  const p = Promise.resolve({ data: resolvedData, error: null })
+  const chain: Record<string, unknown> = {
+    select: vi.fn(() => chain),
+    insert: vi.fn(() => chain),
+    update: vi.fn(() => chain),
+    delete: vi.fn(() => chain),
+    upsert: vi.fn(() => chain),
+    eq: vi.fn(() => chain),
+    neq: vi.fn(() => chain),
+    or: vi.fn(() => chain),
+    like: vi.fn(() => chain),
+    order: vi.fn(() => chain),
+    limit: vi.fn(() => chain),
+    single: vi.fn(() => chain),
+    gte: vi.fn(() => chain),
+    lt: vi.fn(() => chain),
+    lte: vi.fn(() => chain),
+    match: vi.fn(() => chain),
+    not: vi.fn(() => chain),
+    in: vi.fn(() => chain),
+    contains: vi.fn(() => chain),
+    containedBy: vi.fn(() => chain),
+    overlaps: vi.fn(() => chain),
+    filter: vi.fn(() => chain),
+    textSearch: vi.fn(() => chain),
+    then: p.then.bind(p),
+    catch: p.catch.bind(p),
+    finally: p.finally.bind(p),
+  }
+  return chain
+}
+
+/**
+ * Build an error chain – awaiting resolves to `{ data: null, error: Error }`.
+ * All methods return `this` for chaining.
+ */
+export function makeErrorChain(msg = 'Err') {
+  const p = Promise.resolve({ data: null, error: new Error(msg) })
+  const chain: Record<string, unknown> = {
+    select: vi.fn(() => chain),
+    insert: vi.fn(() => chain),
+    update: vi.fn(() => chain),
+    delete: vi.fn(() => chain),
+    upsert: vi.fn(() => chain),
+    eq: vi.fn(() => chain),
+    neq: vi.fn(() => chain),
+    or: vi.fn(() => chain),
+    like: vi.fn(() => chain),
+    order: vi.fn(() => chain),
+    limit: vi.fn(() => chain),
+    single: vi.fn(() => chain),
+    gte: vi.fn(() => chain),
+    lt: vi.fn(() => chain),
+    lte: vi.fn(() => chain),
+    match: vi.fn(() => chain),
+    not: vi.fn(() => chain),
+    in: vi.fn(() => chain),
+    contains: vi.fn(() => chain),
+    containedBy: vi.fn(() => chain),
+    overlaps: vi.fn(() => chain),
+    filter: vi.fn(() => chain),
+    textSearch: vi.fn(() => chain),
+    then: p.then.bind(p),
+    catch: p.catch.bind(p),
+    finally: p.finally.bind(p),
+  }
+  return chain
+}
+
+/**
+ * Build a chain for Supabase count queries (`{ count: 'exact', head: true }`).
+ * Awaiting resolves to `{ count, data: null, error: null }`.
+ */
+export function makeCountChain(count: number) {
+  const p = Promise.resolve({ count, data: null, error: null })
+  const chain: Record<string, unknown> = {
+    select: vi.fn(() => chain),
+    like: vi.fn(() => chain),
+    eq: vi.fn(() => chain),
+    order: vi.fn(() => chain),
+    limit: vi.fn(() => chain),
+    match: vi.fn(() => chain),
+    not: vi.fn(() => chain),
+    lte: vi.fn(() => chain),
+    then: p.then.bind(p),
+    catch: p.catch.bind(p),
+    finally: p.finally.bind(p),
+  }
+  return chain
+}
+
+// ── Legacy (kept for backward compatibility) ────────────────
+
+/** Mock Supabase client for testing (non-thenable) */
 export function createMockSupabase() {
   return {
     from: vi.fn().mockReturnThis(),

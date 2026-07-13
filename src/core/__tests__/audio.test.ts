@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { formatSenhaForSpeech, buildCallSpeechText } from '../audio'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import {
+  formatSenhaForSpeech,
+  buildCallSpeechText,
+  anunciarPaciente,
+  primeAudioSystem,
+  initAutomaticAudioSystem,
+} from '../audio'
 
 describe('formatSenhaForSpeech', () => {
   it('should convert digits to spoken words', () => {
@@ -65,5 +71,96 @@ describe('buildCallSpeechText', () => {
     const fallback = { senha: 'A-999', local: 'Consulta' }
     const result = buildCallSpeechText(petData, fallback)
     expect(result).toBe('Senha N zero zero um. Comparecer ao Triagem.')
+  })
+})
+
+describe('anunciarPaciente', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.useFakeTimers()
+    // Mock speechSynthesis
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        cancel: vi.fn(),
+        speak: vi.fn(),
+        getVoices: vi.fn().mockReturnValue([]),
+        onvoiceschanged: null,
+      },
+      writable: true,
+      configurable: true,
+    })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+    delete (window as any).speechSynthesis
+  })
+
+  it('should not throw with petData (speak may not run in jsdom)', async () => {
+    await expect(
+      anunciarPaciente({ senha: 'N001', localDirecionado: 'Triagem' }, { senha: '', local: '' })
+    ).resolves.not.toThrow()
+  })
+
+  it('should not throw with fallback', async () => {
+    await expect(anunciarPaciente(null, { senha: 'A001', local: 'Consulta' })).resolves.not.toThrow()
+  })
+
+  it('should not throw without speechSynthesis', async () => {
+    delete (window as any).speechSynthesis
+    await expect(anunciarPaciente(null, {})).resolves.not.toThrow()
+  })
+})
+
+describe('primeAudioSystem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        cancel: vi.fn(),
+        speak: vi.fn(),
+        getVoices: vi.fn().mockReturnValue([]),
+        onvoiceschanged: null,
+      },
+      writable: true,
+      configurable: true,
+    })
+  })
+
+  afterEach(() => {
+    delete (window as any).speechSynthesis
+  })
+
+  it('should not throw when priming', () => {
+    expect(() => primeAudioSystem()).not.toThrow()
+  })
+
+  it('should not throw without speechSynthesis', () => {
+    delete (window as any).speechSynthesis
+    expect(() => primeAudioSystem()).not.toThrow()
+  })
+
+  it('should only prime once (no error on second call)', () => {
+    primeAudioSystem()
+    expect(() => primeAudioSystem()).not.toThrow()
+  })
+})
+
+describe('initAutomaticAudioSystem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubGlobal('addEventListener', vi.fn())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('should add event listeners for user interaction', () => {
+    initAutomaticAudioSystem()
+    expect(window.addEventListener).toHaveBeenCalledWith('click', expect.any(Function), { once: true })
+    expect(window.addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function), { once: true })
+    expect(window.addEventListener).toHaveBeenCalledWith('touchstart', expect.any(Function), { once: true })
   })
 })

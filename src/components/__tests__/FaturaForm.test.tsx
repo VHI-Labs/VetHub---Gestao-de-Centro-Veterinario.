@@ -21,15 +21,17 @@ const mockSearchServicos = searchServicos as ReturnType<typeof vi.fn>
 const mockAddFaturaItem = addFaturaItem as ReturnType<typeof vi.fn>
 const mockUseAuth = useAuth as ReturnType<typeof vi.fn>
 
-function renderForm(props: Record<string, unknown> = {}) {
+async function renderForm(props: Record<string, unknown> = {}) {
   const onSave = vi.fn()
   const onClose = vi.fn()
-  const result = render(
+  render(
     <MemoryRouter>
       <FaturaForm pacienteId="pac-1" onSave={onSave} onClose={onClose} {...props} />
     </MemoryRouter>
   )
-  return { ...result, onSave, onClose }
+  // Wait for async servicos to load to avoid act() warnings
+  await screen.findByText('Selecione...')
+  return { onSave, onClose }
 }
 
 describe('FaturaForm', () => {
@@ -46,35 +48,35 @@ describe('FaturaForm', () => {
     mockAddFaturaItem.mockResolvedValue({ id: 'fi-new', faturaId: 'fat-new', descricao: 'Teste', quantidade: 1, precoUnitario: 100, subtotal: 100, criadoEm: '' })
   })
 
-  it('should render form title', () => {
-    renderForm()
+  it('should render form title', async () => {
+    await renderForm()
     expect(screen.getByText('Nova Fatura')).toBeInTheDocument()
   })
 
-  it('should have servico select', () => {
-    renderForm()
+  it('should have servico select', async () => {
+    await renderForm()
     expect(screen.getByText('Selecione...')).toBeInTheDocument()
   })
 
-  it('should have Adicionar button', () => {
-    renderForm()
+  it('should have Adicionar button', async () => {
+    await renderForm()
     expect(screen.getByText('Adicionar')).toBeInTheDocument()
   })
 
-  it('should call onClose when Cancelar clicked', () => {
-    const { onClose } = renderForm()
+  it('should call onClose when Cancelar clicked', async () => {
+    const { onClose } = await renderForm()
     fireEvent.click(screen.getByText('Cancelar'))
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('should disable Criar Fatura without items', () => {
-    renderForm()
+  it('should disable Criar Fatura without items', async () => {
+    await renderForm()
     const criarBtn = screen.getByText('Criar Fatura')
     expect(criarBtn.closest('button')).toBeDisabled()
   })
 
   it('should create fatura with items', async () => {
-    const { onSave } = renderForm()
+    const { onSave } = await renderForm()
 
     // Select a serviço and add
     const select = screen.getByRole('combobox')
@@ -82,7 +84,7 @@ describe('FaturaForm', () => {
     fireEvent.click(screen.getByText('Adicionar'))
 
     await waitFor(() => {
-      expect(screen.getByText(/R\$/)).toBeInTheDocument()
+      expect(screen.getByText(/Total: R\$/)).toBeInTheDocument()
     })
   })
 })

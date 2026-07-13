@@ -3,6 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import MonthlyReport from '../MonthlyReport'
 
+vi.mock('lucide-react', () => ({
+  X: () => <span>✕</span>,
+  FileText: () => <span>📄</span>,
+}))
+
 vi.mock('../../core/engine', () => ({
   getMonthlyReport: vi.fn(),
 }))

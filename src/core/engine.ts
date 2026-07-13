@@ -36,7 +36,8 @@ function getSpeciesEspecie(species: Species): string {
 
 export function cleanText(value: unknown, fallback = ''): string {
   if (value === undefined || value === null || value === 'undefined') return fallback
-  return String(value).trim()
+  const str = String(value).trim()
+  return str || fallback
 }
 
 export function getSpeciesLabel(species: string): string {

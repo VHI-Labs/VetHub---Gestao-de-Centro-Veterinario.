@@ -3,6 +3,13 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import UpsellBanner from '../UpsellBanner'
 
+vi.mock('lucide-react', () => ({
+  X: () => <span>✕</span>,
+  Crown: () => <span>👑</span>,
+  Clock: () => <span>⏰</span>,
+  AlertTriangle: () => <span>⚠️</span>,
+}))
+
 vi.mock('../../context/DemoContext', () => ({
   useDemo: vi.fn(),
 }))

@@ -79,3 +79,4 @@ docs/
 *.local
 *.tmp
 .mimocode/
+nul

@@ -29,7 +29,7 @@ describe('useRealtimeQueue', () => {
     const mockChannelFn = supabase.channel as ReturnType<typeof vi.fn>
     mockChannelFn.mockReturnValue(mockChannel)
     mockOn.mockReturnValue(mockChannel)
-    mockSubscribe.mockReturnValue(undefined)
+    mockSubscribe.mockReturnValue(mockChannel)
     ;(useQueueStore.getState as ReturnType<typeof vi.fn>).mockReturnValue({
       refresh: mockRefresh,
     })
