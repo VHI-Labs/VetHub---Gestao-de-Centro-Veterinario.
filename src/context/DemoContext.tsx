@@ -42,10 +42,12 @@ const PREMIUM_FEATURES = [
 const DemoContext = createContext<DemoConfig>(null!)
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
+  const { user, role } = useAuth()
   const [isDemo, setIsDemo] = useState(false)
   const [trialExpiresAt, setTrialExpiresAt] = useState<string | null>(null)
   const [counts, setCounts] = useState({ pacientes: 0, consultas: 0, medicamentos: 0, faturas: 0 })
+
+  const isAdmin = role === "admin"
 
   const fetchCounts = useCallback(async () => {
     if (!user) return
@@ -64,9 +66,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, [user])
 
   useEffect(() => {
-    if (!user) return
+    if (!user || isAdmin) return
 
-    const demoKey = `hovet_demo_${user.id}`
+    const demoKey = `vethub_demo_${user.id}`
     const stored = localStorage.getItem(demoKey)
 
     if (stored) {
@@ -83,7 +85,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     }
 
     fetchCounts()
-  }, [user, fetchCounts])
+  }, [user, isAdmin, fetchCounts])
 
   const daysRemaining = trialExpiresAt
     ? Math.max(0, Math.ceil((new Date(trialExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))

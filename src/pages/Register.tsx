@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { PawPrint, ArrowLeft, Lock, Mail } from "lucide-react"
+import { getSavedUnidade } from "./UnidadeSelection"
 
 export default function Register() {
   const navigate = useNavigate()
@@ -14,7 +15,7 @@ export default function Register() {
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    if (user) navigate("/selecionar-campus")
+    if (user) navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
   }, [user, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -88,8 +88,8 @@ export const MOCK_DASHBOARD_METRICS: EhrDashboardMetrics = {
 
 /** Sample users for AdminPage */
 export const MOCK_USERS = [
-  { id: 'user-1', email: 'admin@hovet.com', role: 'admin', unidade: 'Mooca', funcoes: [] },
-  { id: 'user-2', email: 'user@hovet.com', role: 'user', unidade: 'Paulista', funcoes: ['Recepcao', 'Fila'] },
+  { id: 'user-1', email: 'admin@vethub.com', role: 'admin', unidade: 'Mooca', funcoes: [] },
+  { id: 'user-2', email: 'user@vethub.com', role: 'user', unidade: 'Paulista', funcoes: ['Recepcao', 'Fila'] },
 ]
 
 /** Initial state for queue store */

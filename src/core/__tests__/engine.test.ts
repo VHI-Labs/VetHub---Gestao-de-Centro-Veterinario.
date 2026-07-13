@@ -128,8 +128,8 @@ describe('buildYoutubeEmbedUrl', () => {
     expect(url).toContain('mute=1')
   })
 
-  it('should not mute when localStorage hovet_video_muted is "false"', () => {
-    localStorage.setItem('hovet_video_muted', 'false')
+  it('should not mute when localStorage vethub_video_muted is "false"', () => {
+    localStorage.setItem('vethub_video_muted', 'false')
     const url = buildYoutubeEmbedUrl('dQw4w9WgXcQ')
     expect(url).toContain('mute=0')
   })

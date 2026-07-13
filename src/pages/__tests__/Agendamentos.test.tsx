@@ -32,7 +32,7 @@ const renderAgendamentos = () => renderPage(<Agendamentos />)
 describe('Agendamentos', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseAuth.mockReturnValue({ unidade: 'HOVET Central' })
+    mockUseAuth.mockReturnValue({ unidade: 'VetHub Central' })
     mockGetAgendamentos.mockResolvedValue(MOCK_AGENDAMENTOS)
     mockGetPatient.mockImplementation(async (id: string) => MOCK_PATIENT_MAP[id] || null)
     mockUpdateStatus.mockResolvedValue(undefined)

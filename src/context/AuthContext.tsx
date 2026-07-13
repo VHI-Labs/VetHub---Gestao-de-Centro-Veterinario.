@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
 import { supabase } from "../lib/supabase"
 import type { User, AuthError } from "@supabase/supabase-js"
+import { clearSavedUnidade } from "../pages/UnidadeSelection"
 
 interface AuthContextType {
   user: User | null
@@ -112,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole("")
     setUnidade("")
     setFuncoes([])
+    clearSavedUnidade()
   }
 
   return (

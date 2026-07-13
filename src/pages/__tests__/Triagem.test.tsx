@@ -36,8 +36,8 @@ vi.mock('react-fluentui-emoji/lib/modern/icons/IconMPawPrints', () => ({
 }))
 
 const renderTriagem = () => renderPage(<Triagem />, ['/triagem'])
-const renderTriagemWithCampus = (campus: string) =>
-  renderPage(<Triagem />, [`/triagem?campus=${campus}`])
+const renderTriagemWithUnidade = (unidade: string) =>
+  renderPage(<Triagem />, [`/triagem?unidade=${unidade}`])
 
 describe('Triagem', () => {
   beforeEach(() => {
@@ -45,24 +45,24 @@ describe('Triagem', () => {
     mockCreateTriagem.mockResolvedValue(MOCK_TRIAGEM_RESULT)
   })
 
-  it('should show campus selection when no campus is set', () => {
+  it('should show unidade selection when no unidade is set', () => {
     renderTriagem()
-    expect(screen.getByText('Selecione o Campus')).toBeInTheDocument()
-    expect(screen.getByText('Mooca')).toBeInTheDocument()
-    expect(screen.getByText('Paulista')).toBeInTheDocument()
+    expect(screen.getByText('Selecione a Unidade')).toBeInTheDocument()
+    expect(screen.getByText('Unidade Central')).toBeInTheDocument()
+    expect(screen.getByText('Unidade Norte')).toBeInTheDocument()
   })
 
-  it('should show species selection after campus is selected', async () => {
+  it('should show species selection after unidade is selected', async () => {
     renderTriagem()
-    fireEvent.click(screen.getByText('Mooca'))
+    fireEvent.click(screen.getByText('Unidade Central'))
     await waitFor(() => {
-      expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument()
+      expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument()
     })
   })
 
   it('should render species cards', async () => {
     renderTriagem()
-    fireEvent.click(screen.getByText('Mooca'))
+    fireEvent.click(screen.getByText('Unidade Central'))
     await waitFor(() => {
       expect(screen.getByText('Cão')).toBeInTheDocument()
       expect(screen.getByText('Gato')).toBeInTheDocument()
@@ -70,20 +70,20 @@ describe('Triagem', () => {
     })
   })
 
-  it('should show campus from URL query param', () => {
-    renderTriagemWithCampus('Paulista')
-    expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument()
+  it('should show unidade from URL query param', () => {
+    renderTriagemWithUnidade('Unidade Norte')
+    expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument()
   })
 
-  it('should not use URL campus if not in allowed list', () => {
-    renderTriagemWithCampus('InvalidCampus')
-    expect(screen.getByText('Selecione o Campus')).toBeInTheDocument()
+  it('should not use URL unidade if not in allowed list', () => {
+    renderTriagemWithUnidade('InvalidUnidade')
+    expect(screen.getByText('Selecione a Unidade')).toBeInTheDocument()
   })
 
   it('should show attendance options after selecting species', async () => {
-    renderTriagemWithCampus('Mooca')
+    renderTriagemWithUnidade('Unidade Central')
     await waitFor(() => {
-      expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument()
+      expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument()
     })
 
     fireEvent.click(screen.getByText('Cão'))
@@ -97,8 +97,8 @@ describe('Triagem', () => {
   })
 
   it('should go to identification step after selecting attendance type', async () => {
-    renderTriagemWithCampus('Mooca')
-    await waitFor(() => { expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument() })
+    renderTriagemWithUnidade('Unidade Central')
+    await waitFor(() => { expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Cão'))
 
     await waitFor(() => { expect(screen.getByText('Tipo de Atendimento')).toBeInTheDocument() })
@@ -110,8 +110,8 @@ describe('Triagem', () => {
   })
 
   it('should show patient search when pressing Sim', async () => {
-    renderTriagemWithCampus('Mooca')
-    await waitFor(() => { expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument() })
+    renderTriagemWithUnidade('Unidade Central')
+    await waitFor(() => { expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Cão'))
     await waitFor(() => { expect(screen.getByText('Tipo de Atendimento')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Pronto Atendimento'))
@@ -125,8 +125,8 @@ describe('Triagem', () => {
   })
 
   it('should create triagem when Não selected', async () => {
-    renderTriagemWithCampus('Mooca')
-    await waitFor(() => { expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument() })
+    renderTriagemWithUnidade('Unidade Central')
+    await waitFor(() => { expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Cão'))
     await waitFor(() => { expect(screen.getByText('Tipo de Atendimento')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Pronto Atendimento'))
@@ -141,8 +141,8 @@ describe('Triagem', () => {
   })
 
   it('should show step indicator dots after selecting species', async () => {
-    renderTriagemWithCampus('Mooca')
-    await waitFor(() => { expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument() })
+    renderTriagemWithUnidade('Unidade Central')
+    await waitFor(() => { expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument() })
 
     fireEvent.click(screen.getByText('Cão'))
 
@@ -153,8 +153,8 @@ describe('Triagem', () => {
   })
 
   it('should have a back button on step 1', async () => {
-    renderTriagemWithCampus('Mooca')
-    await waitFor(() => { expect(screen.getByText('Bem-vindo ao HOVET')).toBeInTheDocument() })
+    renderTriagemWithUnidade('Unidade Central')
+    await waitFor(() => { expect(screen.getByText('Bem-vindo ao VetHub')).toBeInTheDocument() })
     fireEvent.click(screen.getByText('Cão'))
     await waitFor(() => { expect(screen.getByText('Tipo de Atendimento')).toBeInTheDocument() })
 

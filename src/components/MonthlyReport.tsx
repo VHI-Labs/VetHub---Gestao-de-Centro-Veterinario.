@@ -19,7 +19,7 @@ interface ReportRow {
 }
 
 const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
+const UNIDADES = ["Todos", "Unidade Central", "Unidade Norte", "Unidade Sul"]
 
 function calcMinutos(d1: string, d2: string): number {
   return Math.round((new Date(d2).getTime() - new Date(d1).getTime()) / 60000)
@@ -30,14 +30,14 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
   const hoje = new Date()
   const [year, setYear] = useState(hoje.getFullYear())
   const [month, setMonth] = useState(hoje.getMonth())
-  const [reportCampus, setReportCampus] = useState(unidade === "Todos" ? "" : unidade)
+  const [reportUnidade, setReportUnidade] = useState(unidade === "Todos" ? "" : unidade)
   const [data, setData] = useState<ReportRow[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [totalGeral, setTotalGeral] = useState(0)
 
   const gerar = async () => {
     setLoading(true)
-    const u = reportCampus === "Todos" ? "" : reportCampus
+    const u = reportUnidade === "Todos" ? "" : reportUnidade
     const pets = await getMonthlyReport(year, month, u)
     setTotalGeral(pets.length)
 
@@ -78,7 +78,7 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `relatorio-hovet-${MESES[month]}-${year}.csv`
+    a.download = `relatorio-vethub-${MESES[month]}-${year}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -87,9 +87,9 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
     if (!data) return
     const doc = new jsPDF()
     doc.setFontSize(18)
-    doc.text('HOVET - Relatório Mensal', 14, 22)
+    doc.text('VetHub - Relatório Mensal', 14, 22)
     doc.setFontSize(11)
-    doc.text(`${MESES[month]} de ${year} — ${reportCampus || 'Todos os Campi'}`, 14, 30)
+    doc.text(`${MESES[month]} de ${year} — ${reportUnidade || 'Todas as Unidades'}`, 14, 30)
     doc.text(`Total de pacientes: ${totalGeral}`, 14, 36)
 
     const tableData = data.map(r => [
@@ -113,7 +113,7 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
     doc.setTextColor(150)
     doc.text('* Espera média: tempo entre cadastro e chamada. Atendimento médio: tempo entre cadastro e finalização.', 14, doc.internal.pageSize.height - 10)
 
-    doc.save(`relatorio-hovet-${MESES[month]}-${year}.pdf`)
+    doc.save(`relatorio-vethub-${MESES[month]}-${year}.pdf`)
   }
 
   const icone = (especie: string) =>
@@ -168,15 +168,15 @@ export default function MonthlyReport({ onClose }: { onClose: () => void }) {
           </select>
 
           <select
-            value={reportCampus}
-            onChange={e => setReportCampus(e.target.value)}
+            value={reportUnidade}
+            onChange={e => setReportUnidade(e.target.value)}
             style={{
               padding: "10px 14px", borderRadius: 8, border: "1px solid #e5e7eb",
               fontSize: "0.9rem", fontWeight: 600, background: "#fff", cursor: "pointer"
             }}
           >
-            <option value="Todos">Todos os Campi</option>
-            {CAMPUSES.map(c => (
+            <option value="Todos">Todas as Unidades</option>
+            {UNIDADES.map(c => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>

@@ -1,4 +1,4 @@
-let hovetAudioPrimed = false
+let vethubAudioPrimed = false
 let sharedAudioCtx: AudioContext | null = null
 
 function getAudioContext(): AudioContext {
@@ -112,8 +112,8 @@ export async function anunciarPaciente(petData: { senha?: string; localDireciona
 }
 
 export function primeAudioSystem() {
-  if (hovetAudioPrimed) return
-  hovetAudioPrimed = true
+  if (vethubAudioPrimed) return
+  vethubAudioPrimed = true
 
   try {
     const ctx = getAudioContext()

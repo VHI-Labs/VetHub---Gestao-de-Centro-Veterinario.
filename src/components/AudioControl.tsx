@@ -2,10 +2,10 @@ import { useState, useEffect } from "react"
 import { VolumeX, Volume2 } from "lucide-react"
 
 export default function AudioControl() {
-  const [muted, setMuted] = useState(() => localStorage.getItem("hovet_video_muted") === "true")
+  const [muted, setMuted] = useState(() => localStorage.getItem("vethub_video_muted") === "true")
 
   useEffect(() => {
-    localStorage.setItem("hovet_video_muted", muted ? "true" : "false")
+    localStorage.setItem("vethub_video_muted", muted ? "true" : "false")
     window.dispatchEvent(new Event("storage-sync"))
   }, [muted])
 

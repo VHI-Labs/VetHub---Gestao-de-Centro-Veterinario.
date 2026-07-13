@@ -230,7 +230,7 @@ export default function TvPanelLayout({ activeCall, history, title, icon }: TvPa
           fontSize: "1.1rem", fontWeight: 800, color: "var(--color-accent)",
           display: "flex", alignItems: "center", gap: 10, flexShrink: 0
         }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>{icon} HOVET {title.toUpperCase()}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>{icon} VetHub {title.toUpperCase()}</span>
           <span style={{
             fontWeight: 300, fontSize: "0.9rem",
             borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 10

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
 import { PawPrint, ArrowLeft, Lock } from "lucide-react"
+import { getSavedUnidade } from "./UnidadeSelection"
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -25,7 +26,7 @@ export default function ResetPassword() {
   }, [])
 
   useEffect(() => {
-    if (user) navigate("/selecionar-campus")
+    if (user) navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
   }, [user, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {

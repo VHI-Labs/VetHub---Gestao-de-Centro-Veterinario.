@@ -114,8 +114,8 @@ describe('AdminPage', () => {
     renderAdminPage()
 
     await waitFor(() => {
-      expect(screen.getByText('admin@hovet.com')).toBeInTheDocument()
-      expect(screen.getByText('user@hovet.com')).toBeInTheDocument()
+      expect(screen.getByText('admin@vethub.com')).toBeInTheDocument()
+      expect(screen.getByText('user@vethub.com')).toBeInTheDocument()
     })
   })
 
@@ -129,7 +129,7 @@ describe('AdminPage', () => {
   })
 
   it('should show permission toggles for regular users', async () => {
-    mockUseAuth.mockReturnValue({ user: { id: 'user-2', email: 'user@hovet.com' }, role: 'admin', signOut: vi.fn() })
+    mockUseAuth.mockReturnValue({ user: { id: 'user-2', email: 'user@vethub.com' }, role: 'admin', signOut: vi.fn() })
     renderAdminPage()
 
     await waitFor(() => {
@@ -193,7 +193,7 @@ describe('AdminPage', () => {
     })
   })
 
-  it('should render campus selects for users', async () => {
+  it('should render unidade selects for users', async () => {
     mockUseAuth.mockReturnValue({ user: { id: '1' }, role: 'admin', signOut: vi.fn() })
     renderAdminPage()
 

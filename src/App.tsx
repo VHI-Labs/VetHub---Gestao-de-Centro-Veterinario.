@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
-import CampusSelection from './pages/CampusSelection'
+import UnidadeSelection from './pages/UnidadeSelection'
 import Recepcao from './pages/Recepcao'
 import Triagem from './pages/Triagem'
 import ProntoAtendimento from './pages/ProntoAtendimento'
@@ -40,7 +40,7 @@ export default function App() {
   const hideFooter = ["/login", "/triagem", "/painel-caes", "/painel-gatos"].includes(location.pathname)
 
   useEffect(() => {
-    useQueueStore.getState().setCampus(unidade, role === 'admin' || role === 'coordinator')
+    useQueueStore.getState().setUnidade(unidade, role === 'admin' || role === 'coordinator')
   }, [unidade, role])
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function App() {
       <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/selecionar-campus" element={<ProtectedRoute><CampusSelection /></ProtectedRoute>} />
+      <Route path="/selecionar-unidade" element={<ProtectedRoute><UnidadeSelection /></ProtectedRoute>} />
       <Route path="/recepcao" element={<ProtectedRoute><UpsellBanner /><Recepcao /></ProtectedRoute>} />
       <Route path="/triagem" element={<Triagem />} />
       <Route path="/pronto-atendimento" element={<ProtectedRoute><ProntoAtendimento /></ProtectedRoute>} />

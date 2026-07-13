@@ -9,7 +9,7 @@ import IconMCatFace from "react-fluentui-emoji/lib/modern/icons/IconMCatFace"
 import IconMBird from "react-fluentui-emoji/lib/modern/icons/IconMBird"
 import IconMPawPrints from "react-fluentui-emoji/lib/modern/icons/IconMPawPrints"
 
-const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
+const UNIDADES = ["Unidade Central", "Unidade Norte", "Unidade Sul"]
 
 type Step = 1 | 2 | 3
 
@@ -25,9 +25,9 @@ export default function Triagem() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [autoResetSec, setAutoResetSec] = useState(15)
   const [searchParams] = useSearchParams()
-  const urlCampus = searchParams.get("campus")
-  const [manualCampus, setManualCampus] = useState("")
-  const triagemCampus = (urlCampus && CAMPUSES.includes(urlCampus)) ? urlCampus : manualCampus
+  const urlUnidade = searchParams.get("unidade")
+  const [manualUnidade, setManualUnidade] = useState("")
+  const triagemUnidade = (urlUnidade && UNIDADES.includes(urlUnidade)) ? urlUnidade : manualUnidade
   const autoResetRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const cancelAutoReset = useCallback(() => {
@@ -89,7 +89,7 @@ export default function Triagem() {
   const handleSearchPatient = async (q: string) => {
     setPatientQuery(q)
     if (q.trim().length < 2) { setPatientResults([]); return }
-    const results = await searchPatients(q, triagemCampus)
+    const results = await searchPatients(q, triagemUnidade)
     setPatientResults(results)
   }
 
@@ -108,7 +108,7 @@ export default function Triagem() {
       especie: species,
       tipoAtendimento,
       prioridade: "Verde"
-    }, triagemCampus)
+    }, triagemUnidade)
 
     setUltimoPet(pet)
     goToStep(3)
@@ -126,7 +126,7 @@ export default function Triagem() {
       especie: species,
       tipoAtendimento,
       prioridade: "Verde"
-    }, triagemCampus)
+    }, triagemUnidade)
 
     await linkPetToPatient(pet.id, patient.id)
 
@@ -145,7 +145,7 @@ export default function Triagem() {
     printArea.id = "printTicketArea"
     printArea.innerHTML = `
       <div style="font-family: monospace; text-align: center; padding: 20px; color: black;">
-        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><span style="font-size: 28px;">🐾</span> HOVET</h2>
+        <h2 style="margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; justify-content: center;"><span style="font-size: 28px;">🐾</span> VetHub</h2>
         <p style="margin: 4px 0; font-size: 0.8rem;">Hospital Veterinário Universitário</p>
         <hr style="border: 0; border-top: 1px dashed black; margin: 10px 0;">
         <h1 style="margin: 10px 0; font-size: 3rem; font-weight: bold; letter-spacing: -1px;">${ultimoPet.senha}</h1>
@@ -176,7 +176,7 @@ export default function Triagem() {
 
   const stepOffset = `${(currentStep - 1) * 33.33333}%`
 
-  if (!triagemCampus) {
+  if (!triagemUnidade) {
     return (
       <div className="species-overlay" style={{
         position: "fixed", inset: 0, background: "rgba(15,23,42,0.4)",
@@ -184,11 +184,11 @@ export default function Triagem() {
         display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100
       }}>
         <div className="species-modal antigravity-card" style={{ width: "90%", maxWidth: 500, padding: 40, textAlign: "center" }}>
-          <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Selecione o Campus</h2>
-          <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: "1.1rem" }}>Escolha o campus para atendimento:</p>
+          <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Selecione a Unidade</h2>
+          <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: "1.1rem" }}>Escolha a unidade para atendimento:</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {CAMPUSES.map(c => (
-              <button key={c} onClick={() => { setManualCampus(c) }} style={{
+            {UNIDADES.map(c => (
+              <button key={c} onClick={() => { setManualUnidade(c) }} style={{
                 padding: "16px 24px", borderRadius: 12, border: "2px solid #e5e7eb",
                 background: "#fff", cursor: "pointer", fontSize: "1.1rem", fontWeight: 600,
                 color: "#2d3a2d", transition: "all 0.2s"
@@ -210,7 +210,7 @@ export default function Triagem() {
         display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100
       }}>
         <div className="species-modal antigravity-card" style={{ width: "90%", maxWidth: 700, padding: 40, textAlign: "center" }}>
-          <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Bem-vindo ao HOVET</h2>
+          <h2 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: 12, fontWeight: 700 }}>Bem-vindo ao VetHub</h2>
           <p style={{ color: "var(--text-muted)", marginBottom: 40, fontSize: "1.1rem" }}>Para iniciar o autoatendimento, selecione a espécie do seu pet:</p>
           <div className="species-options" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 30 }}>
             {(["Cão", "Gato", "Animais Silvestres"] as Species[]).map(s => (
@@ -246,11 +246,11 @@ export default function Triagem() {
           alignItems: "center", borderBottom: "1px solid rgba(15,118,110,0.05)"
         }}>
           <div className="totem-logo" style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-            <span><IconMPawPrints size={24} /> HOVET</span>
+            <span><IconMPawPrints size={24} /> VetHub</span>
             <span style={{ fontWeight: 300, fontSize: "1.1rem", borderLeft: "1px solid rgba(15,118,110,0.2)", paddingLeft: 10 }}>Triagem</span>
-            {triagemCampus && (
+            {triagemUnidade && (
               <span style={{ fontSize: "0.75rem", background: "rgba(15,118,110,0.1)", padding: "2px 8px", borderRadius: 6, color: "var(--color-primary)" }}>
-                {triagemCampus}
+                {triagemUnidade}
               </span>
             )}
           </div>
@@ -382,7 +382,7 @@ export default function Triagem() {
                 <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", height: "100%", width: "100%" }}>
                   <div className="info-header" style={{ marginBottom: 24 }}>
                     <h2 style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 700 }}>Identificação</h2>
-                    <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no HOVET?</p>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>Você já é paciente no VetHub?</p>
                   </div>
                   <div className="attendance-options" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24, marginTop: 10, marginBottom: 20, flex: 1, alignContent: "center" }}>
                     <div className="attendance-card" onClick={() => selectPatientSimplificado("Sim")}

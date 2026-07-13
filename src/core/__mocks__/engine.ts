@@ -58,7 +58,7 @@ export function extractYoutubeId(url: string): string | null {
 }
 
 export function buildYoutubeEmbedUrl(videoId: string): string {
-  const muted = localStorage.getItem('hovet_video_muted') !== 'false'
+  const muted = localStorage.getItem('vethub_video_muted') !== 'false'
   return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=${muted ? 1 : 0}&controls=0&rel=0&enablejsapi=1`
 }
 

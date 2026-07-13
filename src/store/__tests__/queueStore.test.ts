@@ -84,8 +84,8 @@ describe('queueStore', () => {
     expect(state.activeCallWild).toBeNull()
   })
 
-  it('should setCampus update unidade and isAdmin', () => {
-    useQueueStore.getState().setCampus('HOVET Central', true)
+  it('should setUnidade update unidade and isAdmin', () => {
+    useQueueStore.getState().setUnidade('HOVET Central', true)
     const state = useQueueStore.getState()
     expect(state.unidade).toBe('HOVET Central')
     expect(state.isAdmin).toBe(true)

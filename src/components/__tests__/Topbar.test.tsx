@@ -39,38 +39,38 @@ describe('Topbar', () => {
   })
 
   it('should render the clock', () => {
-    mockUseAuth.mockReturnValue({ role: null, unidade: 'HOVET Central' })
+    mockUseAuth.mockReturnValue({ role: null, unidade: 'VetHub Central' })
     renderTopbar()
     expect(screen.getByText('25/06/2026 12:00:00')).toBeInTheDocument()
   })
 
   it('should render the campus/unidade name', () => {
-    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'HOVET Central' })
+    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'VetHub Central' })
     renderTopbar()
-    expect(screen.getByText('HOVET Central')).toBeInTheDocument()
+    expect(screen.getByText('VetHub Central')).toBeInTheDocument()
   })
 
   it('should render navigation tabs', () => {
-    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'HOVET' })
+    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'VetHub' })
     renderTopbar()
     expect(screen.getByText('Fila Cães')).toBeInTheDocument()
     expect(screen.getByText('Fila Gatos')).toBeInTheDocument()
   })
 
   it('should show admin badge for admin users', () => {
-    mockUseAuth.mockReturnValue({ role: 'admin', unidade: 'HOVET' })
+    mockUseAuth.mockReturnValue({ role: 'admin', unidade: 'VetHub' })
     renderTopbar()
     expect(screen.getByText('Admin')).toBeInTheDocument()
   })
 
   it('should show user badge for regular users', () => {
-    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'HOVET' })
+    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'VetHub' })
     renderTopbar()
     expect(screen.getByText('Usuário')).toBeInTheDocument()
   })
 
   it('should render navigation links (Recepção, Pronto Atendimento, etc)', () => {
-    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'HOVET' })
+    mockUseAuth.mockReturnValue({ role: 'user', unidade: 'VetHub' })
     renderTopbar()
     expect(screen.getByText('Recepção')).toBeInTheDocument()
     expect(screen.getByText('Pronto Atendimento')).toBeInTheDocument()

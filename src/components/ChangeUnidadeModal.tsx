@@ -1,30 +1,20 @@
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { supabase } from "../lib/supabase"
-import { Lock, TreeDeciduous } from "lucide-react"
+import { Lock, PawPrint } from "lucide-react"
+import { clearSavedUnidade } from "../pages/UnidadeSelection"
 
-const CAMPUSES = ["Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
+const UNIDADES = [
+  { id: "unidade-central", name: "Unidade Central" },
+  { id: "unidade-norte", name: "Unidade Norte" },
+  { id: "unidade-sul", name: "Unidade Sul" },
+]
 
-interface ChangeCampusModalProps {
+interface ChangeUnidadeModalProps {
   onClose: () => void
 }
 
-function campusImgUrl(campus: string): string | null {
-  switch (campus) {
-    case "Mooca": return "/mooca.svg"
-    case "Vila Olímpia": return "/VO.svg"
-    case "Paulista": return "/paulista.png"
-    case "Piracicaba": return "/piracicaba.svg"
-    case "São José dos Campos": return "/sjc.svg"
-    default: return null
-  }
-}
-
-function campusSvg(campus: string): boolean {
-  return campus === "Mooca" || campus === "Vila Olímpia" || campus === "Paulista" || campus === "Piracicaba" || campus === "São José dos Campos"
-}
-
-export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
+export default function ChangeUnidadeModal({ onClose }: ChangeUnidadeModalProps) {
   const { user, unidade, role, signOut, refreshProfile } = useAuth()
   const [selected, setSelected] = useState("")
   const [password, setPassword] = useState("")
@@ -33,11 +23,11 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
   const [saving, setSaving] = useState(false)
 
   const canAccessAll = role === "admin" || role === "coordinator"
-  const visibleCampuses = canAccessAll ? CAMPUSES : (unidade ? [unidade] : [])
+  const visibleUnidades = canAccessAll ? UNIDADES : (unidade ? UNIDADES.filter(u => u.name === unidade) : [])
 
-  const handleSelect = (campus: string) => {
-    if (campus === unidade || !canAccessAll) return
-    setSelected(campus)
+  const handleSelect = (u: string) => {
+    if (u === unidade || !canAccessAll) return
+    setSelected(u)
     setStep("confirm")
     setError("")
     setPassword("")
@@ -59,9 +49,11 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
       return
     }
 
+    const unitName = UNIDADES.find(u => u.id === selected)?.name || selected
+
     const { error: updateError } = await supabase
       .from("user_profiles")
-      .update({ unidade: selected, atualizado_em: new Date().toISOString() })
+      .update({ unidade: unitName, atualizado_em: new Date().toISOString() })
       .eq("id", user.id)
 
     setSaving(false)
@@ -71,6 +63,7 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
       return
     }
 
+    localStorage.setItem("vethub_unidade", selected)
     await refreshProfile()
     onClose()
   }
@@ -88,9 +81,9 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
         {step === "select" ? (
           <>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "#2d3a2d", marginBottom: 4 }}>Mudar Campus</h2>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "#2d3a2d", marginBottom: 4 }}>Mudar Unidade</h2>
               <p style={{ fontSize: "0.85rem", color: "#6b7280" }}>
-                Campus atual: <strong>{unidade || "Nenhum"}</strong>
+                Unidade atual: <strong>{unidade || "Nenhuma"}</strong>
               </p>
               {user && (
                 <div style={{ fontSize: "0.8rem", color: "#9ca3af", marginTop: 8 }}>
@@ -105,41 +98,25 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
               gap: canAccessAll ? "32px 12px" : "0",
               marginBottom: 20
             }}>
-              {visibleCampuses.map(campus => {
-                const isCurrent = campus === unidade
+              {visibleUnidades.map(u => {
+                const isCurrent = u.name === unidade
                 if (!canAccessAll) {
                   return (
-                    <div key={campus} style={{
+                    <div key={u.id} style={{
                       textAlign: "center", padding: "24px 16px"
                     }}>
-                      {campusSvg(campus) ? (
-                        <img
-                          src={campusImgUrl(campus)!}
-                          alt={campus}
-                          style={{
-                            width: campus === "Paulista" ? 140 : 180,
-                            height: "auto",
-                            marginTop: campus === "Paulista" ? -28 : -32,
-                            marginBottom: 8,
-                            filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.12))",
-                            pointerEvents: "none"
-                          }}
-                        />
-                      ) : (
-                          <span style={{ fontSize: "3rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}><TreeDeciduous size={48} /></span>
-                      )}
-                      <div style={{ fontWeight: 700, fontSize: "1.2rem", color: "#2d3a2d" }}>{campus}</div>
+                      <span style={{ fontSize: "3rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}><PawPrint size={48} /></span>
+                      <div style={{ fontWeight: 700, fontSize: "1.2rem", color: "#2d3a2d" }}>{u.name}</div>
                     </div>
                   )
                 }
                 return (
                   <button
-                    key={campus}
-                    onClick={() => handleSelect(campus)}
+                    key={u.id}
+                    onClick={() => handleSelect(u.id)}
                     disabled={isCurrent}
                     style={{
-                      padding: campusSvg(campus) ? "0 8px 14px" : "14px 8px",
-                      paddingTop: campusSvg(campus) ? 0 : 14,
+                      padding: "14px 8px",
                       borderRadius: 14,
                       border: isCurrent ? "2px solid #6b8e6b" : "2px solid #e5e7eb",
                       background: isCurrent ? "rgba(107,142,107,0.08)" : "#fff",
@@ -152,30 +129,15 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      gap: campusSvg(campus) ? 0 : 6,
+                      gap: 6,
                       overflow: "visible",
                       position: "relative",
                       opacity: isCurrent ? 0.7 : 1
                     }}
                   >
-                    {campusSvg(campus) ? (
-                      <img
-                        src={campusImgUrl(campus)!}
-                        alt={campus}
-                        style={{
-                          width: campus === "Paulista" ? 100 : 130,
-                          height: "auto",
-                          marginTop: campus === "Paulista" ? -34 : -32,
-                          marginBottom: 0,
-                          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))",
-                          pointerEvents: "none"
-                        }}
-                      />
-                    ) : (
-                      <span style={{ fontSize: "1.6rem", display: "flex", alignItems: "center", justifyContent: "center" }}><TreeDeciduous size={28} /></span>
-                    )}
-                    <span style={{ marginTop: campusSvg(campus) ? 2 : 0, fontSize: "0.82rem" }}>
-                      {campus}
+                    <span style={{ fontSize: "1.6rem", display: "flex", alignItems: "center", justifyContent: "center" }}><PawPrint size={28} /></span>
+                    <span style={{ fontSize: "0.82rem" }}>
+                      {u.name}
                       {isCurrent && <span style={{ display: "block", fontSize: "0.7rem", color: "#6b8e6b", marginTop: 2 }}>Atual</span>}
                     </span>
                   </button>
@@ -195,7 +157,7 @@ export default function ChangeCampusModal({ onClose }: ChangeCampusModalProps) {
           <>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: "#2d3a2d", marginBottom: 4 }}>Confirmar Mudança</h2>
             <p style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: 20 }}>
-              De <strong>{unidade}</strong> para <strong>{selected}</strong>
+              De <strong>{unidade}</strong> para <strong>{UNIDADES.find(u => u.id === selected)?.name || selected}</strong>
             </p>
 
             <p style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: 12 }}>

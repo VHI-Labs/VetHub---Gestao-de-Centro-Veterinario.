@@ -65,7 +65,7 @@ const renderProntuario = () => renderPage(<Prontuario />, ['/prontuario'])
 describe('Prontuario', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseAuth.mockReturnValue({ unidade: 'HOVET Central' })
+    mockUseAuth.mockReturnValue({ unidade: 'VetHub Central' })
     mockSearchPatients.mockResolvedValue(MOCK_PATIENTS)
     mockSearchOwners.mockResolvedValue(MOCK_OWNERS)
     mockGetDashboard.mockResolvedValue(MOCK_DASHBOARD_METRICS)

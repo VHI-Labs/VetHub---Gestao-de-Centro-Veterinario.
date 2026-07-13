@@ -16,7 +16,7 @@ interface QueueState {
   loading: boolean
   unidade: string
   isAdmin: boolean
-  setCampus: (unidade: string, isAdmin: boolean) => void
+  setUnidade: (unidade: string, isAdmin: boolean) => void
   refresh: () => Promise<void>
 }
 
@@ -36,7 +36,7 @@ export const useQueueStore = create<QueueState>((set, get) => ({
   loading: true,
   unidade: '',
   isAdmin: false,
-  setCampus: (unidade, isAdmin) => {
+  setUnidade: (unidade, isAdmin) => {
     set({ unidade, isAdmin })
     get().refresh()
   },

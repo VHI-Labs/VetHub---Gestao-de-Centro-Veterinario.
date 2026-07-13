@@ -18,7 +18,7 @@ export default function TvSelection() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <PawPrint className="w-6 h-6 text-[#6b8e6b]" />
-          <span style={{ fontWeight: 700, fontSize: "1.1rem" }}>HOVET</span>
+          <span style={{ fontWeight: 700, fontSize: "1.1rem" }}>VetHub</span>
           <span style={{
             background: "rgba(107,142,107,0.2)", color: "#6b8e6b",
             padding: "4px 10px", borderRadius: 8, fontSize: "0.75rem", fontWeight: 600
@@ -42,7 +42,7 @@ export default function TvSelection() {
         <div style={{ textAlign: "center" }}>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#2d3a2d", marginBottom: 4 }}>Selecionar TV</h1>
           <p style={{ color: "#6b7280" }}>
-            Transmitindo: <strong>{unidade || "Nenhum campus"}</strong>
+            Transmitindo: <strong>{unidade || "Nenhuma unidade"}</strong>
           </p>
         </div>
 

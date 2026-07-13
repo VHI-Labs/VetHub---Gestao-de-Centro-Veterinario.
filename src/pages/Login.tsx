@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from "react"
 import { Lock, Mail, PawPrint, ArrowLeft, ChevronDown, ChevronUp, Shield, Stethoscope, Receipt, User, Eye } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import { getSavedUnidade } from "./UnidadeSelection"
 
 const TEST_ACCOUNTS = [
   { email: "admin@vethub.com.br", password: "Teste@123", label: "Admin", desc: "Acesso total", icon: Shield, color: "text-amber-400" },
-  { email: "vet@vethub.com.br", password: "Teste@123", label: "Veterinário", desc: "HOVET Central", icon: Stethoscope, color: "text-emerald-400" },
-  { email: "recepcao@vethub.com.br", password: "Teste@123", label: "Recepção", desc: "HOVET Central", icon: User, color: "text-blue-400" },
-  { email: "financeiro@vethub.com.br", password: "Teste@123", label: "Financeiro", desc: "HOVET Central", icon: Receipt, color: "text-purple-400" },
+  { email: "vet@vethub.com.br", password: "Teste@123", label: "Veterinário", desc: "Unidade Central", icon: Stethoscope, color: "text-emerald-400" },
+  { email: "recepcao@vethub.com.br", password: "Teste@123", label: "Recepção", desc: "Unidade Central", icon: User, color: "text-blue-400" },
+  { email: "financeiro@vethub.com.br", password: "Teste@123", label: "Financeiro", desc: "Unidade Central", icon: Receipt, color: "text-purple-400" },
   { email: "user@vethub.com.br", password: "Teste@123", label: "Usuário", desc: "Somente leitura", icon: Eye, color: "text-white/40" },
 ]
 
@@ -47,7 +48,9 @@ export default function Login() {
   }, [])
 
   useEffect(() => {
-    if (!authLoading && user) navigate("/selecionar-campus")
+    if (!authLoading && user) {
+      navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+    }
   }, [user, authLoading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {

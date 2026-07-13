@@ -90,7 +90,7 @@ const renderPA = () => renderPage(<ProntoAtendimento />)
 describe('ProntoAtendimento', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseAuth.mockReturnValue({ unidade: 'HOVET Central', role: 'user' })
+    mockUseAuth.mockReturnValue({ unidade: 'VetHub Central', role: 'user' })
     Object.assign(mockQueueStoreState, INITIAL_QUEUE_STATE)
   })
 

@@ -4,7 +4,7 @@ import { useClock } from "../hooks/useClock"
 import { useAuth } from "../context/AuthContext"
 import { MapPin } from "lucide-react"
 import IconMHospital from "react-fluentui-emoji/lib/modern/icons/IconMHospital"
-import ChangeCampusModal from "./ChangeCampusModal"
+import ChangeUnidadeModal from "./ChangeUnidadeModal"
 
 interface TopbarProps {
   title?: string
@@ -15,7 +15,7 @@ export default function Topbar({ title, tabs }: TopbarProps) {
   const time = useClock()
   const location = useLocation()
   const { role, unidade } = useAuth()
-  const [showCampusModal, setShowCampusModal] = useState(false)
+  const [showUnidadeModal, setShowUnidadeModal] = useState(false)
 
   return (
     <>
@@ -26,7 +26,7 @@ export default function Topbar({ title, tabs }: TopbarProps) {
         borderBottom: "var(--glass-border)", boxShadow: "0 4px 30px rgba(15,118,110,0.03)", zIndex: 10
       }}>
         <div className="topbar-brand" style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <span style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 10 }}><IconMHospital size={28} /> HOVET</span>
+          <span style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 10 }}><IconMHospital size={28} /> VetHub</span>
           <div style={{ display: "flex", gap: 8, fontSize: "0.9rem" }}>
             <Link to="/recepcao" className="tab-btn" style={{
               textDecoration: "none", padding: "6px 14px", borderRadius: 100, display: "inline-block",
@@ -76,8 +76,8 @@ export default function Topbar({ title, tabs }: TopbarProps) {
             </button>
           ))}
           <button
-            onClick={() => setShowCampusModal(true)}
-            title="Mudar de campus"
+            onClick={() => setShowUnidadeModal(true)}
+            title="Mudar de unidade"
             style={{
               padding: "6px 16px", border: "1px solid rgba(15,118,110,0.15)", borderRadius: 100,
               background: "rgba(15,118,110,0.06)", cursor: "pointer", display: "inline-flex",
@@ -85,7 +85,7 @@ export default function Topbar({ title, tabs }: TopbarProps) {
               color: "var(--color-primary)", whiteSpace: "nowrap"
             }}
           >
-            <MapPin size={14} /> {unidade && unidade !== "Todos" ? unidade : "Campus"}
+            <MapPin size={14} /> {unidade && unidade !== "Todos" ? unidade : "Unidade"}
           </button>
         </nav>
 
@@ -103,7 +103,7 @@ export default function Topbar({ title, tabs }: TopbarProps) {
         <div style={{ fontWeight: 600, color: "var(--color-primary)", fontSize: "0.95rem" }}>{time}</div>
       </header>
 
-      {showCampusModal && <ChangeCampusModal onClose={() => setShowCampusModal(false)} />}
+      {showUnidadeModal && <ChangeUnidadeModal onClose={() => setShowUnidadeModal(false)} />}
     </>
   )
 }

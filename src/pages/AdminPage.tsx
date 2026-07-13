@@ -5,7 +5,7 @@ import { supabase } from "../lib/supabase"
 import { PawPrint, LogOut, Shield, AlertTriangle, RefreshCw, UserPlus, Tv, ClipboardList } from "lucide-react"
 import type { UserProfile } from "../types"
 
-const CAMPUSES = ["Todos", "Mooca", "Vila Olímpia", "Paulista", "Piracicaba", "São José dos Campos"]
+const UNIDADES = ["Todos", "Unidade Central", "Unidade Norte", "Unidade Sul"]
 const PERMISSIONS = ["Recepcao", "Fila", "Videos", "Relatorios", "TV", "Prontuario", "Agendamentos"]
 
 export default function AdminPage() {
@@ -14,7 +14,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [confirmTarget, setConfirmTarget] = useState<{ id: string; name: string; newRole: string } | null>(null)
-  const [savingCampus, setSavingCampus] = useState<string | null>(null)
+  const [savingUnidade, setSavingUnidade] = useState<string | null>(null)
   const [savingPerm, setSavingPerm] = useState<string | null>(null)
   const [syncing, setSyncing] = useState(false)
   const [syncMessage, setSyncMessage] = useState("")
@@ -58,11 +58,11 @@ export default function AdminPage() {
     await loadUsers()
   }
 
-  const updateCampus = async (uid: string, campus: string) => {
-    setSavingCampus(uid)
-    await supabase.from("user_profiles").update({ unidade: campus }).eq("id", uid)
-    setUsers(prev => prev.map(u => u.id === uid ? { ...u, unidade: campus } : u))
-    setSavingCampus(null)
+  const updateUnidade = async (uid: string, unidade: string) => {
+    setSavingUnidade(uid)
+    await supabase.from("user_profiles").update({ unidade: unidade }).eq("id", uid)
+    setUsers(prev => prev.map(u => u.id === uid ? { ...u, unidade: unidade } : u))
+    setSavingUnidade(null)
   }
 
   const syncUsers = async () => {
@@ -101,8 +101,7 @@ export default function AdminPage() {
         borderBottom: "1px solid rgba(255,255,255,0.06)"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <img src="/logo-uam.png" alt="UAM" style={{ height: 32, borderRadius: 6 }} />
-          <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "#e0e7e3" }}>HOVET ADMIN</span>
+               <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "#e0e7e3" }}>VetHub ADMIN</span>
           <span style={{
             background: "rgba(16,185,129,0.15)", color: "#34d399",
             padding: "2px 10px", borderRadius: 8, fontSize: "0.7rem", fontWeight: 700,
@@ -139,7 +138,7 @@ export default function AdminPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
             <div>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#e0e7e3" }}>Administração</h1>
-              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 2 }}>Gerencie os usuários e seus campus.</p>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: 2 }}>Gerencie os usuários e suas unidades.</p>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={() => navigate('/admin/auditoria')} style={{
@@ -234,7 +233,7 @@ export default function AdminPage() {
 
                   <select
                     value={u.unidade || ""}
-                    onChange={e => updateCampus(u.id!, e.target.value)}
+                    onChange={e => updateUnidade(u.id!, e.target.value)}
                     style={{
                       padding: "6px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)",
                       fontSize: "0.8rem", fontWeight: 500,
@@ -242,8 +241,8 @@ export default function AdminPage() {
                       cursor: "pointer", outline: "none", minWidth: 150
                     }}
                   >
-                    <option value="">Sem campus</option>
-                    {CAMPUSES.map(c => (
+                    <option value="">Sem unidade</option>
+                    {UNIDADES.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>

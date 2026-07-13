@@ -70,8 +70,7 @@ export default function AuditLog() {
         borderBottom: "1px solid rgba(255,255,255,0.06)"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <img src="/logo-uam.png" alt="UAM" style={{ height: 32, borderRadius: 6 }} />
-          <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "#e0e7e3" }}>HOVET AUDITORIA</span>
+          <span style={{ fontWeight: 700, fontSize: "1.1rem", color: "#e0e7e3" }}>VetHub AUDITORIA</span>
           <span style={{
             background: "rgba(16,185,129,0.15)", color: "#34d399",
             padding: "2px 10px", borderRadius: 8, fontSize: "0.7rem", fontWeight: 700,

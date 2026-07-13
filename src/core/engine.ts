@@ -87,7 +87,7 @@ export function extractYoutubeId(url: string): string | null {
 }
 
 export function buildYoutubeEmbedUrl(videoId: string): string {
-  const muted = localStorage.getItem("hovet_video_muted") !== "false"
+  const muted = localStorage.getItem("vethub_video_muted") !== "false"
   return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=${muted ? 1 : 0}&controls=0&rel=0&enablejsapi=1`
 }
 
@@ -99,12 +99,12 @@ export function getNextWaitingPet(pets: Pet[]): Pet | null {
 }
 
 async function migrateLocalStorage(): Promise<void> {
-  const migrated = localStorage.getItem('hovet_supabase_migrated')
+  const migrated = localStorage.getItem('vethub_supabase_migrated')
   if (migrated) return
 
   const keys = [
-    'hovet_queue_dogs', 'hovet_queue_cats', 'hovet_queue_wild',
-    'hovet_history', 'hovet_called_dog', 'hovet_called_cat', 'hovet_called_wild'
+    'vethub_queue_dogs', 'vethub_queue_cats', 'vethub_queue_wild',
+    'vethub_history', 'vethub_called_dog', 'vethub_called_cat', 'vethub_called_wild'
   ]
 
   let hasData = false
@@ -134,7 +134,7 @@ async function migrateLocalStorage(): Promise<void> {
     }
   }
 
-  localStorage.setItem('hovet_supabase_migrated', '1')
+  localStorage.setItem('vethub_supabase_migrated', '1')
 }
 
 export async function initDatabase(): Promise<void> {
@@ -329,7 +329,7 @@ export async function updatePetStatus(id: string, species: Species, status: stri
 
   window.dispatchEvent(new Event('storage'))
   window.dispatchEvent(new Event('storage-sync'))
-  localStorage.setItem('hovet_last_update', Date.now().toString())
+  localStorage.setItem('vethub_last_update', Date.now().toString())
 }
 
 export async function reCallPet(id: string, local: string) {
@@ -515,12 +515,12 @@ export async function saveReceptionVideoUrl(url: string): Promise<void> {
   if (error) console.error('[Supabase] saveReceptionVideoUrl error:', error)
 
   const data: VideoMetadata = { id: 'reception_youtube_video', youtubeUrl: url, savedAt: new Date().toISOString() }
-  localStorage.setItem('hovet_reception_video', JSON.stringify(data))
+  localStorage.setItem('vethub_reception_video', JSON.stringify(data))
   window.dispatchEvent(new Event('storage'))
 }
 
 export async function getReceptionVideoUrl(): Promise<string | null> {
-  const local = localStorage.getItem('hovet_reception_video')
+  const local = localStorage.getItem('vethub_reception_video')
   if (local) {
     try {
       const parsed = JSON.parse(local) as VideoMetadata
