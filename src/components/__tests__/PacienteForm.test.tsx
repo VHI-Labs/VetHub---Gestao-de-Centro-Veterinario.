@@ -17,7 +17,7 @@ function renderForm(props: Record<string, unknown> = {}) {
   const onClose = vi.fn()
   const result = render(
     <MemoryRouter>
-      <PacienteForm patientId="" onSave={onSave} onClose={onClose} {...props} />
+      <PacienteForm patient={null} onSave={onSave} onClose={onClose} {...props} />
     </MemoryRouter>
   )
   return { ...result, onSave, onClose }

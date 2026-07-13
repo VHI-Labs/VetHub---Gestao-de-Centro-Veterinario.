@@ -47,8 +47,8 @@ describe('CalledQueueSidebar', () => {
   })
 
   it('should render header with Chamados text', () => {
-    mockUseQueueStore.mockImplementation((selector?: Function) => {
-      const state = { dogs: [], cats: [], wild: [] }
+    mockUseQueueStore.mockImplementation((selector?: (s: Record<string, unknown[]>) => unknown) => {
+      const state = { dogs: [] as unknown[], cats: [] as unknown[], wild: [] as unknown[] }
       return selector ? selector(state) : state
     })
     renderSidebar()
@@ -56,8 +56,8 @@ describe('CalledQueueSidebar', () => {
   })
 
   it('should show empty state when no called pets', () => {
-    mockUseQueueStore.mockImplementation((selector?: Function) => {
-      const state = { dogs: [], cats: [], wild: [] }
+    mockUseQueueStore.mockImplementation((selector?: (s: Record<string, unknown[]>) => unknown) => {
+      const state = { dogs: [] as unknown[], cats: [] as unknown[], wild: [] as unknown[] }
       return selector ? selector(state) : state
     })
     renderSidebar()
@@ -65,7 +65,7 @@ describe('CalledQueueSidebar', () => {
   })
 
   it('should show called pets count', () => {
-    mockUseQueueStore.mockImplementation((selector?: Function) => {
+    mockUseQueueStore.mockImplementation((selector?: (s: Record<string, unknown[]>) => unknown) => {
       const state = {
         dogs: [{
           id: 'd1', senha: 'N001', especie: 'Cão', status: 'Chamado',
@@ -83,7 +83,7 @@ describe('CalledQueueSidebar', () => {
   })
 
   it('should show called pets from all species', () => {
-    mockUseQueueStore.mockImplementation((selector?: Function) => {
+    mockUseQueueStore.mockImplementation((selector?: (s: Record<string, unknown[]>) => unknown) => {
       const state = {
         dogs: [{
           id: 'd1', senha: 'N001', especie: 'Cão', status: 'Chamado',
@@ -105,7 +105,7 @@ describe('CalledQueueSidebar', () => {
   })
 
   it('should filter by senhaPrefix', () => {
-    mockUseQueueStore.mockImplementation((selector?: Function) => {
+    mockUseQueueStore.mockImplementation((selector?: (s: Record<string, unknown[]>) => unknown) => {
       const state = {
         dogs: [{
           id: 'd1', senha: 'N001', especie: 'Cão', status: 'Chamado',

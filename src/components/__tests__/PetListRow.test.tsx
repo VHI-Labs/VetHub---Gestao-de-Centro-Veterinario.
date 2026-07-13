@@ -9,7 +9,7 @@ vi.mock('../../hooks/useWaitTimer', () => ({
 
 vi.mock('../../store/queueStore', () => ({
   useQueueStore: Object.assign(
-    (selector?: Function) => selector ? selector({ refresh: vi.fn() }) : { refresh: vi.fn() },
+    (selector?: (s: Record<string, unknown>) => unknown) => selector ? selector({ refresh: vi.fn() }) : { refresh: vi.fn() },
     { getState: () => ({ refresh: vi.fn() }) }
   ),
 }))
