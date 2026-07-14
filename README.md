@@ -198,7 +198,7 @@ Para deploy manual, basta importar o repositório no Vercel. As variáveis de am
     <tr>
       <td align="center">
         <a href="https://github.com/vihisantos">
-          <img src="https://ui-avatars.com/api/?name=Vitor+Santos&background=0f766e&color=fff&size=100&font-size=0.35&bold=true" alt="Vitor Santos" width="100" style="border-radius:50%" />
+          <img src="https://raw.githubusercontent.com/VHI-Labs/VetHub---Gestao-de-Centro-Veterinario/master/public/team/vitor.png" alt="Vitor Santos" width="100" style="border-radius:50%; object-fit:cover" />
           <br />
           <b>Vitor Santos</b>
           <br />
@@ -209,7 +209,7 @@ Para deploy manual, basta importar o repositório no Vercel. As variáveis de am
       </td>
       <td align="center">
         <a href="https://github.com/IngridBrito">
-          <img src="https://ui-avatars.com/api/?name=Ingrid+Brito&background=881337&color=fff&size=100&font-size=0.33&bold=true" alt="Ingrid Brito" width="100" style="border-radius:50%" />
+          <img src="https://raw.githubusercontent.com/VHI-Labs/VetHub---Gestao-de-Centro-Veterinario/master/public/team/ingrid.png" alt="Ingrid Brito" width="100" style="border-radius:50%; object-fit:cover" />
           <br />
           <b>Ingrid Brito</b>
           <br />
