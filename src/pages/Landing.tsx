@@ -612,6 +612,8 @@ export default function Landing() {
         ::-webkit-scrollbar-track { background: #e8e4de; }
         ::-webkit-scrollbar-thumb { background: rgba(107,142,107,0.25); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(107,142,107,0.4); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         @keyframes dots {
           0% { background-position: 0 0; }
           100% { background-position: 40px 40px; }
@@ -893,8 +895,15 @@ export default function Landing() {
       </motion.section>
 
       {/* ===== NÚMEROS ===== */}
-      <section className="px-6 py-24" style={{ background: "#ede9e4" }}>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="px-6 py-24 overflow-hidden" style={{ background: "#ede9e4" }}>
+        <style>{`
+          @keyframes stats-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .stats-track:hover { animation-play-state: paused; }
+        `}</style>
+        <div className="max-w-5xl mx-auto hidden lg:grid lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon
             return (
@@ -921,6 +930,24 @@ export default function Landing() {
               </motion.div>
             )
           })}
+        </div>
+        <div className="lg:hidden">
+          <div className="stats-track flex gap-8" style={{ animation: "stats-marquee 12s linear infinite", width: "max-content" }}>
+            {[...stats, ...stats].map((stat, i) => {
+              const Icon = stat.icon
+              return (
+                <div key={`${stat.label}-${i}`} className="text-center min-w-[140px] shrink-0">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(107,142,107,0.1)" }}>
+                    <Icon className="w-5 h-5" style={{ color: "#6b8e6b" }} />
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-bold text-[#2d3a2d] mb-1">
+                    <AnimatedCounter target={stat.value} suffix={stat.suffix} k={!!stat.k} />
+                  </div>
+                  <p className="text-sm" style={{ color: "rgba(45,58,45,0.45)" }}>{stat.label}</p>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </section>
 
