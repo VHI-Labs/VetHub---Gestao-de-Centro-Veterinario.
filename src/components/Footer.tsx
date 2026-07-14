@@ -62,7 +62,7 @@ export default function Footer() {
               <span className="text-[#2d3a2d] font-semibold text-sm">VetHub</span>
             </div>
             <p className="text-[#2d3a2d]/35 text-xs leading-relaxed mb-5">
-              Sistema de gestão veterinária desenvolvido por estudantes de NSI para transformar o atendimento em clínicas de todo o Brasil.
+              Sistema de gestão veterinária desenvolvido para tornar o atendimento mais simples, eficiente e transparente em clínicas de todo o Brasil.
             </p>
             <div>
               <p className="text-[#2d3a2d]/40 text-xs font-medium mb-2">Receba novidades</p>
@@ -181,8 +181,16 @@ export default function Footer() {
 
       <div className="relative z-10 border-t border-black/5 py-6 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[#2d3a2d]/25 text-xs text-center sm:text-left">
+          <p className="text-[#2d3a2d]/25 text-xs text-center sm:text-left flex items-center gap-1.5">
             &copy; {new Date().getFullYear()} VetHub. Todos os direitos reservados.
+            <span className="inline-flex items-center ml-1">
+              <svg width="16" height="11" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="20" height="14" rx="2" fill="#009739"/>
+                <polygon points="10,1 19,7 10,13 1,7" fill="#FEDD00"/>
+                <circle cx="10" cy="7" r="3.2" fill="#002776"/>
+                <path d="M6.8 7.2 Q10 5.8 13.2 7.2" stroke="#FFFFFF" strokeWidth="0.7" fill="none"/>
+              </svg>
+            </span>
           </p>
           <p className="text-[#2d3a2d]/15 text-[11px] tracking-widest">v 1.0.0</p>
         </div>

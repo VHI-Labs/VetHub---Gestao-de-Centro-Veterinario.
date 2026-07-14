@@ -26,7 +26,7 @@ function LinkedinIcon({ className, style }: { className?: string; style?: React.
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import { getSavedUnidade } from "./UnidadeSelection"
-import Footer from "../components/Footer"
+
 
 const features = [
   {
@@ -127,7 +127,8 @@ const team = [
     bio: "Cocriadora do VetHub. Apaixonada por tecnologia e soluções que transformam o dia a dia das clínicas veterinárias.",
     links: { github: "https://github.com/IngridBrito", portfolio: "https://ingridbrito.github.io/ingrid-portfolio/", linkedin: "https://www.linkedin.com/in/ingrid-brito-5957b2333/" },
     unidade: "Gestão Grande São Paulo Capital",
-    image: "/team/ingrid.png"
+    image: "/team/ingrid.png",
+    video: "/team/cat.mp4"
   }
 ]
 
@@ -656,7 +657,10 @@ export default function Landing() {
             >
               <PawPrint className="w-4 h-4 transition-colors duration-300" style={{ color: "#6b8e6b" }} />
             </motion.div>
-            <span className="text-[#2d3a2d] font-semibold text-sm tracking-tight">VetHub</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-[#2d3a2d] font-semibold text-sm tracking-tight">VetHub</span>
+              <span className="text-[#2d3a2d]/35 text-[9px] tracking-wide">Gestão Veterinária</span>
+            </div>
           </motion.button>
           <div className="hidden md:flex items-center gap-2">
             {[
@@ -923,7 +927,7 @@ export default function Landing() {
       {/* ===== COMO FUNCIONA ===== */}
       <section id="como-funciona" className="px-6 py-32">
         <SectionTitle
-          badge="como funciona"
+          badge="simples e rápido"
           title="Como funciona"
           desc="Do cadastro ao primeiro atendimento, tudo é rápido e intuitivo. Três passos para transformar sua clínica."
         />
@@ -971,7 +975,7 @@ export default function Landing() {
       {/* ===== FUNCIONALIDADES ===== */}
       <section id="funcionalidades" className="px-6 py-32" style={{ background: "#ede9e4" }}>
         <SectionTitle
-          badge="funcionalidades"
+          badge="ferramentas pensadas pra você"
           title="Tudo que sua clínica precisa"
           desc="Do check-in à saída do paciente, o VetHub acompanha cada etapa do atendimento com ferramentas pensadas para a rotina veterinária."
         />
@@ -1484,9 +1488,6 @@ export default function Landing() {
           </div>
         </FadeInView>
       </section>
-
-      {/* ===== FOOTER ===== */}
-      <Footer />
 
       {/* ===== BACK TO TOP ===== */}
       <AnimatePresence>
