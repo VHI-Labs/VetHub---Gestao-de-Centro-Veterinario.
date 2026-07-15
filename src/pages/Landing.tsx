@@ -124,7 +124,7 @@ const team = [
   },
   {
     name: "Ingrid Brito", role: "Desenvolvedora Full Stack",
-    bio: "Cocriadora do VetHub. Apaixonada por tecnologia e soluções que transformam o dia a dia das clínicas veterinárias.",
+    bio: "Criadora do VetHub. Apaixonada por tecnologia e soluções que transformam o dia a dia das clínicas veterinárias.",
     links: { github: "https://github.com/IngridBrito", portfolio: "https://ingridbrito.github.io/ingrid-portfolio/", linkedin: "https://www.linkedin.com/in/ingrid-brito-5957b2333/" },
     unidade: "Gestão Grande São Paulo Capital",
     image: "/team/ingrid.png",
