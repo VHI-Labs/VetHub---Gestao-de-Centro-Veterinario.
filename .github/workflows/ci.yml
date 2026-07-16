@@ -68,11 +68,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: amondnet/vercel-action@v42.3.0
+        id: vercel-preview
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./
+          vercel-args: '--yes'
+        continue-on-error: true
+      - name: Retry on failure
+        if: steps.vercel-preview.outcome == 'failure'
+        uses: amondnet/vercel-action@v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--yes'
 
   deploy-production:
     name: Deploy Production
@@ -82,9 +94,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: amondnet/vercel-action@v42.3.0
+        id: vercel-production
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: '--prod --yes'
+        continue-on-error: true
+      - name: Retry on failure
+        if: steps.vercel-production.outcome == 'failure'
+        uses: amondnet/vercel-action@v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod --yes'
           working-directory: ./
