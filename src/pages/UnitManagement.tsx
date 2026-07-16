@@ -340,7 +340,7 @@ export default function UnitManagement() {
             </div>
 
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => { editingUnit ? setEditingUnit(null) : setShowCreateModal(false); resetForm() }} style={{
+              <button onClick={() => { if (editingUnit) { setEditingUnit(null) } else { setShowCreateModal(false) }; resetForm() }} style={{
                 flex: 1, padding: "10px", borderRadius: 8,
                 border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.05)",
                 cursor: "pointer", fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", fontWeight: 500
