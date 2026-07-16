@@ -14,15 +14,11 @@ const TEST_ACCOUNTS = [
 
 export default function Login() {
   const navigate = useNavigate()
-  const { user, loading: authLoading, signIn, resetPassword } = useAuth()
+  const { user, loading: authLoading, signIn, forcePasswordChange, role } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [showResetModal, setShowResetModal] = useState(false)
-  const [resetEmail, setResetEmail] = useState("")
-  const [resetSent, setResetSent] = useState(false)
-  const [resetError, setResetError] = useState("")
   const [showTestAccounts, setShowTestAccounts] = useState(false)
   const testAccountsRef = useRef<HTMLDivElement>(null)
 
@@ -49,9 +45,15 @@ export default function Login() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+      if (forcePasswordChange) {
+        navigate("/trocar-senha", { replace: true })
+      } else if (role === "admin") {
+        navigate("/admin", { replace: true })
+      } else {
+        navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+      }
     }
-  }, [user, authLoading, navigate])
+  }, [user, authLoading, forcePasswordChange, role, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,14 +65,6 @@ export default function Login() {
     if (signInError) {
       setError(signInError.message)
     }
-  }
-
-  const handleResetPassword = async () => {
-    if (!resetEmail.trim()) return
-    setResetError("")
-    const { error } = await resetPassword(resetEmail.trim())
-    if (error) setResetError(error.message)
-    else setResetSent(true)
   }
 
   if (authLoading) {
@@ -135,13 +129,6 @@ export default function Login() {
             />
           </div>
 
-          <div style={{ textAlign: "right", marginTop: -8 }}>
-            <button type="button" onClick={() => setShowResetModal(true)}
-              className="text-xs text-white/30 hover:text-white/50 transition-colors">
-              Esqueceu a senha?
-            </button>
-          </div>
-
           <div className="relative" ref={testAccountsRef}>
             <button
               type="button"
@@ -195,42 +182,6 @@ export default function Login() {
         </p>
       </div>
 
-      {showResetModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
-          onClick={() => setShowResetModal(false)}>
-          <div style={{ background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32, maxWidth: 400, width: "100%" }}
-            onClick={e => e.stopPropagation()}>
-            <h3 style={{ fontWeight: 700, color: "#e0e7e3", marginBottom: 8, fontSize: "1.1rem" }}>Redefinir Senha</h3>
-            <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.5)", marginBottom: 16 }}>
-              Informe seu email para receber o link de redefinição.
-            </p>
-            {resetSent ? (
-              <div style={{ padding: "12px 16px", borderRadius: 8, background: "rgba(16,185,129,0.1)", color: "#34d399", fontSize: "0.85rem", fontWeight: 500 }}>
-                Email enviado! Verifique sua caixa de entrada.
-              </div>
-            ) : (
-              <>
-                {resetError && (
-                  <div style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(239,68,68,0.1)", color: "#f87171", fontSize: "0.82rem", marginBottom: 12 }}>
-                    {resetError}
-                  </div>
-                )}
-                <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 mb-4"
-                  placeholder="Seu email" />
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setShowResetModal(false)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.05)", cursor: "pointer", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
-                    Cancelar
-                  </button>
-                  <button onClick={handleResetPassword} disabled={!resetEmail.trim()} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: "#10b981", color: "#fff", cursor: "pointer", fontSize: "0.85rem", fontWeight: 600, opacity: !resetEmail.trim() ? 0.5 : 1 }}>
-                    Enviar
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

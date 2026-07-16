@@ -13,12 +13,64 @@ export interface Pet {
   patientId?: string
 }
 
+export interface Company {
+  id: string
+  name: string
+  slug: string
+  logo_url?: string
+  cover_url?: string
+  settings?: Record<string, unknown>
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Unit {
+  id: string
+  companyId: string
+  name: string
+  slug: string
+  address?: string
+  phone?: string
+  active: boolean
+  settings?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CompanyDashboard {
+  total_users: number
+  total_units: number
+  total_patients: number
+  total_owners: number
+  total_consultas: number
+  total_vacinas: number
+  total_cirurgias: number
+  total_agendamentos: number
+  total_veterinarios: number
+  total_medicamentos: number
+  total_faturas: number
+  faturas_abertas: number
+  receita_total: number
+  unidades: Array<{
+    id: string
+    name: string
+    slug: string
+    active: boolean
+    users: number
+    patients: number
+    consultas: number
+  }>
+}
+
 export interface UserProfile {
   id?: string
   email?: string
   unidade: string
   funcoes: string[]
   role?: string
+  companyId?: string
+  unitId?: string
   atualizadoEm: string
 }
 

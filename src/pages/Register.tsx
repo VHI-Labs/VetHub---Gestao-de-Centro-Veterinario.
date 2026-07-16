@@ -6,7 +6,7 @@ import { getSavedUnidade } from "./UnidadeSelection"
 
 export default function Register() {
   const navigate = useNavigate()
-  const { user, signUp } = useAuth()
+  const { user, signUp, role } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -15,8 +15,14 @@ export default function Register() {
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    if (user) navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
-  }, [user, navigate])
+    if (user) {
+      if (role === "admin") {
+        navigate("/admin", { replace: true })
+      } else {
+        navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+      }
+    }
+  }, [user, role, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

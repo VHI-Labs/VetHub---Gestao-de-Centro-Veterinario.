@@ -7,7 +7,7 @@ import { getSavedUnidade } from "./UnidadeSelection"
 
 export default function ResetPassword() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, role } = useAuth()
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -26,8 +26,14 @@ export default function ResetPassword() {
   }, [])
 
   useEffect(() => {
-    if (user) navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
-  }, [user, navigate])
+    if (user) {
+      if (role === "admin") {
+        navigate("/admin", { replace: true })
+      } else {
+        navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+      }
+    }
+  }, [user, role, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

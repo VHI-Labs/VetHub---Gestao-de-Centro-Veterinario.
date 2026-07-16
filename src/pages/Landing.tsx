@@ -78,6 +78,7 @@ const faqs = [
   { q: "Posso usar no celular?", a: "Sim! O sistema é responsivo e pode ser instalado como um aplicativo (PWA) no seu celular ou tablet." },
   { q: "Como cadastro minha equipe?", a: "Entre em contato com o administrador da sua clínica para criar os acessos. Cada usuário tem permissões específicas." },
   { q: "Funciona para clínicas de grande porte?", a: "Com certeza. O VetHub foi desenvolvido pensando em fluxos intensos, com fila de espera, múltiplos consultórios e painéis de TV simultâneos." },
+  { q: "Esqueci minha senha, o que faço?", a: "Procure o administrador do VetHub para resetar sua senha. Se você for funcionário de uma clínica parceira, precisaremos de uma comprovação de que faz parte do estabelecimento antes de realizar o reset." },
 ]
 
 const plans = [
@@ -539,7 +540,7 @@ function MobileMenuDrawer({ open, onClose, onNavigate, scrollTo }: { open: boole
 
 export default function Landing() {
   const navigate = useNavigate()
-  const { user, loading } = useAuth()
+  const { user, loading, role } = useAuth()
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [testimonialIdx, setTestimonialIdx] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -551,8 +552,14 @@ export default function Landing() {
   const heroScale = useTransform(scrollYProgress, [0, 0.12], [1, 0.95])
 
   useEffect(() => {
-    if (!loading && user) navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
-  }, [user, loading, navigate])
+    if (!loading && user) {
+      if (role === "admin") {
+        navigate("/admin", { replace: true })
+      } else {
+        navigate(getSavedUnidade() ? "/recepcao" : "/selecionar-unidade")
+      }
+    }
+  }, [user, loading, role, navigate])
 
   useEffect(() => {
     const interval = setInterval(() => {
