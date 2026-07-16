@@ -8,6 +8,10 @@ import ProntoAtendimento from './pages/ProntoAtendimento'
 import PainelCaes from './pages/PainelCaes'
 import PainelGatos from './pages/PainelGatos'
 import AdminPage from './pages/AdminPage'
+import CompanySelection from './pages/CompanySelection'
+import CompanyDashboard from './pages/CompanyDashboard'
+import UnitManagement from './pages/UnitManagement'
+import CompanyUsers from './pages/CompanyUsers'
 import TvSelection from './pages/TvSelection'
 import Prontuario from './pages/Prontuario'
 import TutorDetail from './pages/TutorDetail'
@@ -20,6 +24,7 @@ import Financeiro from './pages/Financeiro'
 import Servicos from './pages/Servicos'
 import Register from './pages/Register'
 import ResetPassword from './pages/ResetPassword'
+import ForcePasswordChange from './pages/ForcePasswordChange'
 import BottomNavbar from './components/BottomNavbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -37,7 +42,7 @@ export default function App() {
   useRealtimeQueue()
   const { unidade, role } = useAuth()
   const location = useLocation()
-  const hideFooter = ["/login", "/triagem", "/painel-caes", "/painel-gatos"].includes(location.pathname)
+  const hideFooter = ["/login", "/triagem", "/painel-caes", "/painel-gatos", "/trocar-senha"].includes(location.pathname)
 
   useEffect(() => {
     useQueueStore.getState().setUnidade(unidade, role === 'admin' || role === 'coordinator')
@@ -72,7 +77,14 @@ export default function App() {
       <Route path="/estoque" element={<ProtectedRoute><PaywallCard feature="estoque"><Estoque /></PaywallCard></ProtectedRoute>} />
       <Route path="/register" element={<Register />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+      <Route path="/trocar-senha" element={<ProtectedRoute><ForcePasswordChange /></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedRoute requireAdmin><CompanySelection /></ProtectedRoute>} />
+      <Route path="/admin/legacy" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+      <Route path="/admin/empresa/:companyId" element={<ProtectedRoute requireAdmin><CompanyDashboard /></ProtectedRoute>} />
+      <Route path="/admin/empresa/:companyId/unidades" element={<ProtectedRoute requireAdmin><UnitManagement /></ProtectedRoute>} />
+      <Route path="/admin/empresa/:companyId/unidade/:unitId" element={<ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute>} />
+      <Route path="/admin/empresa/:companyId/usuarios" element={<ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute>} />
+      <Route path="/admin/empresa/:companyId/auditoria" element={<ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute>} />
       <Route path="/admin/auditoria" element={<ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute>} />
       <Route path="/financeiro" element={<ProtectedRoute><PaywallCard feature="faturamento"><Financeiro /></PaywallCard></ProtectedRoute>} />
       <Route path="/financeiro/servicos" element={<ProtectedRoute><PaywallCard feature="faturamento"><Servicos /></PaywallCard></ProtectedRoute>} />

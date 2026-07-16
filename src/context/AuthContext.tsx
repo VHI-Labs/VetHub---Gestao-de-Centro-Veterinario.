@@ -8,12 +8,16 @@ interface AuthContextType {
   role: string
   unidade: string
   funcoes: string[]
+  companyId: string
+  unitId: string
+  forcePasswordChange: boolean
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   refreshProfile: () => Promise<void>
+  clearForcePasswordChange: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>(null!)
@@ -49,18 +53,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string>("")
   const [unidade, setUnidade] = useState<string>("")
   const [funcoes, setFuncoes] = useState<string[]>([])
+  const [companyId, setCompanyId] = useState<string>("")
+  const [unitId, setUnitId] = useState<string>("")
+  const [forcePasswordChange, setForcePasswordChange] = useState<boolean>(false)
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = useCallback(async (uid: string) => {
     const { data } = await supabase
       .from("user_profiles")
-      .select("role, unidade, funcoes")
+      .select("role, unidade, funcoes, company_id, unit_id, force_password_change")
       .eq("id", uid)
       .single()
     if (data) {
       setRole((data.role as string) || "user")
       setUnidade((data.unidade as string) || "")
       setFuncoes((data.funcoes as string[]) || [])
+      setCompanyId((data.company_id as string) || "")
+      setUnitId((data.unit_id as string) || "")
+      setForcePasswordChange((data.force_password_change as boolean) || false)
     }
   }, [])
 
@@ -84,6 +94,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole("")
         setUnidade("")
         setFuncoes([])
+        setCompanyId("")
+        setUnitId("")
+        setForcePasswordChange(false)
       }
     })
 
@@ -113,11 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole("")
     setUnidade("")
     setFuncoes([])
+    setCompanyId("")
+    setUnitId("")
+    setForcePasswordChange(false)
     clearSavedUnidade()
   }
 
+  const clearForcePasswordChange = async () => {
+    if (!user) return
+    await supabase.from("user_profiles").update({ force_password_change: false }).eq("id", user.id)
+    setForcePasswordChange(false)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, role, unidade, funcoes, loading, signIn, signUp, signOut, resetPassword, refreshProfile: () => user ? fetchProfile(user.id) : Promise.resolve() }}>
+    <AuthContext.Provider value={{ user, role, unidade, funcoes, companyId, unitId, forcePasswordChange, loading, signIn, signUp, signOut, resetPassword, refreshProfile: () => user ? fetchProfile(user.id) : Promise.resolve(), clearForcePasswordChange }}>
       {children}
     </AuthContext.Provider>
   )

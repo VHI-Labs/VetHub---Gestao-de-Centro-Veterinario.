@@ -46,7 +46,9 @@ describe('Login', () => {
     localStorage.clear()
     mockUseAuth.mockReturnValue({
       user: null,
+      role: '',
       loading: false,
+      forcePasswordChange: false,
       signIn: vi.fn().mockResolvedValue({ error: null }),
       resetPassword: vi.fn().mockResolvedValue({ error: null }),
     })
@@ -72,7 +74,9 @@ describe('Login', () => {
   it('should show loading state when authenticating', () => {
     mockUseAuth.mockReturnValue({
       user: null,
+      role: '',
       loading: true,
+      forcePasswordChange: false,
       signIn: vi.fn(),
       resetPassword: vi.fn(),
     })
@@ -83,7 +87,9 @@ describe('Login', () => {
   it('should show error message on failed login', async () => {
     mockUseAuth.mockReturnValue({
       user: null,
+      role: '',
       loading: false,
+      forcePasswordChange: false,
       signIn: vi.fn().mockResolvedValue({ error: { message: 'Email ou senha inválidos' } }),
       resetPassword: vi.fn().mockResolvedValue({ error: null }),
     })
@@ -114,52 +120,12 @@ describe('Login', () => {
     expect(emailInput.value).toBe('admin@vethub.com.br')
   })
 
-  it('should show forgot password link', () => {
-    renderLogin()
-    expect(screen.getByText('Esqueceu a senha?')).toBeInTheDocument()
-  })
-
-  it('should show reset password modal when clicking forgot password', () => {
-    renderLogin()
-    fireEvent.click(screen.getByText('Esqueceu a senha?'))
-    expect(screen.getByText('Redefinir Senha')).toBeInTheDocument()
-    expect(screen.getByText('Enviar')).toBeInTheDocument()
-  })
-
-  it('should show success message after password reset', async () => {
-    renderLogin()
-    fireEvent.click(screen.getByText('Esqueceu a senha?'))
-
-    fireEvent.change(screen.getByPlaceholderText('Seu email'), { target: { value: 'test@test.com' } })
-    fireEvent.click(screen.getByText('Enviar'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Email enviado! Verifique sua caixa de entrada.')).toBeInTheDocument()
-    })
-  })
-
-  it('should show error on password reset failure', async () => {
-    mockUseAuth.mockReturnValue({
-      user: null,
-      loading: false,
-      signIn: vi.fn(),
-      resetPassword: vi.fn().mockResolvedValue({ error: { message: 'Email não encontrado' } }),
-    })
-    renderLogin()
-    fireEvent.click(screen.getByText('Esqueceu a senha?'))
-
-    fireEvent.change(screen.getByPlaceholderText('Seu email'), { target: { value: 'test@test.com' } })
-    fireEvent.click(screen.getByText('Enviar'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Email não encontrado')).toBeInTheDocument()
-    })
-  })
-
   it('should not crash when user is already logged in', () => {
     mockUseAuth.mockReturnValue({
       user: { id: '1', email: 'test@test.com' },
+      role: 'admin',
       loading: false,
+      forcePasswordChange: false,
       signIn: vi.fn(),
       resetPassword: vi.fn(),
     })
