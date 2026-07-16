@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [master]
+    branches: [master, docs/atualizar-documentacao-v2]
   pull_request:
     branches: [master]
 
@@ -67,12 +67,24 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-      - uses: nick-invision/retry@v3
+      - uses: amondnet/vercel-action@v42.3.0
+        id: vercel-preview
         with:
-          timeout_minutes: 10
-          max_attempts: 3
-          retry_wait_seconds: 30
-          command: npx vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --yes
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--yes'
+        continue-on-error: true
+      - name: Retry on failure
+        if: steps.vercel-preview.outcome == 'failure'
+        uses: amondnet/vercel-action@v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--yes'
 
   deploy-production:
     name: Deploy Production
@@ -81,9 +93,20 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
-      - uses: nick-invision/retry@v3
+      - uses: amondnet/vercel-action@v42.3.0
+        id: vercel-production
         with:
-          timeout_minutes: 10
-          max_attempts: 3
-          retry_wait_seconds: 30
-          command: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod --yes'
+        continue-on-error: true
+      - name: Retry on failure
+        if: steps.vercel-production.outcome == 'failure'
+        uses: amondnet/vercel-action@v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod --yes'
+          working-directory: ./
