@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import UnidadeSelection from './pages/UnidadeSelection'
@@ -31,6 +32,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import PaywallCard from './components/PaywallCard'
 import UpsellBanner from './components/UpsellBanner'
 import TrialExpiredModal from './components/TrialExpiredModal'
+import PageTransition from './components/PageTransition'
 import { useQueueStore } from './store/queueStore'
 import { useEffect } from 'react'
 import { useStorageSync } from './hooks/useStorageSync'
@@ -59,37 +61,39 @@ export default function App() {
     <>
       <TrialExpiredModal />
       <BottomNavbar />
-      <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/selecionar-unidade" element={<ProtectedRoute><UnidadeSelection /></ProtectedRoute>} />
-      <Route path="/recepcao" element={<ProtectedRoute><UpsellBanner /><Recepcao /></ProtectedRoute>} />
-      <Route path="/triagem" element={<Triagem />} />
-      <Route path="/pronto-atendimento" element={<ProtectedRoute><ProntoAtendimento /></ProtectedRoute>} />
-      <Route path="/painel-caes" element={<PainelCaes />} />
-      <Route path="/painel-gatos" element={<PainelGatos />} />
-      <Route path="/selecionar-tv" element={<ProtectedRoute><TvSelection /></ProtectedRoute>} />
-      <Route path="/prontuario" element={<ProtectedRoute><Prontuario /></ProtectedRoute>} />
-      <Route path="/prontuario/tutor/:id" element={<ProtectedRoute><TutorDetail /></ProtectedRoute>} />
-      <Route path="/prontuario/paciente/:id" element={<ProtectedRoute><PacienteDetail /></ProtectedRoute>} />
-      <Route path="/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
-      <Route path="/veterinarios" element={<ProtectedRoute><PaywallCard feature="veterinarios"><Veterinarios /></PaywallCard></ProtectedRoute>} />
-      <Route path="/estoque" element={<ProtectedRoute><PaywallCard feature="estoque"><Estoque /></PaywallCard></ProtectedRoute>} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/trocar-senha" element={<ProtectedRoute><ForcePasswordChange /></ProtectedRoute>} />
-      <Route path="/admin" element={<ProtectedRoute requireAdmin><CompanySelection /></ProtectedRoute>} />
-      <Route path="/admin/legacy" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
-      <Route path="/admin/empresa/:companyId" element={<ProtectedRoute requireAdmin><CompanyDashboard /></ProtectedRoute>} />
-      <Route path="/admin/empresa/:companyId/unidades" element={<ProtectedRoute requireAdmin><UnitManagement /></ProtectedRoute>} />
-      <Route path="/admin/empresa/:companyId/unidade/:unitId" element={<ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute>} />
-      <Route path="/admin/empresa/:companyId/usuarios" element={<ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute>} />
-      <Route path="/admin/empresa/:companyId/auditoria" element={<ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute>} />
-      <Route path="/admin/auditoria" element={<ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute>} />
-      <Route path="/financeiro" element={<ProtectedRoute><PaywallCard feature="faturamento"><Financeiro /></PaywallCard></ProtectedRoute>} />
-      <Route path="/financeiro/servicos" element={<ProtectedRoute><PaywallCard feature="faturamento"><Servicos /></PaywallCard></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><Landing /></PageTransition>} />
+          <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+          <Route path="/selecionar-unidade" element={<PageTransition><ProtectedRoute><UnidadeSelection /></ProtectedRoute></PageTransition>} />
+          <Route path="/recepcao" element={<PageTransition><ProtectedRoute><UpsellBanner /><Recepcao /></ProtectedRoute></PageTransition>} />
+          <Route path="/triagem" element={<PageTransition><Triagem /></PageTransition>} />
+          <Route path="/pronto-atendimento" element={<PageTransition><ProtectedRoute><ProntoAtendimento /></ProtectedRoute></PageTransition>} />
+          <Route path="/painel-caes" element={<PageTransition><PainelCaes /></PageTransition>} />
+          <Route path="/painel-gatos" element={<PageTransition><PainelGatos /></PageTransition>} />
+          <Route path="/selecionar-tv" element={<PageTransition><ProtectedRoute><TvSelection /></ProtectedRoute></PageTransition>} />
+          <Route path="/prontuario" element={<PageTransition><ProtectedRoute><Prontuario /></ProtectedRoute></PageTransition>} />
+          <Route path="/prontuario/tutor/:id" element={<PageTransition><ProtectedRoute><TutorDetail /></ProtectedRoute></PageTransition>} />
+          <Route path="/prontuario/paciente/:id" element={<PageTransition><ProtectedRoute><PacienteDetail /></ProtectedRoute></PageTransition>} />
+          <Route path="/agendamentos" element={<PageTransition><ProtectedRoute><Agendamentos /></ProtectedRoute></PageTransition>} />
+          <Route path="/veterinarios" element={<PageTransition><ProtectedRoute><PaywallCard feature="veterinarios"><Veterinarios /></PaywallCard></ProtectedRoute></PageTransition>} />
+          <Route path="/estoque" element={<PageTransition><ProtectedRoute><PaywallCard feature="estoque"><Estoque /></PaywallCard></ProtectedRoute></PageTransition>} />
+          <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+          <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+          <Route path="/trocar-senha" element={<PageTransition><ProtectedRoute><ForcePasswordChange /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin" element={<PageTransition><ProtectedRoute requireAdmin><CompanySelection /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/legacy" element={<PageTransition><ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/empresa/:companyId" element={<PageTransition><ProtectedRoute requireAdmin><CompanyDashboard /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/empresa/:companyId/unidades" element={<PageTransition><ProtectedRoute requireAdmin><UnitManagement /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/empresa/:companyId/unidade/:unitId" element={<PageTransition><ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/empresa/:companyId/usuarios" element={<PageTransition><ProtectedRoute requireAdmin><CompanyUsers /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/empresa/:companyId/auditoria" element={<PageTransition><ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute></PageTransition>} />
+          <Route path="/admin/auditoria" element={<PageTransition><ProtectedRoute requireAdmin><AuditLog /></ProtectedRoute></PageTransition>} />
+          <Route path="/financeiro" element={<PageTransition><ProtectedRoute><PaywallCard feature="faturamento"><Financeiro /></PaywallCard></ProtectedRoute></PageTransition>} />
+          <Route path="/financeiro/servicos" element={<PageTransition><ProtectedRoute><PaywallCard feature="faturamento"><Servicos /></PaywallCard></ProtectedRoute></PageTransition>} />
+          <Route path="*" element={<PageTransition><Navigate to="/" replace /></PageTransition>} />
+        </Routes>
+      </AnimatePresence>
       {!hideFooter && <Footer />}
     </>
   )
